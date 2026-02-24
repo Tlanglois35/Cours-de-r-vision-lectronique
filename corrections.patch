@@ -1,0 +1,87 @@
+  diff --git a/cours_electrique_v4.html b/cours_electrique_v4.html
+  index 0000000..1111111 100644
+  --- a/cours_electrique_v4.html
+  +++ b/cours_electrique_v4.html
+  @@ -1,5 +1,5 @@
+  <!DOCTYPE html>
+  -<html lang="fr">
+  +<html lang="fr">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  @@ -320,6 +320,12 @@
+      <div class="module-card" onclick="showLesson('triphasé')">
+        <div class="module-num">MODULE 06</div>
+        <div class="module-title">Systèmes Triphasés</div>
+  +    </div>
+  +
+  +    <!-- NOUVEAU MODULE GÉNÉRALITÉS -->
+  +    <div class="module-card" onclick="showLesson('generalites')">
+  +      <div class="module-num">MODULE 00</div>
+  +      <div class="module-title">Généralités Réseau Électrique</div>
+        <div class="module-desc">Consommation France, schéma EDF, import/export, défis ENR + VE</div>
+        <div class="module-tags"><span class="tag tag-circuit">Réseau</span><span class="tag tag-power">EDF</span></div>
+        <div class="module-arrow">↗</div>
+  @@ -450,6 +456,140 @@
+        </div>
+      </div>
+  
+  +    <!-- ====================== NOUVEAU BLOC EXERCICES PDF ====================== -->
+  +    <div class="content-block" id="exercices-pdf">
+  +      <div class="section-tag">📐 Exercices officiels du PDF</div>
+  +      <h2 class="block-title">Exercices résolus – Puissances & Circuits monophasés</h2>
+  +
+  +      <!-- Exercice 1 p.54 -->
+  +      <div class="example-box">
+  +        <span class="example-label">Exercice 1 (PDF p.54) – Charge monophasée</span>
+  +        <p>V = 230 V eff (φᵥ = 0), f = 50 Hz.<br>
+  +        Branche 1 : R₁ = 20 Ω Branche 2 : R₂ = 10 Ω + L = 20 mH</p>
+  +
+  +        <div class="formula-box">
+  +          <span class="formula-label">Solution détaillée</span>
+  +          <div class="formula">ω = 314,16 rad/s → X_L = 6,283 Ω<br>
+  +          I₁ = 230 / 20 = <strong style="color:#e8f428">11,5 A</strong> ∠0°<br>
+  +          Z₂ = 10 + j6,283 → |Z₂| ≈ 11,81 Ω → I₂ ≈ 19,475 A ∠−32,14°<br>
+  +          I = <strong>29,85 A</strong><br>
+  +          P = 6435 W Q = 2387 VAr S = 6865 VA cosφ = 0,937</div>
+  +        </div>
+  +        <div class="tip"><strong>💡 Utilise le calculateur Puissances de ton site pour vérifier !</strong></div>
+  +      </div>
+  +
+  +      <!-- Exercice 2 p.55 -->
+  +      <div class="example-box">
+  +        <span class="example-label">Exercice 2 (PDF p.55) – Diagramme vectoriel</span>
+  +        <p>V = 100 V, Z = 20 + j10 − j5 = 20 + j5 Ω</p>
+  +        <div class="formula-box">
+  +          <div class="formula">I = 100 / √425 ≈ <strong>4,85 A</strong> ∠−14,04°<br>
+  +          v(t) = 100√2 sin(ωt)<br>
+  +          i(t) = 4,85√2 sin(ωt − 14,04°)</div>
+  +        </div>
+  +        <div class="tip">Trace le diagramme de Fresnel avec le plan complexe interactif (MODULE 01).</div>
+  +      </div>
+  +    </div>
+  +
+      <!-- QCM existant reste inchangé -->
+    </div>
+  </div>
+  @@ -520,6 +660,12 @@
+        <li class="sidebar-item" onclick="scrollToId('c-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+  +
+  +  <!-- Ajout dans la sidebar des autres modules (exemple pour puissances) -->
+  +  <li class="sidebar-item" onclick="scrollToId('exercices-pdf')">📐 Exercices PDF (p.54+)</li>
+  +</ul>
+  +
+  +<!-- NOUVEAU MODULE GÉNÉRALITÉS (à placer après le dernier lesson) -->
+  +<div id="lesson-generalites" class="section">
+  +  <button class="back-btn" onclick="showSection('modules-elec')">← Retour aux modules</button>
+  +  <div class="lesson-layout">
+  +    <!-- Contenu Généralités pages 1-7 du PDF – je peux te le remplir complètement si tu veux -->
+  +    <div class="lesson-content">
+  +      <h2 class="block-title">Généralités sur le réseau électrique</h2>
+  +      <p>Consommation résidentielle 147,8 TWh (2019), schéma production-transport-distribution EDF, import/export France, défis réseaux intelligents…</p>
+  +      <!-- Tu peux copier-coller les textes/images du PDF ici -->
+  +    </div>
+  +  </div>
+  +</div>

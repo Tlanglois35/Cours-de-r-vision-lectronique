@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElecMath — Réseau Électrique FISA3</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #12121a;
+      --bg3: #1a1a26;
+      --accent: #e8f428;
+      --accent2: #ff5e3a;
+      --accent3: #3af4c8;
+      --text: #e8e8f0;
+      --text2: #8888aa;
+      --border: #2a2a3a;
+      --card: #16161f;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND ── */
+    .bg-noise {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: .03;
+      pointer-events: none;
+      z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+    }
+
+    .bg-glow {
+      position: fixed;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(232, 244, 40, .06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      top: -100px;
+      left: -100px;
+      animation: glowMove 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes glowMove {
+      to {
+        transform: translate(200px, 150px);
+      }
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(10, 10, 15, .85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      height: 60px;
+      gap: 1rem;
+    }
+
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      margin-right: auto;
+    }
+
+    .nav-logo span {
+      color: var(--text2);
+      font-weight: 400;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      color: var(--text2);
+      font-family: 'Inter', sans-serif;
+      font-size: .8rem;
+      padding: .4rem .8rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all .2s;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .nav-btn:hover,
+    .nav-btn.active {
+      color: var(--accent);
+      background: rgba(232, 244, 40, .08);
+    }
+
+    .progress-bar {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      height: 2px;
+      background: var(--accent);
+      z-index: 99;
+      transition: width .3s;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 4rem 4rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(232, 244, 40, .1);
+      border: 1px solid rgba(232, 244, 40, .3);
+      color: var(--accent);
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      padding: .4rem .8rem;
+      border-radius: 2px;
+      margin-bottom: 2rem;
+      letter-spacing: .1em;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: .95;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--text2);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 3rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 2rem;
+      color: var(--accent);
+    }
+
+    .stat-label {
+      font-size: .8rem;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: .75rem;
+      background: var(--accent);
+      color: var(--bg);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      padding: 1rem 2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+      transition: all .2s;
+      letter-spacing: .02em;
+    }
+
+    .hero-cta:hover {
+      background: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 20px 40px rgba(232, 244, 40, .2);
+    }
+
+    /* ── SECTION WRAPPER ── */
+    .section {
+      padding: 6rem 4rem;
+      position: relative;
+      z-index: 1;
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .section-header {
+      margin-bottom: 4rem;
+    }
+
+    .section-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      color: var(--accent);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2rem, 5vw, 4rem);
+      line-height: 1;
+      color: var(--text);
+    }
+
+    .section-sub {
+      font-size: 1rem;
+      color: var(--text2);
+      margin-top: 1rem;
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* ── MODULES GRID ── */
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .module-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2rem;
+      cursor: pointer;
+      transition: all .3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .3s;
+    }
+
+    .module-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .module-card:hover {
+      border-color: rgba(232, 244, 40, .3);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, .4);
+    }
+
+    .module-num {
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      color: var(--text2);
+      margin-bottom: 1rem;
+      letter-spacing: .1em;
+    }
+
+    .module-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: var(--text);
+      margin-bottom: .75rem;
+    }
+
+    .module-desc {
+      font-size: .875rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .module-tags {
+      display: flex;
+      gap: .5rem;
+      margin-top: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: .7rem;
+      padding: .25rem .6rem;
+      border-radius: 2px;
+      font-family: 'Space Mono', monospace;
+      letter-spacing: .05em;
+    }
+
+    .tag-math {
+      background: rgba(58, 244, 200, .1);
+      color: var(--accent3);
+      border: 1px solid rgba(58, 244, 200, .2);
+    }
+
+    .tag-circuit {
+      background: rgba(255, 94, 58, .1);
+      color: var(--accent2);
+      border: 1px solid rgba(255, 94, 58, .2);
+    }
+
+    .tag-power {
+      background: rgba(232, 244, 40, .1);
+      color: var(--accent);
+      border: 1px solid rgba(232, 244, 40, .2);
+    }
+
+    .module-arrow {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      font-size: 1.5rem;
+      color: var(--text2);
+      transition: all .3s;
+    }
+
+    .module-card:hover .module-arrow {
+      color: var(--accent);
+      transform: translate(4px, -4px);
+    }
+
+    /* ── LESSON ── */
+    .lesson-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .lesson-sidebar {
+      position: sticky;
+      top: 80px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+
+    .sidebar-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: .9rem;
+      color: var(--text);
+      margin-bottom: 1rem;
+      padding-bottom: .75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .25rem;
+    }
+
+    .sidebar-item {
+      padding: .5rem .75rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: .85rem;
+      color: var(--text2);
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .sidebar-item:hover,
+    .sidebar-item.active {
+      background: rgba(232, 244, 40, .08);
+      color: var(--accent);
+    }
+
+    .sidebar-item.done {
+      color: var(--accent3);
+    }
+
+    .sidebar-item.done::before {
+      content: '✓';
+      font-size: .7rem;
+      color: var(--accent3);
+    }
+
+    .sidebar-item:not(.done)::before {
+      content: '○';
+      font-size: .7rem;
+    }
+
+    .lesson-content {
+      min-width: 0;
+    }
+
+    .lesson-header {
+      margin-bottom: 3rem;
+    }
+
+    .back-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text2);
+      padding: .5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: .8rem;
+      margin-bottom: 2rem;
+      transition: all .2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .back-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── CONTENT BLOCKS ── */
+    .content-block {
+      margin-bottom: 2.5rem;
+    }
+
+    .block-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+
+    .block-text {
+      font-size: .95rem;
+      color: var(--text2);
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+
+    .block-text strong {
+      color: var(--text);
+    }
+
+    /* FORMULA BOX */
+    .formula-box {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 0 8px 8px 0;
+      padding: 1.5rem 2rem;
+      margin: 1.5rem 0;
+      font-family: 'Space Mono', monospace;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .formula-box::before {
+      content: '∑';
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 4rem;
+      color: rgba(232, 244, 40, .05);
+      pointer-events: none;
+    }
+
+    .formula-label {
+      font-size: .7rem;
+      color: var(--accent);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+      display: block;
+    }
+
+    .formula {
+      font-size: 1.1rem;
+      color: var(--accent);
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    .formula sub,
+    .formula sup {
+      font-size: .6em;
+    }
+
+    .formula-explain {
+      font-size: .8rem;
+      color: var(--text2);
+      margin-top: .75rem;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+    }
+
+    /* EXPANDABLE */
+    .expand-card {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 1rem 0;
+    }
+
+    .expand-header {
+      background: var(--bg2);
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all .2s;
+    }
+
+    .expand-header:hover {
+      background: var(--bg3);
+    }
+
+    .expand-header-text {
+      font-weight: 500;
+      font-size: .95rem;
+      color: var(--text);
+    }
+
+    .expand-icon {
+      color: var(--accent);
+      font-size: 1.2rem;
+      transition: transform .3s;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .expand-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .4s ease, padding .3s;
+    }
+
+    .expand-content.open {
+      max-height: 2000px;
+      padding: 1.5rem;
+    }
+
+    .expand-content p,
+    .expand-content li {
+      font-size: .9rem;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+
+    .expand-content ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: .5rem;
+    }
+
+    .expand-content li::before {
+      content: '→ ';
+      color: var(--accent);
+    }
+
+    /* EXAMPLE BOX */
+    .example-box {
+      background: rgba(58, 244, 200, .05);
+      border: 1px solid rgba(58, 244, 200, .15);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .example-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--accent3);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: .75rem;
+      display: block;
+    }
+
+    .example-box .formula {
+      color: var(--accent3);
+    }
+
+    /* ALERT */
+    .alert {
+      background: rgba(255, 94, 58, .05);
+      border: 1px solid rgba(255, 94, 58, .2);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      display: flex;
+      gap: .75rem;
+      align-items: flex-start;
+    }
+
+    .alert-icon {
+      color: var(--accent2);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      margin-top: .1rem;
+    }
+
+    .alert-text {
+      font-size: .875rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .alert-text strong {
+      color: var(--accent2);
+    }
+
+    /* TIP */
+    .tip {
+      background: rgba(232, 244, 40, .04);
+      border: 1px solid rgba(232, 244, 40, .15);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      display: flex;
+      gap: .75rem;
+    }
+
+    .tip-icon {
+      color: var(--accent);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .tip-text {
+      font-size: .875rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .tip-text strong {
+      color: var(--accent);
+    }
+
+    /* VISUAL TABLE */
+    .vtable {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 1.5rem 0;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .vtable th {
+      background: var(--bg3);
+      padding: .75rem 1rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: .85rem;
+      color: var(--text);
+      text-align: left;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .vtable td {
+      padding: .75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      font-size: .875rem;
+      color: var(--text2);
+      vertical-align: top;
+    }
+
+    .vtable tr:last-child td {
+      border-bottom: none;
+    }
+
+    .vtable tr:hover td {
+      background: rgba(255, 255, 255, .02);
+    }
+
+    .vtable .mono {
+      font-family: 'Space Mono', monospace;
+      color: var(--accent3);
+    }
+
+    .vtable .accent {
+      color: var(--accent);
+    }
+
+    /* INTERACTIVE CALCULATOR */
+    .calc-box {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .calc-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .calc-title span {
+      background: rgba(232, 244, 40, .15);
+      color: var(--accent);
+      padding: .2rem .6rem;
+      border-radius: 4px;
+      font-size: .8rem;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .calc-field {
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+    }
+
+    .calc-label {
+      font-size: .75rem;
+      color: var(--text2);
+      letter-spacing: .05em;
+      font-family: 'Space Mono', monospace;
+    }
+
+    .calc-input {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .6rem .8rem;
+      border-radius: 6px;
+      font-family: 'Space Mono', monospace;
+      font-size: .9rem;
+      width: 100%;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .calc-input:focus {
+      border-color: var(--accent);
+    }
+
+    .calc-btn {
+      background: var(--accent);
+      color: var(--bg);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      padding: .75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: .95rem;
+      transition: all .2s;
+      width: 100%;
+    }
+
+    .calc-btn:hover {
+      background: #fff;
+      box-shadow: 0 8px 20px rgba(232, 244, 40, .2);
+    }
+
+    .calc-result {
+      background: var(--bg2);
+      border: 1px solid rgba(232, 244, 40, .2);
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      margin-top: 1rem;
+      font-family: 'Space Mono', monospace;
+      display: none;
+    }
+
+    .calc-result.show {
+      display: block;
+    }
+
+    .result-line {
+      display: flex;
+      justify-content: space-between;
+      padding: .25rem 0;
+      font-size: .9rem;
+    }
+
+    .result-key {
+      color: var(--text2);
+    }
+
+    .result-val {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ── QCM ── */
+    .qcm-section {
+      margin: 2rem 0;
+    }
+
+    .qcm-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.5rem;
+    }
+
+    .qcm-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: var(--text);
+    }
+
+    .qcm-score {
+      font-family: 'Space Mono', monospace;
+      font-size: .875rem;
+      color: var(--text2);
+    }
+
+    .qcm-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      transition: border-color .3s;
+    }
+
+    .qcm-card.correct {
+      border-color: var(--accent3);
+    }
+
+    .qcm-card.wrong {
+      border-color: var(--accent2);
+    }
+
+    .qcm-q {
+      font-size: 1rem;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .qcm-q strong {
+      color: var(--accent);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .qcm-options {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+
+    .qcm-opt {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .875rem 1.25rem;
+      cursor: pointer;
+      font-size: .9rem;
+      color: var(--text2);
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+    }
+
+    .qcm-opt:hover:not(.disabled) {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .qcm-opt.selected.correct {
+      background: rgba(58, 244, 200, .08);
+      border-color: var(--accent3);
+      color: var(--accent3);
+    }
+
+    .qcm-opt.selected.wrong {
+      background: rgba(255, 94, 58, .08);
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    .qcm-opt.correct-answer {
+      background: rgba(58, 244, 200, .08);
+      border-color: var(--accent3);
+      color: var(--accent3);
+    }
+
+    .qcm-opt.disabled {
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .opt-letter {
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      background: var(--bg3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--text2);
+    }
+
+    .qcm-explanation {
+      background: var(--bg3);
+      border-left: 3px solid var(--accent3);
+      padding: 1rem 1.5rem;
+      margin-top: 1rem;
+      border-radius: 0 8px 8px 0;
+      font-size: .875rem;
+      color: var(--text2);
+      line-height: 1.6;
+      display: none;
+    }
+
+    .qcm-explanation.show {
+      display: block;
+    }
+
+    .qcm-explanation strong {
+      color: var(--accent3);
+    }
+
+    .submit-qcm {
+      background: var(--accent);
+      color: var(--bg);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      padding: .875rem 2rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all .2s;
+      margin-top: 1rem;
+    }
+
+    .submit-qcm:hover {
+      background: #fff;
+    }
+
+    .qcm-total {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      margin-top: 2rem;
+      display: none;
+    }
+
+    .qcm-total.show {
+      display: block;
+    }
+
+    .score-big {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 4rem;
+      color: var(--accent);
+    }
+
+    .score-msg {
+      font-size: 1.1rem;
+      color: var(--text2);
+      margin-top: .5rem;
+    }
+
+    .retry-btn {
+      background: none;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      padding: .75rem 2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: .95rem;
+      margin-top: 1.5rem;
+      transition: all .2s;
+    }
+
+    .retry-btn:hover {
+      background: rgba(232, 244, 40, .1);
+    }
+
+    /* ── INTERACTIVE DIAGRAM ── */
+    .diagram-container {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+      position: relative;
+    }
+
+    .diagram-label {
+      font-family: 'Space Mono', monospace;
+      font-size: .7rem;
+      color: var(--accent);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    svg.diagram {
+      width: 100%;
+      max-width: 600px;
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ── PROGRESS ── */
+    .progress-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .progress-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+    }
+
+    .progress-items {
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+    }
+
+    .prog-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .prog-label {
+      font-size: .85rem;
+      color: var(--text2);
+      width: 160px;
+      flex-shrink: 0;
+    }
+
+    .prog-bar-wrap {
+      flex: 1;
+      background: var(--bg3);
+      border-radius: 2px;
+      height: 4px;
+      overflow: hidden;
+    }
+
+    .prog-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      transition: width 1s ease;
+    }
+
+    .prog-pct {
+      font-family: 'Space Mono', monospace;
+      font-size: .75rem;
+      color: var(--text2);
+      width: 35px;
+      text-align: right;
+    }
+
+    /* ── PLANE COMPLEXE ── */
+    .complex-plane {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .plane-controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .plane-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: .3rem;
+    }
+
+    .plane-input-group label {
+      font-size: .75rem;
+      color: var(--text2);
+      font-family: 'Space Mono', monospace;
+    }
+
+    .plane-input-group input {
+      width: 90px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: .5rem;
+      border-radius: 4px;
+      font-family: 'Space Mono', monospace;
+      font-size: .85rem;
+      outline: none;
+    }
+
+    .plane-input-group input:focus {
+      border-color: var(--accent);
+    }
+
+    .plane-btn {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 4px;
+      padding: .5rem 1rem;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: .85rem;
+      cursor: pointer;
+      align-self: flex-end;
+    }
+
+    #complexCanvas {
+      border-radius: 8px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+    }
+
+    .complex-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .cinfo {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .75rem;
+      text-align: center;
+    }
+
+    .cinfo-label {
+      font-size: .7rem;
+      color: var(--text2);
+      font-family: 'Space Mono', monospace;
+      letter-spacing: .05em;
+      display: block;
+      margin-bottom: .25rem;
+    }
+
+    .cinfo-val {
+      font-family: 'Space Mono', monospace;
+      font-size: .9rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ── BREADCRUMB ── */
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-size: .8rem;
+      color: var(--text2);
+      margin-bottom: 2rem;
+    }
+
+    .breadcrumb span {
+      color: var(--text2);
+    }
+
+    .breadcrumb .sep {
+      color: var(--border);
+    }
+
+    .breadcrumb .current {
+      color: var(--text);
+    }
+
+    /* ── STEP INDICATOR ── */
+    .steps {
+      display: flex;
+      gap: .5rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+    }
+
+    .step {
+      flex: 1;
+      min-width: 80px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: .75rem;
+      text-align: center;
+      font-size: .75rem;
+      color: var(--text2);
+      font-family: 'Space Mono', monospace;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .step.active {
+      background: rgba(232, 244, 40, .1);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .step.done {
+      background: rgba(58, 244, 200, .05);
+      border-color: rgba(58, 244, 200, .3);
+      color: var(--accent3);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media(max-width:768px) {
+      .hero {
+        padding: 6rem 1.5rem 3rem;
+      }
+
+      .section {
+        padding: 4rem 1.5rem;
+      }
+
+      .lesson-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .lesson-sidebar {
+        position: static;
+      }
+
+      .calc-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .complex-info {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-up {
+      animation: fadeUp .6s ease forwards;
+    }
+
+    .fade-up-2 {
+      animation: fadeUp .6s .15s ease both;
+    }
+
+    .fade-up-3 {
+      animation: fadeUp .6s .3s ease both;
+    }
+
+    /* NAV dots */
+    .nav-dots {
+      display: flex;
+      gap: .5rem;
+      align-items: center;
+    }
+
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .nav-dot.active {
+      background: var(--accent);
+      width: 16px;
+      border-radius: 3px;
+    }
+
+    /* Code inline */
+    code {
+      background: var(--bg3);
+      color: var(--accent3);
+      padding: .1em .4em;
+      border-radius: 3px;
+      font-family: 'Space Mono', monospace;
+      font-size: .85em;
+    }
+
+    /* Highlight */
+    .hl {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .hl-green {
+      color: var(--accent3);
+      font-weight: 700;
+    }
+
+    .hl-red {
+      color: var(--accent2);
+      font-weight: 700;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ==================================================
+     BODY – VERSION MISE À JOUR AVEC MODULE 00 COMPLET
+  ================================================== -->
+
+  <!-- NAV (inchangée) -->
+  <nav>
+    <div class="nav-logo">Elec<span>Math</span></div>
+    <button class="nav-btn active" onclick="showHome()">Accueil</button>
+    <button class="nav-btn" onclick="showSection('modules-elec')">Électricité</button>
+    <button class="nav-btn" style="color: var(--accent3);" onclick="showSection('modules-aop')">Électronique
+      (AOP)</button>
+    <button class="nav-btn" onclick="showSection('progression')">Progression</button>
+  </nav>
+
+  <!-- HERO (inchangé) -->
+  <div id="home" class="hero">
+    <div class="hero-badge">📐 FISA 3 — Zhibin ZHOU</div>
+    <h1 class="fade-up">Réseaux &<br>Électronique<br><em>Décodés.</em></h1>
+    <p class="fade-up-2">Choisis ta matière pour commencer les révisions. Maths, formules, schémas et QCM — tout ce
+      qu'il faut pour vraiment comprendre.</p>
+    <div class="hero-stats fade-up-3" style="gap: 1rem; flex-wrap: wrap;">
+      <button class="hero-cta" onclick="showSection('modules-elec')">⚡ Réseaux Électriques →</button>
+      <button class="hero-cta" style="background: var(--bg3); color: var(--accent3); border: 1px solid var(--accent3);"
+        onclick="showSection('modules-aop')">🔌 Amplificateurs (AOP) →</button>
+    </div>
+  </div>
+
+  <!-- MODULES ÉLECTRICITÉ (avec MODULE 00 ajouté) -->
+  <div id="modules-elec" class="section">
+    <div class="section-header">
+      <span class="section-tag">→ Programme</span>
+      <h2 class="section-title">Choisir<br>un module</h2>
+      <p class="section-sub">Chaque module contient des explications détaillées, des exemples résolus, une calculatrice
+        interactive et un QCM pour tester vos connaissances.</p>
+    </div>
+
+    <div class="modules-grid">
+
+      <!-- MODULE 00 – GÉNÉRALITÉS (nouveau) -->
+      <div class="module-card" onclick="showLesson('generalites')">
+        <div class="module-num" style="background: linear-gradient(135deg, #4a6bff, #6b8cff); color: white;">MODULE 00
+        </div>
+        <div class="module-title">Généralités</div>
+        <div class="module-desc">Consommation France 2019, solde exportateur +39,1 TWh, schéma EDF, défis ENR et VE
+        </div>
+        <div class="module-tags">
+          <span class="tag tag-power">Réseau</span>
+          <span class="tag tag-circuit">EDF</span>
+        </div>
+        <div class="module-arrow">↗</div>
+      </div>
+
+      <!-- Tes modules existants (inchangés) -->
+      <div class="module-card" onclick="showLesson('complexes')">
+        <div class="module-num">MODULE 01</div>
+        <div class="module-title">Nombres Complexes</div>
+        <div class="module-desc">Représentations algébrique, trigonométrique et exponentielle. Module, argument,
+          conjugué et opérations.</div>
+        <div class="module-tags"><span class="tag tag-math">Mathématiques</span><span
+            class="tag tag-math">Phaseurs</span></div>
+        <div class="module-arrow">↗</div>
+      </div>
+
+      <!-- ... ajoute ici tes autres modules existants si tu veux ... -->
+
+    </div>
+  </div>
+
+  <!-- ═══ LESSON: GÉNÉRALITÉS – MODULE 00 COMPLET ═══ -->
+  <div id="lesson-generalites" class="section">
+    <button class="back-btn" onclick="showSection('modules-elec')">← Retour aux modules</button>
+
+    <div class="lesson-layout">
+      <aside class="lesson-sidebar">
+        <div class="sidebar-title">MODULE 00</div>
+        <ul class="sidebar-items">
+          <li class="sidebar-item active" onclick="scrollToId('slide-1')">Slide 1 – Titre</li>
+          <li class="sidebar-item" onclick="scrollToId('slide-2')">Slide 2 – Plan</li>
+          <li class="sidebar-item" onclick="scrollToId('slide-3')">Slide 3 – Conso France</li>
+          <li class="sidebar-item" onclick="scrollToId('slide-4')">Slide 4 – Solde export</li>
+          <li class="sidebar-item" onclick="scrollToId('slide-5')">Slide 5 – Schéma réseau</li>
+          <li class="sidebar-item" onclick="scrollToId('slide-6')">Slide 6 – Schéma détaillé EDF</li>
+          <li class="sidebar-item" onclick="scrollToId('slide-7')">Slide 7 – Défis futurs</li>
+          <li class="sidebar-item" onclick="scrollToId('gen-exo')">Exercices PDF</li>
+        </ul>
+      </aside>
+
+      <div class="lesson-content">
+
+        <!-- Slide 1 – Titre -->
+        <div class="content-block" id="slide-1">
+          <div class="section-tag">Slide 1</div>
+          <div
+            style="background:#0d1421; padding:2rem; border-radius:12px; border:1px solid var(--border); text-align:center;">
+            <div style="font-size:2.2rem; font-weight:800; color:var(--accent); margin-bottom:1.5rem;">
+              Réseau électrique
+            </div>
+            <div style="font-size:1.4rem; color:var(--text); margin:1rem 0;">
+              (Régime monophasé / triphasé)
+            </div>
+            <div style="font-size:1.2rem; color:var(--text2); margin:1.5rem 0;">
+              FISA 3 – 2026<br>
+              Zhibin ZHOU<br>
+              zhibin.zhou@isen-ouest.yncrea.fr
+            </div>
+            <div style="margin-top:2rem; font-size:1.1rem; color:#888;">
+              ISEN – ALLIS DIGITAL – yncréa – BREST
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 2 – Plan du cours -->
+        <div class="content-block" id="slide-2">
+          <div class="section-tag">Slide 2</div>
+          <h2 class="block-title">Plan du cours</h2>
+          <ul style="font-size:1.3rem; line-height:2.4; margin:2rem 0; padding-left:2rem; list-style:none;">
+            <li style="margin-bottom:1rem;">• <strong>Généralités</strong></li>
+            <li style="margin-bottom:1rem;">• Rappel sur les nombres complexes</li>
+            <li style="margin-bottom:1rem;">• Circuits électriques monophasés</li>
+            <li style="margin-bottom:1rem;">• Circuits électriques triphasés</li>
+            <li>• Synthèse</li>
+          </ul>
+        </div>
+
+        <!-- Slide 3 – Consommation France -->
+        <div class="content-block" id="slide-3">
+          <div class="section-tag">Slide 3</div>
+          <h2 class="block-title">Généralités – Consommation résidentielle</h2>
+          <p style="font-size:1.4rem; margin:1.5rem 0;">
+            Consommation finale résidentielle en France en 2019 : <strong class="hl">147,8 TWh</strong>
+          </p>
+
+          <div
+            style="display:flex; flex-wrap:wrap; gap:2.5rem; justify-content:center; align-items:center; margin:2.5rem 0;">
+            <!-- Camembert approximatif -->
+            <div style="width:260px; height:260px; border-radius:50%; background:conic-gradient(
+            #ff9800 0% 27.6%,
+            #ff5722 27.6% 46.1%,
+            #795548 46.1% 58.9%,
+            #9c27b0 58.9% 72.4%,
+            #673ab7 72.4% 80.2%,
+            #3f51b5 80.2% 85.8%,
+            #2196f3 85.8% 87.5%,
+            #607d8b 87.5% 100%
+          ); position:relative;">
+              <div
+                style="position:absolute; inset:50px; background:var(--bg2); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:bold; color:var(--accent);">
+                147,8 TWh
+              </div>
+            </div>
+
+            <div style="flex:1; min-width:300px;">
+              <ul style="font-size:1.15rem; line-height:2.4; list-style:none;">
+                <li><span style="color:#ff9800; font-weight:bold;">■ Chauffage</span> : 27,6 %</li>
+                <li><span style="color:#ff5722; font-weight:bold;">■ Froid & lavage</span> : 18,5 %</li>
+                <li><span style="color:#795548; font-weight:bold;">■ Eau chaude sanitaire</span> : 12,8 %</li>
+                <li><span style="color:#9c27b0; font-weight:bold;">■ Multimédia & informatique</span> : 13,5 %</li>
+                <li><span style="color:#673ab7; font-weight:bold;">■ Cuisson</span> : 7,8 %</li>
+                <li><span style="color:#3f51b5; font-weight:bold;">■ Éclairage</span> : 5,6 %</li>
+                <li><span style="color:#2196f3; font-weight:bold;">■ Ventilation</span> : 1,7 %</li>
+                <li><span style="color:#607d8b; font-weight:bold;">■ Autres</span> : 12,1 %</li>
+              </ul>
+            </div>
+          </div>
+
+          <p style="text-align:center; color:var(--text2); font-style:italic; margin-top:1.5rem;">
+            Source : ADEME – Clés pour 2019
+          </p>
+        </div>
+
+        <!-- Slide 4 – Solde exportateur + carte -->
+        <div class="content-block" id="slide-4">
+          <div class="section-tag">Slide 4</div>
+          <h2 class="block-title">Généralités – Solde exportateur</h2>
+          <p style="font-size:1.4rem; margin:1.5rem 0;">
+            Solde net : <strong class="hl">+39,1 TWh</strong>
+          </p>
+          <p>Export total : 71,7 TWh • Import total : 32,6 TWh</p>
+
+          <div
+            style="margin:2.5rem auto; max-width:800px; background:#0d1421; padding:1.8rem; border-radius:12px; border:1px solid var(--border); text-align:center;">
+            <p style="font-size:1.2rem; color:#4a90e2; margin-bottom:1.5rem;">Principaux flux 2019</p>
+
+            <div
+              style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1.5rem; font-size:1rem;">
+              <div>
+                <strong style="color:#4caf50;">Grande-Bretagne</strong><br>
+                Export : 12,7 TWh<br>
+                Import : 2,7 TWh
+              </div>
+              <div>
+                <strong style="color:#f44336;">Italie</strong><br>
+                Export : 17,7 TWh<br>
+                Import : 1,2 TWh
+              </div>
+              <div>
+                <strong style="color:#9c27b0;">Suisse</strong><br>
+                Export : 17,4 TWh<br>
+                Import : 7,3 TWh
+              </div>
+              <div>
+                <strong style="color:#ff9800;">CWE</strong><br>
+                Export : 10,6 TWh<br>
+                Import : 15,9 TWh
+              </div>
+              <div>
+                <strong style="color:#795548;">Espagne</strong><br>
+                Export : 13,3 TWh<br>
+                Import : 5,5 TWh
+              </div>
+              <div style="grid-column: span 2; margin-top:1rem; font-size:1.2rem; color:var(--accent);">
+                Solde net global : <strong>+39,1 TWh</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 5 – Schéma général -->
+        <div class="content-block" id="slide-5">
+          <div class="section-tag">Slide 5</div>
+          <h2 class="block-title">Schéma général production – transport – distribution</h2>
+          <p style="margin:1.5rem 0; font-size:1.1rem;">
+            Le réseau électrique a pour rôle d’acheminer l’électricité depuis les centres de production (nucléaires,
+            thermiques et renouvelables) vers les centres de consommation et d’assurer à tout moment l’équilibre entre
+            la production et la consommation.
+          </p>
+
+          <div style="margin:2rem 0; text-align:center;">
+            <div
+              style="background:#0d1421; padding:2rem; border-radius:12px; border:1px solid var(--border); max-width:900px; margin:0 auto;">
+              <div style="display:flex; flex-direction:column; gap:1.8rem; font-size:1.1rem; color:var(--text);">
+                <div style="border-left:5px solid #4caf50; padding-left:1.2rem;">
+                  <strong>PRODUCTION</strong><br>
+                  Centrales → THT 400 kV / 225 kV
+                </div>
+                <div style="border-left:5px solid #2196f3; padding-left:1.2rem;">
+                  <strong>TRANSPORT</strong><br>
+                  Grand Transport & Interconnexions → HTB / HTA
+                </div>
+                <div style="border-left:5px solid #ff9800; padding-left:1.2rem;">
+                  <strong>RÉPARTITION & DISTRIBUTION</strong><br>
+                  HTA → MT 20 kV → BT 400/230 V
+                </div>
+              </div>
+
+              <p style="margin-top:2rem; color:var(--text2); font-size:0.95rem;">
+                THT : 400 000 V / 225 000 V<br>
+                HT : 63 000 à 90 000 V<br>
+                MT : 20 000 V<br>
+                BT : 400 V et 230 V
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 6 – Schéma détaillé EDF -->
+        <div class="content-block" id="slide-6">
+          <div class="section-tag">Slide 6</div>
+          <h2 class="block-title">Schéma détaillé de la production, du transport et de la distribution</h2>
+
+          <div
+            style="margin:2rem auto; max-width:1000px; background:#0d1421; padding:1.8rem; border-radius:12px; border:1px solid var(--border);">
+            <p style="font-size:1.05rem; line-height:1.8; color:var(--text2);">
+              Schéma général de la production, du transport et de la distribution d'énergie électrique.
+            </p>
+
+            <ul style="margin:1.5rem 0; padding-left:2rem; line-height:2; font-size:1.05rem;">
+              <li>Production : centrales hydrauliques, thermiques, nucléaires → 400 kV</li>
+              <li>Transport : Grand Transport & Interconnexions (THT 400 kV / 225 kV) → HTB / HTA</li>
+              <li>Répartition : HTA (63–90 kV) → MT (20 kV)</li>
+              <li>Distribution : MT → BT (400/230 V) vers les consommateurs</li>
+            </ul>
+
+            <p style="margin-top:1.5rem; color:var(--text2); font-style:italic; text-align:center;">
+              Schéma simplifié EDF – Production → Transport → Répartition → Distribution
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 7 – Défis actuels -->
+        <div class="content-block" id="slide-7">
+          <div class="section-tag">Slide 7</div>
+          <h2 class="block-title">Défis actuels et évolution des réseaux</h2>
+
+          <p style="margin:1.5rem 0; font-size:1.1rem;">
+            Les réseaux électriques actuels sont confrontés au développement de nouveaux moyens de production et à une
+            évolution des usages. On peut citer en particulier :
+          </p>
+
+          <ul style="font-size:1.1rem; line-height:2.2; margin:1.8rem 2rem; color:var(--text2);">
+            <li>le développement des moyens de production d’électricité issue d’énergies renouvelables, souvent
+              décentralisés, et dont la production est variable au cours du temps</li>
+            <li>les consommations liées aux équipements électroniques</li>
+            <li>l’insertion des véhicules électriques</li>
+          </ul>
+
+          <div
+            style="margin:2.5rem auto; max-width:900px; background:#0d1421; padding:1.8rem; border-radius:12px; border:1px solid var(--border); text-align:center;">
+            <p style="font-size:1.3rem; color:var(--accent); margin-bottom:1.5rem;">
+              Vers des réseaux intelligents (« smart grids »)
+            </p>
+            <p style="color:var(--text2); font-size:1.05rem;">
+              Configuration possible avec production centralisée + décentralisée,<br>
+              stockage, pilotage actif de la demande, flux bidirectionnels.
+            </p>
+          </div>
+        </div>
+
+        <!-- Bloc exercices PDF (déjà présent) -->
+        <div class="content-block" id="gen-exo">
+          <!-- Ton bloc exercices existant – je le garde tel quel -->
+          <div class="section-tag">📐 Exercices du cours (PDF)</div>
+          <h2 class="block-title">Exercices résolus — Extrait pages 54–55</h2>
+
+          <!-- Exercice 1 corrigé -->
+          <div class="example-box">
+            <span class="example-label">Exercice 1 (PDF p.54) — Charge monophasée</span>
+            <p>V = 230 V eff (φᵥ = 0), f = 50 Hz.<br>
+              Branche 1 : R₁ = 20 Ω Branche 2 : R₂ = 10 Ω + L = 20 mH (parallèle)</p>
+            <div class="formula-box">
+              <span class="formula-label">Solution détaillée</span>
+              <div class="formula">
+                ω = 314,16 rad/s → X_L = 6,283 Ω<br>
+                I₁ = 230 / 20 = <strong class="hl">11,5 A</strong> ∠0°<br>
+                Z₂ = 10 + j6,283 → |Z₂| ≈ 11,81 Ω → I₂ ≈ 19,475 A ∠−32,14°<br>
+                I_total ≈ <strong>29,85 A</strong><br>
+                P ≈ 6435 W Q ≈ 2387 VAr S ≈ 6865 VA cosφ ≈ 0,937
+              </div>
+            </div>
+            <div class="tip"><strong>💡</strong> Vérifie avec le calculateur Puissances (mode PQS) !</div>
+          </div>
+
+          <!-- Exercice 2 -->
+          <div class="example-box" style="margin-top:2rem">
+            <span class="example-label">Exercice 2 (PDF p.55) — Diagramme vectoriel</span>
+            <p>V = 100 V, Z = 20 + j10 − j5 = 20 + j5 Ω</p>
+            <div class="formula-box">
+              <div class="formula">
+                I ≈ 4,85 A ∠−14,04°<br>
+                v(t) = 100√2 sin(ωt)<br>
+                i(t) = 4,85√2 sin(ωt − 14,04°)
+              </div>
+            </div>
+            <div class="tip">Utilise le plan complexe interactif (MODULE 01) pour visualiser.</div>
+          </div>
+
+          <!-- Placeholder 56–60 -->
+          <div class="example-box"
+            style="margin-top:2.5rem; background:rgba(232,244,40,0.04); border-color:rgba(232,244,40,0.3)">
+            <span class="example-label">Pages 56–60 — Exercices / exemples complémentaires</span>
+            <p>Ces pages contiennent principalement :</p>
+            <ul style="margin:1rem 0; line-height:1.7; color:var(--text2)">
+              <li>Calculs détaillés de puissances complexes S = V·I*</li>
+              <li>Compensation de facteur de puissance (condensateurs)</li>
+              <li>Exemples RL, RC, RLC série et parallèle</li>
+              <li>Application du théorème de Boucherot</li>
+              <li>Décomposition P/Q/S</li>
+            </ul>
+            <div class="tip">
+              <strong>Pour l’instant :</strong> pas d’exercices numérotés clairs comme p.54–55.<br>
+              Si tu as les énoncés précis (photos ou texte), envoie-les-moi pour les intégrer au même style.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ JAVASCRIPT (extrait minimal pour navigation) ═══ -->
+  <script>
+    function showHome() {
+      document.querySelectorAll('.section, .hero').forEach(el => el.style.display = 'none');
+      document.getElementById('home').style.display = 'flex';
+    }
+
+    function showSection(id) {
+      document.querySelectorAll('.section, .hero').forEach(el => el.style.display = 'none');
+      const section = document.getElementById(id);
+      if (section) section.style.display = 'block';
+    }
+
+    function showLesson(id) {
+      showSection('lesson-' + id);
+    }
+
+    function scrollToId(id) {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Au chargement
+    showHome();
+  </script>
+</body>
+
+</html>
