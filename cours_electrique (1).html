@@ -1,0 +1,2518 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ElecMath — Réseau Électrique FISA3</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: #12121a;
+  --bg3: #1a1a26;
+  --accent: #e8f428;
+  --accent2: #ff5e3a;
+  --accent3: #3af4c8;
+  --text: #e8e8f0;
+  --text2: #8888aa;
+  --border: #2a2a3a;
+  --card: #16161f;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* ── BACKGROUND ── */
+.bg-noise{position:fixed;top:0;left:0;width:100%;height:100%;opacity:.03;pointer-events:none;z-index:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px;}
+.bg-glow{position:fixed;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(232,244,40,.06) 0%,transparent 70%);pointer-events:none;z-index:0;top:-100px;left:-100px;animation:glowMove 8s ease-in-out infinite alternate;}
+@keyframes glowMove{to{transform:translate(200px,150px);}}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,10,15,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:60px;gap:1rem;}
+.nav-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;color:var(--accent);letter-spacing:-0.02em;margin-right:auto;}
+.nav-logo span{color:var(--text2);font-weight:400;}
+.nav-btn{background:none;border:none;color:var(--text2);font-family:'Inter',sans-serif;font-size:.8rem;padding:.4rem .8rem;border-radius:4px;cursor:pointer;transition:all .2s;letter-spacing:.05em;text-transform:uppercase;}
+.nav-btn:hover,.nav-btn.active{color:var(--accent);background:rgba(232,244,40,.08);}
+.progress-bar{position:fixed;top:60px;left:0;height:2px;background:var(--accent);z-index:99;transition:width .3s;}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:8rem 4rem 4rem;position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:.5rem;background:rgba(232,244,40,.1);border:1px solid rgba(232,244,40,.3);color:var(--accent);font-family:'Space Mono',monospace;font-size:.75rem;padding:.4rem .8rem;border-radius:2px;margin-bottom:2rem;letter-spacing:.1em;}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(3rem,8vw,7rem);line-height:.95;color:var(--text);margin-bottom:1.5rem;}
+.hero h1 em{font-style:normal;color:var(--accent);}
+.hero p{font-size:1.1rem;color:var(--text2);max-width:560px;line-height:1.7;margin-bottom:3rem;}
+.hero-stats{display:flex;gap:3rem;margin-bottom:3rem;}
+.stat{display:flex;flex-direction:column;gap:.25rem;}
+.stat-num{font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;color:var(--accent);}
+.stat-label{font-size:.8rem;color:var(--text2);text-transform:uppercase;letter-spacing:.1em;}
+.hero-cta{display:inline-flex;align-items:center;gap:.75rem;background:var(--accent);color:var(--bg);font-family:'Syne',sans-serif;font-weight:700;padding:1rem 2rem;border-radius:4px;cursor:pointer;border:none;font-size:1rem;transition:all .2s;letter-spacing:.02em;}
+.hero-cta:hover{background:#fff;transform:translateY(-2px);box-shadow:0 20px 40px rgba(232,244,40,.2);}
+
+/* ── SECTION WRAPPER ── */
+.section{padding:6rem 4rem;position:relative;z-index:1;display:none;}
+.section.active{display:block;}
+.section-header{margin-bottom:4rem;}
+.section-tag{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem;display:block;}
+.section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,5vw,4rem);line-height:1;color:var(--text);}
+.section-sub{font-size:1rem;color:var(--text2);margin-top:1rem;max-width:600px;line-height:1.6;}
+
+/* ── MODULES GRID ── */
+.modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem;}
+.module-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem;cursor:pointer;transition:all .3s;position:relative;overflow:hidden;}
+.module-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.module-card:hover::before{transform:scaleX(1);}
+.module-card:hover{border-color:rgba(232,244,40,.3);transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.4);}
+.module-num{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--text2);margin-bottom:1rem;letter-spacing:.1em;}
+.module-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.3rem;color:var(--text);margin-bottom:.75rem;}
+.module-desc{font-size:.875rem;color:var(--text2);line-height:1.6;}
+.module-tags{display:flex;gap:.5rem;margin-top:1.5rem;flex-wrap:wrap;}
+.tag{font-size:.7rem;padding:.25rem .6rem;border-radius:2px;font-family:'Space Mono',monospace;letter-spacing:.05em;}
+.tag-math{background:rgba(58,244,200,.1);color:var(--accent3);border:1px solid rgba(58,244,200,.2);}
+.tag-circuit{background:rgba(255,94,58,.1);color:var(--accent2);border:1px solid rgba(255,94,58,.2);}
+.tag-power{background:rgba(232,244,40,.1);color:var(--accent);border:1px solid rgba(232,244,40,.2);}
+.module-arrow{position:absolute;bottom:2rem;right:2rem;font-size:1.5rem;color:var(--text2);transition:all .3s;}
+.module-card:hover .module-arrow{color:var(--accent);transform:translate(4px,-4px);}
+
+/* ── LESSON ── */
+.lesson-layout{display:grid;grid-template-columns:280px 1fr;gap:3rem;align-items:start;}
+.lesson-sidebar{position:sticky;top:80px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.5rem;overflow:hidden;}
+.sidebar-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;color:var(--text);margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);}
+.sidebar-items{list-style:none;display:flex;flex-direction:column;gap:.25rem;}
+.sidebar-item{padding:.5rem .75rem;border-radius:4px;cursor:pointer;font-size:.85rem;color:var(--text2);transition:all .2s;display:flex;align-items:center;gap:.5rem;}
+.sidebar-item:hover,.sidebar-item.active{background:rgba(232,244,40,.08);color:var(--accent);}
+.sidebar-item.done{color:var(--accent3);}
+.sidebar-item.done::before{content:'✓';font-size:.7rem;color:var(--accent3);}
+.sidebar-item:not(.done)::before{content:'○';font-size:.7rem;}
+.lesson-content{min-width:0;}
+.lesson-header{margin-bottom:3rem;}
+.back-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:.5rem 1rem;border-radius:4px;cursor:pointer;font-size:.8rem;margin-bottom:2rem;transition:all .2s;font-family:'Inter',sans-serif;}
+.back-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ── CONTENT BLOCKS ── */
+.content-block{margin-bottom:2.5rem;}
+.block-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.5rem;color:var(--text);margin-bottom:1.25rem;}
+.block-text{font-size:.95rem;color:var(--text2);line-height:1.8;margin-bottom:1rem;}
+.block-text strong{color:var(--text);}
+
+/* FORMULA BOX */
+.formula-box{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:1.5rem 2rem;margin:1.5rem 0;font-family:'Space Mono',monospace;position:relative;overflow:hidden;}
+.formula-box::before{content:'∑';position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:4rem;color:rgba(232,244,40,.05);pointer-events:none;}
+.formula-label{font-size:.7rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.75rem;display:block;}
+.formula{font-size:1.1rem;color:var(--accent);font-weight:700;line-height:1.6;}
+.formula sub,.formula sup{font-size:.6em;}
+.formula-explain{font-size:.8rem;color:var(--text2);margin-top:.75rem;font-family:'Inter',sans-serif;line-height:1.6;}
+
+/* EXPANDABLE */
+.expand-card{border:1px solid var(--border);border-radius:8px;overflow:hidden;margin:1rem 0;}
+.expand-header{background:var(--bg2);padding:1rem 1.5rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;transition:all .2s;}
+.expand-header:hover{background:var(--bg3);}
+.expand-header-text{font-weight:500;font-size:.95rem;color:var(--text);}
+.expand-icon{color:var(--accent);font-size:1.2rem;transition:transform .3s;font-family:'Space Mono',monospace;}
+.expand-content{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s;}
+.expand-content.open{max-height:2000px;padding:1.5rem;}
+.expand-content p,.expand-content li{font-size:.9rem;color:var(--text2);line-height:1.7;}
+.expand-content ul{list-style:none;display:flex;flex-direction:column;gap:.5rem;}
+.expand-content li::before{content:'→ ';color:var(--accent);}
+
+/* EXAMPLE BOX */
+.example-box{background:rgba(58,244,200,.05);border:1px solid rgba(58,244,200,.15);border-radius:8px;padding:1.5rem;margin:1.5rem 0;}
+.example-label{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--accent3);letter-spacing:.15em;text-transform:uppercase;margin-bottom:.75rem;display:block;}
+.example-box .formula{color:var(--accent3);}
+
+/* ALERT */
+.alert{background:rgba(255,94,58,.05);border:1px solid rgba(255,94,58,.2);border-radius:8px;padding:1rem 1.5rem;margin:1rem 0;display:flex;gap:.75rem;align-items:flex-start;}
+.alert-icon{color:var(--accent2);font-size:1.2rem;flex-shrink:0;margin-top:.1rem;}
+.alert-text{font-size:.875rem;color:var(--text2);line-height:1.6;}
+.alert-text strong{color:var(--accent2);}
+
+/* TIP */
+.tip{background:rgba(232,244,40,.04);border:1px solid rgba(232,244,40,.15);border-radius:8px;padding:1rem 1.5rem;margin:1rem 0;display:flex;gap:.75rem;}
+.tip-icon{color:var(--accent);font-size:1.1rem;flex-shrink:0;}
+.tip-text{font-size:.875rem;color:var(--text2);line-height:1.6;}
+.tip-text strong{color:var(--accent);}
+
+/* VISUAL TABLE */
+.vtable{width:100%;border-collapse:separate;border-spacing:0;margin:1.5rem 0;border-radius:8px;overflow:hidden;}
+.vtable th{background:var(--bg3);padding:.75rem 1rem;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;color:var(--text);text-align:left;border-bottom:2px solid var(--accent);}
+.vtable td{padding:.75rem 1rem;border-bottom:1px solid var(--border);font-size:.875rem;color:var(--text2);vertical-align:top;}
+.vtable tr:last-child td{border-bottom:none;}
+.vtable tr:hover td{background:rgba(255,255,255,.02);}
+.vtable .mono{font-family:'Space Mono',monospace;color:var(--accent3);}
+.vtable .accent{color:var(--accent);}
+
+/* INTERACTIVE CALCULATOR */
+.calc-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0;}
+.calc-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.1rem;color:var(--text);margin-bottom:1.5rem;display:flex;align-items:center;gap:.5rem;}
+.calc-title span{background:rgba(232,244,40,.15);color:var(--accent);padding:.2rem .6rem;border-radius:4px;font-size:.8rem;font-family:'Space Mono',monospace;}
+.calc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.calc-field{display:flex;flex-direction:column;gap:.4rem;}
+.calc-label{font-size:.75rem;color:var(--text2);letter-spacing:.05em;font-family:'Space Mono',monospace;}
+.calc-input{background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.6rem .8rem;border-radius:6px;font-family:'Space Mono',monospace;font-size:.9rem;width:100%;outline:none;transition:border-color .2s;}
+.calc-input:focus{border-color:var(--accent);}
+.calc-btn{background:var(--accent);color:var(--bg);font-family:'Syne',sans-serif;font-weight:700;padding:.75rem 1.5rem;border:none;border-radius:6px;cursor:pointer;font-size:.95rem;transition:all .2s;width:100%;}
+.calc-btn:hover{background:#fff;box-shadow:0 8px 20px rgba(232,244,40,.2);}
+.calc-result{background:var(--bg2);border:1px solid rgba(232,244,40,.2);border-radius:8px;padding:1rem 1.5rem;margin-top:1rem;font-family:'Space Mono',monospace;display:none;}
+.calc-result.show{display:block;}
+.result-line{display:flex;justify-content:space-between;padding:.25rem 0;font-size:.9rem;}
+.result-key{color:var(--text2);}
+.result-val{color:var(--accent);font-weight:700;}
+
+/* ── QCM ── */
+.qcm-section{margin:2rem 0;}
+.qcm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+.qcm-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1.3rem;color:var(--text);}
+.qcm-score{font-family:'Space Mono',monospace;font-size:.875rem;color:var(--text2);}
+.qcm-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:1.5rem;transition:border-color .3s;}
+.qcm-card.correct{border-color:var(--accent3);}
+.qcm-card.wrong{border-color:var(--accent2);}
+.qcm-q{font-size:1rem;color:var(--text);line-height:1.6;margin-bottom:1.5rem;}
+.qcm-q strong{color:var(--accent);font-family:'Space Mono',monospace;}
+.qcm-options{display:flex;flex-direction:column;gap:.75rem;}
+.qcm-opt{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.875rem 1.25rem;cursor:pointer;font-size:.9rem;color:var(--text2);transition:all .2s;display:flex;align-items:center;gap:.75rem;}
+.qcm-opt:hover:not(.disabled){border-color:var(--accent);color:var(--text);}
+.qcm-opt.selected.correct{background:rgba(58,244,200,.08);border-color:var(--accent3);color:var(--accent3);}
+.qcm-opt.selected.wrong{background:rgba(255,94,58,.08);border-color:var(--accent2);color:var(--accent2);}
+.qcm-opt.correct-answer{background:rgba(58,244,200,.08);border-color:var(--accent3);color:var(--accent3);}
+.qcm-opt.disabled{cursor:default;pointer-events:none;}
+.opt-letter{font-family:'Space Mono',monospace;font-size:.75rem;width:24px;height:24px;border-radius:4px;background:var(--bg3);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text2);}
+.qcm-explanation{background:var(--bg3);border-left:3px solid var(--accent3);padding:1rem 1.5rem;margin-top:1rem;border-radius:0 8px 8px 0;font-size:.875rem;color:var(--text2);line-height:1.6;display:none;}
+.qcm-explanation.show{display:block;}
+.qcm-explanation strong{color:var(--accent3);}
+.submit-qcm{background:var(--accent);color:var(--bg);font-family:'Syne',sans-serif;font-weight:700;padding:.875rem 2rem;border:none;border-radius:6px;cursor:pointer;font-size:1rem;transition:all .2s;margin-top:1rem;}
+.submit-qcm:hover{background:#fff;}
+.qcm-total{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;text-align:center;margin-top:2rem;display:none;}
+.qcm-total.show{display:block;}
+.score-big{font-family:'Syne',sans-serif;font-weight:800;font-size:4rem;color:var(--accent);}
+.score-msg{font-size:1.1rem;color:var(--text2);margin-top:.5rem;}
+.retry-btn{background:none;border:1px solid var(--accent);color:var(--accent);font-family:'Syne',sans-serif;font-weight:700;padding:.75rem 2rem;border-radius:6px;cursor:pointer;font-size:.95rem;margin-top:1.5rem;transition:all .2s;}
+.retry-btn:hover{background:rgba(232,244,40,.1);}
+
+/* ── INTERACTIVE DIAGRAM ── */
+.diagram-container{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0;position:relative;}
+.diagram-label{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:1rem;display:block;}
+svg.diagram{width:100%;max-width:600px;display:block;margin:0 auto;}
+
+/* ── PROGRESS ── */
+.progress-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:2rem;}
+.progress-title{font-family:'Syne',sans-serif;font-weight:700;font-size:1rem;color:var(--text);margin-bottom:1.25rem;}
+.progress-items{display:flex;flex-direction:column;gap:.75rem;}
+.prog-item{display:flex;align-items:center;gap:1rem;}
+.prog-label{font-size:.85rem;color:var(--text2);width:160px;flex-shrink:0;}
+.prog-bar-wrap{flex:1;background:var(--bg3);border-radius:2px;height:4px;overflow:hidden;}
+.prog-bar-fill{height:100%;background:var(--accent);border-radius:2px;transition:width 1s ease;}
+.prog-pct{font-family:'Space Mono',monospace;font-size:.75rem;color:var(--text2);width:35px;text-align:right;}
+
+/* ── PLANE COMPLEXE ── */
+.complex-plane{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0;}
+.plane-controls{display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;}
+.plane-input-group{display:flex;flex-direction:column;gap:.3rem;}
+.plane-input-group label{font-size:.75rem;color:var(--text2);font-family:'Space Mono',monospace;}
+.plane-input-group input{width:90px;background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.5rem;border-radius:4px;font-family:'Space Mono',monospace;font-size:.85rem;outline:none;}
+.plane-input-group input:focus{border-color:var(--accent);}
+.plane-btn{background:var(--accent);color:var(--bg);border:none;border-radius:4px;padding:.5rem 1rem;font-family:'Syne',sans-serif;font-weight:700;font-size:.85rem;cursor:pointer;align-self:flex-end;}
+#complexCanvas{border-radius:8px;background:var(--bg2);border:1px solid var(--border);}
+.complex-info{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1rem;}
+.cinfo{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:.75rem;text-align:center;}
+.cinfo-label{font-size:.7rem;color:var(--text2);font-family:'Space Mono',monospace;letter-spacing:.05em;display:block;margin-bottom:.25rem;}
+.cinfo-val{font-family:'Space Mono',monospace;font-size:.9rem;color:var(--accent);font-weight:700;}
+
+/* ── BREADCRUMB ── */
+.breadcrumb{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--text2);margin-bottom:2rem;}
+.breadcrumb span{color:var(--text2);}
+.breadcrumb .sep{color:var(--border);}
+.breadcrumb .current{color:var(--text);}
+
+/* ── STEP INDICATOR ── */
+.steps{display:flex;gap:.5rem;margin:2rem 0;flex-wrap:wrap;}
+.step{flex:1;min-width:80px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:.75rem;text-align:center;font-size:.75rem;color:var(--text2);font-family:'Space Mono',monospace;cursor:pointer;transition:all .2s;}
+.step.active{background:rgba(232,244,40,.1);border-color:var(--accent);color:var(--accent);}
+.step.done{background:rgba(58,244,200,.05);border-color:rgba(58,244,200,.3);color:var(--accent3);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .hero{padding:6rem 1.5rem 3rem;}
+  .section{padding:4rem 1.5rem;}
+  .lesson-layout{grid-template-columns:1fr;}
+  .lesson-sidebar{position:static;}
+  .calc-grid{grid-template-columns:1fr;}
+  .complex-info{grid-template-columns:1fr;}
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+.fade-up{animation:fadeUp .6s ease forwards;}
+.fade-up-2{animation:fadeUp .6s .15s ease both;}
+.fade-up-3{animation:fadeUp .6s .3s ease both;}
+
+/* NAV dots */
+.nav-dots{display:flex;gap:.5rem;align-items:center;}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s;}
+.nav-dot.active{background:var(--accent);width:16px;border-radius:3px;}
+
+/* Code inline */
+code{background:var(--bg3);color:var(--accent3);padding:.1em .4em;border-radius:3px;font-family:'Space Mono',monospace;font-size:.85em;}
+
+/* Highlight */
+.hl{color:var(--accent);font-weight:700;}
+.hl-green{color:var(--accent3);font-weight:700;}
+.hl-red{color:var(--accent2);font-weight:700;}
+
+</style>
+</head>
+<body>
+
+<div class="bg-noise"></div>
+<div class="bg-glow"></div>
+<div class="progress-bar" id="progressBar" style="width:0%"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Elec<span>Math</span></div>
+  <button class="nav-btn active" onclick="showHome()">Accueil</button>
+  <button class="nav-btn" onclick="showSection('modules')">Modules</button>
+  <button class="nav-btn" onclick="showSection('progression')">Progression</button>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<div id="home" class="hero">
+  <div class="hero-badge">📐 FISA 3 — 2026 — Zhibin ZHOU</div>
+  <h1 class="fade-up">Réseaux<br>Électriques<br><em>Décodés.</em></h1>
+  <p class="fade-up-2">Un cours interactif complet sur les circuits monophasés et triphasés. Maths, formules, exercices pratiques et QCM — tout ce qu'il faut pour vraiment comprendre.</p>
+  <div class="hero-stats fade-up-3">
+    <div class="stat"><span class="stat-num">6</span><span class="stat-label">Modules</span></div>
+    <div class="stat"><span class="stat-num">40+</span><span class="stat-label">Exercices</span></div>
+    <div class="stat"><span class="stat-num">3</span><span class="stat-label">Calculatrices</span></div>
+  </div>
+  <button class="hero-cta fade-up-3" onclick="showSection('modules')">Commencer →</button>
+</div>
+
+<!-- ═══ MODULES ═══ -->
+<div id="modules" class="section">
+  <div class="section-header">
+    <span class="section-tag">→ Programme</span>
+    <h2 class="section-title">Choisir<br>un module</h2>
+    <p class="section-sub">Chaque module contient des explications détaillées, des exemples résolus, une calculatrice interactive et un QCM pour tester vos connaissances.</p>
+  </div>
+  <div class="modules-grid">
+    <div class="module-card" onclick="showLesson('complexes')">
+      <div class="module-num">MODULE 01</div>
+      <div class="module-title">Nombres Complexes</div>
+      <div class="module-desc">Représentations algébrique, trigonométrique et exponentielle. Module, argument, conjugué et opérations.</div>
+      <div class="module-tags"><span class="tag tag-math">Mathématiques</span><span class="tag tag-math">Phaseurs</span></div>
+      <div class="module-arrow">↗</div>
+    </div>
+    <div class="module-card" onclick="showLesson('signaux')">
+      <div class="module-num">MODULE 02</div>
+      <div class="module-title">Signaux Sinusoïdaux</div>
+      <div class="module-desc">Valeur efficace, valeur crête, fréquence, pulsation, déphasage. Du temporel au complexe.</div>
+      <div class="module-tags"><span class="tag tag-circuit">Signaux</span><span class="tag tag-math">RMS</span></div>
+      <div class="module-arrow">↗</div>
+    </div>
+    <div class="module-card" onclick="showLesson('impedances')">
+      <div class="module-num">MODULE 03</div>
+      <div class="module-title">Lois & Impédances</div>
+      <div class="module-desc">Lois de Kirchhoff, impédances R, L, C en complexe. Associations série/parallèle.</div>
+      <div class="module-tags"><span class="tag tag-circuit">Circuits</span><span class="tag tag-circuit">Ohm</span></div>
+      <div class="module-arrow">↗</div>
+    </div>
+    <div class="module-card" onclick="showLesson('puissances')">
+      <div class="module-num">MODULE 04</div>
+      <div class="module-title">Puissances Électriques</div>
+      <div class="module-desc">Puissance active P, réactive Q, apparente S. Facteur de puissance et triangle des puissances.</div>
+      <div class="module-tags"><span class="tag tag-power">Puissance</span><span class="tag tag-power">Cosφ</span></div>
+      <div class="module-arrow">↗</div>
+    </div>
+    <div class="module-card" onclick="showLesson('triphasé')">
+      <div class="module-num">MODULE 06</div>
+      <div class="module-title">Systèmes Triphasés</div>
+      <div class="module-tags"><span class="tag">réseau</span><span class="tag">étoile</span><span class="tag">triangle</span></div>
+      <div class="module-desc">Distribution 3 phases, récepteurs étoile et triangle, puissances triphasées, compensation d'énergie réactive.</div>
+      <div class="module-arrow">↗</div>
+    </div>
+    <div class="module-card" onclick="showLesson('methodologie')">
+      <div class="module-num">MODULE 05</div>
+      <div class="module-title">Méthodologie & Exemples</div>
+      <div class="module-desc">Comment résoudre un circuit AC étape par étape. Exemples complets avec calculs détaillés.</div>
+      <div class="module-tags"><span class="tag tag-circuit">Méthode</span><span class="tag tag-power">Pratique</span></div>
+      <div class="module-arrow">↗</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PROGRESSION ═══ -->
+<div id="progression" class="section">
+  <div class="section-header">
+    <span class="section-tag">→ Suivi</span>
+    <h2 class="section-title">Progression</h2>
+  </div>
+  <div class="progress-section">
+    <div class="progress-title">Modules complétés</div>
+    <div class="progress-items" id="progressItems"></div>
+  </div>
+</div>
+
+<!-- ═══ LESSON: COMPLEXES ═══ -->
+<div id="lesson-complexes" class="section">
+  <button class="back-btn" onclick="showSection('modules')">← Retour aux modules</button>
+  <div class="breadcrumb">
+    <span onclick="showHome()" style="cursor:pointer">Accueil</span><span class="sep">/</span>
+    <span onclick="showSection('modules')" style="cursor:pointer">Modules</span><span class="sep">/</span>
+    <span class="current">Nombres Complexes</span>
+  </div>
+
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE 01</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active" onclick="scrollTo(0,0)">1.1 Introduction</li>
+        <li class="sidebar-item" onclick="scrollToId('c-formes')">1.2 Les 3 formes</li>
+        <li class="sidebar-item" onclick="scrollToId('c-operations')">1.3 Opérations</li>
+        <li class="sidebar-item" onclick="scrollToId('c-plan')">1.4 Plan complexe</li>
+        <li class="sidebar-item" onclick="scrollToId('c-electrique')">1.5 En électricité</li>
+        <li class="sidebar-item" onclick="scrollToId('c-derivation')">1.6 Dérivation/Intégration</li>
+        <li class="sidebar-item" onclick="scrollToId('c-calc')">🧮 Calculatrice</li>
+        <li class="sidebar-item" onclick="scrollToId('c-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+
+    <div class="lesson-content">
+      <!-- 1.1 Introduction -->
+      <div class="content-block">
+        <div class="section-tag">1.1 — Pourquoi les complexes ?</div>
+        <h2 class="block-title">Nombres complexes en électricité</h2>
+        <p class="block-text">En électricité, les grandeurs (tension, courant) varient sinusoïdalement. Résoudre des équations différentielles serait très lourd. Les <strong>nombres complexes</strong> permettent de remplacer ces équations par de simples multiplications !</p>
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text"><strong>Idée clé :</strong> Un nombre complexe Z encode à la fois l'amplitude et le déphasage d'un signal sinusoïdal. Les calculs dans le domaine complexe sont beaucoup plus simples que dans le domaine temporel.</div>
+        </div>
+        <div class="formula-box">
+          <span class="formula-label">Définition fondamentale</span>
+          <div class="formula">j² = −1 &nbsp;&nbsp;→&nbsp;&nbsp; j = √(−1)</div>
+          <div class="formula-explain">j est l'unité imaginaire. En math on note souvent i, mais en électricité on utilise j pour ne pas confondre avec le courant i(t).</div>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">📌 Pourquoi j et pas i ? Explication intuitive</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>En mathématiques pures, l'unité imaginaire est notée <strong>i</strong>. Mais en électrotechnique, <strong>i</strong> est déjà utilisé pour désigner le courant électrique i(t). Pour éviter toute confusion, les ingénieurs ont adopté la lettre <strong>j</strong>. C'est une pure convention de notation — le concept est identique.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.2 Les 3 formes -->
+      <div class="content-block" id="c-formes">
+        <div class="section-tag">1.2 — Représentations</div>
+        <h2 class="block-title">Les 3 formes d'un complexe</h2>
+
+        <div class="steps">
+          <div class="step active" onclick="showForm(0)">Algébrique</div>
+          <div class="step" onclick="showForm(1)">Trigonométrique</div>
+          <div class="step" onclick="showForm(2)">Exponentielle</div>
+        </div>
+
+        <div id="form-0">
+          <div class="formula-box">
+            <span class="formula-label">Forme algébrique (cartésienne)</span>
+            <div class="formula">Z = a + j·b</div>
+            <div class="formula-explain">
+              • a = partie réelle : <code>a = Re(Z)</code><br>
+              • b = partie imaginaire : <code>b = Im(Z)</code><br>
+              • a et b sont des nombres réels<br><br>
+              <strong>Utile pour :</strong> additionner et soustraire des complexes.
+            </div>
+          </div>
+          <div class="example-box">
+            <span class="example-label">Exemple concret</span>
+            <p>Z = 3 + j·4 &nbsp;→&nbsp; Re(Z) = 3, Im(Z) = 4</p>
+          </div>
+        </div>
+        <div id="form-1" style="display:none;">
+          <div class="formula-box">
+            <span class="formula-label">Forme trigonométrique (polaire)</span>
+            <div class="formula">Z = |Z|·(cosφ + j·sinφ)</div>
+            <div class="formula-explain">
+              • |Z| = module = √(a² + b²)<br>
+              • φ = argument = arctan(b/a) pour a > 0<br><br>
+              La projection donne : a = |Z|·cosφ &nbsp;&nbsp; b = |Z|·sinφ<br>
+              <strong>Utile pour :</strong> comprendre géométriquement.
+            </div>
+          </div>
+          <div class="example-box">
+            <span class="example-label">Exemple</span>
+            <p>Z = 3 + j·4 &nbsp;→&nbsp; |Z| = √(9+16) = 5 &nbsp;&nbsp; φ = arctan(4/3) ≈ 53°</p>
+            <p>Vérif : 5·cos(53°) ≈ 3 ✓ &nbsp;&nbsp; 5·sin(53°) ≈ 4 ✓</p>
+          </div>
+        </div>
+        <div id="form-2" style="display:none;">
+          <div class="formula-box">
+            <span class="formula-label">Forme exponentielle (Euler)</span>
+            <div class="formula">Z = |Z|·e<sup>jφ</sup></div>
+            <div class="formula-explain">
+              Grâce à la formule d'Euler : e<sup>jφ</sup> = cosφ + j·sinφ<br><br>
+              • Produit : |Z₁|·e<sup>jφ₁</sup> × |Z₂|·e<sup>jφ₂</sup> = |Z₁|·|Z₂|·e<sup>j(φ₁+φ₂)</sup><br>
+              • Division : quotient des modules, différence des arguments<br><br>
+              <strong>Utile pour :</strong> multiplier, diviser, calculer des puissances.
+            </div>
+          </div>
+          <div class="example-box">
+            <span class="example-label">Valeurs remarquables</span>
+            <div class="formula" style="font-size:.9rem;">
+              φ = 0 → e<sup>j0</sup> = 1<br>
+              φ = π/2 → e<sup>jπ/2</sup> = j<br>
+              φ = −π/2 → e<sup>−jπ/2</sup> = −j<br>
+              φ = π → e<sup>jπ</sup> = −1
+            </div>
+          </div>
+        </div>
+
+        <!-- Tableau récapitulatif -->
+        <table class="vtable" style="margin-top:2rem;">
+          <tr><th>Forme</th><th>Écriture</th><th>Avantage</th></tr>
+          <tr><td>Algébrique</td><td class="mono">a + jb</td><td>Addition, soustraction</td></tr>
+          <tr><td>Trigonométrique</td><td class="mono">|Z|(cosφ + j sinφ)</td><td>Visualisation géométrique</td></tr>
+          <tr><td>Exponentielle</td><td class="mono">|Z|·e<sup>jφ</sup></td><td>Multiplication, division, dérivation</td></tr>
+        </table>
+      </div>
+
+      <!-- 1.3 Opérations -->
+      <div class="content-block" id="c-operations">
+        <div class="section-tag">1.3 — Opérations</div>
+        <h2 class="block-title">Calculer avec les complexes</h2>
+
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">➕ Addition et Soustraction</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <div class="formula-box">
+              <span class="formula-label">Règle</span>
+              <div class="formula">Z₁ + Z₂ = (a+c) + j(b+d)</div>
+              <div class="formula-explain">On additionne les parties réelles entre elles, et les parties imaginaires entre elles.</div>
+            </div>
+            <div class="example-box">
+              <span class="example-label">Exemple résolu pas à pas</span>
+              <p>Z₁ = 3 − 2j &nbsp;&nbsp; Z₂ = 5 + 4j</p>
+              <p>Z = Z₁ + Z₂ = (3+5) + (−2+4)j = <strong>8 + 2j</strong></p>
+              <p>|Z| = √(8² + 2²) = √68 ≈ <strong>8,25</strong></p>
+              <p>φ = arctan(2/8) = arctan(0,25) ≈ <strong>14°</strong></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">✕ Multiplication</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <div class="formula-box">
+              <span class="formula-label">Règle (forme exponentielle)</span>
+              <div class="formula">Z₁ × Z₂ = |Z₁|·|Z₂| · e<sup>j(φ₁+φ₂)</sup></div>
+              <div class="formula-explain">
+                <strong>→ Module :</strong> on multiplie les modules<br>
+                <strong>→ Argument :</strong> on additionne les arguments<br><br>
+                En algébrique : (a+jb)(c+jd) = ac − bd + j(ad + bc)<br>
+                (rappel : j² = −1, donc j×j = −1)
+              </div>
+            </div>
+            <div class="example-box">
+              <span class="example-label">Exemple</span>
+              <p>Z₁ = √3 − j &nbsp;&nbsp;→&nbsp;&nbsp; |Z₁| = 2, φ₁ = −30°</p>
+              <p>Z₂ = 1 − j &nbsp;&nbsp;→&nbsp;&nbsp; |Z₂| = √2, φ₂ = −45°</p>
+              <p>Z = Z₁×Z₂ : |Z| = 2√2 ≈ <strong>2,83</strong> &nbsp;&nbsp; φ = −75°</p>
+            </div>
+            <div class="alert">
+              <div class="alert-icon">⚠️</div>
+              <div class="alert-text"><strong>Attention :</strong> Pour multiplier, la forme exponentielle est bien plus pratique que la forme algébrique. Convertissez d'abord !</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">÷ Division</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <div class="formula-box">
+              <span class="formula-label">Règle (forme exponentielle)</span>
+              <div class="formula">Z₁ / Z₂ = (|Z₁|/|Z₂|) · e<sup>j(φ₁−φ₂)</sup></div>
+              <div class="formula-explain">
+                <strong>→ Module :</strong> on divise les modules<br>
+                <strong>→ Argument :</strong> on soustrait les arguments<br><br>
+                En algébrique : multiplier numérateur et dénominateur par le <strong>conjugué</strong> du dénominateur.
+              </div>
+            </div>
+            <div class="example-box">
+              <span class="example-label">Astuce conjugué</span>
+              <p>Z₁/Z₂ = Z₁ × Z₂*/|Z₂|²</p>
+              <p>Exemple : 1/j = 1×(−j)/(j×(−j)) = −j/1 = −j</p>
+              <p>⟹ <strong>1/j = −j</strong> (très important en électricité !)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">* Conjugué</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>Le conjugué de Z = a + jb est <strong>Z* = a − jb</strong></p>
+            <p style="margin-top:.75rem;">En exponentielle : si Z = |Z|·e<sup>jφ</sup> alors Z* = |Z|·e<sup>−jφ</sup></p>
+            <p style="margin-top:.75rem;">Propriété utile : Z × Z* = |Z|² (nombre réel positif)</p>
+            <div class="tip" style="margin-top:1rem;">
+              <div class="tip-icon">💡</div>
+              <div class="tip-text">Le conjugué est utilisé pour calculer la <strong>puissance complexe</strong> : <code>S = V · I*</code></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.4 Plan complexe interactif -->
+      <div class="content-block" id="c-plan">
+        <div class="section-tag">1.4 — Visualisation</div>
+        <h2 class="block-title">Plan complexe interactif</h2>
+        <p class="block-text">Entrez les parties réelle et imaginaire pour visualiser le nombre complexe sur le plan d'Argand.</p>
+        <div class="complex-plane">
+          <span class="diagram-label">Plan d'Argand — Cliquez pour placer un point ou utilisez les champs</span>
+          <div class="plane-controls">
+            <div class="plane-input-group">
+              <label>Partie réelle (a)</label>
+              <input type="number" id="cRe" value="3" step="0.5">
+            </div>
+            <div class="plane-input-group">
+              <label>Partie imaginaire (b)</label>
+              <input type="number" id="cIm" value="4" step="0.5">
+            </div>
+            <button class="plane-btn" onclick="drawComplex()">Tracer</button>
+          </div>
+          <canvas id="complexCanvas" width="500" height="300"></canvas>
+          <div class="complex-info">
+            <div class="cinfo"><span class="cinfo-label">Module |Z|</span><span class="cinfo-val" id="cMod">5.00</span></div>
+            <div class="cinfo"><span class="cinfo-label">Argument φ</span><span class="cinfo-val" id="cArg">53.1°</span></div>
+            <div class="cinfo"><span class="cinfo-label">Forme exp.</span><span class="cinfo-val" id="cExp">5·e^(j53°)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.5 En électricité -->
+      <div class="content-block" id="c-electrique">
+        <div class="section-tag">1.5 — Application électrique</div>
+        <h2 class="block-title">Les phaseurs</h2>
+        <p class="block-text">Un signal sinusoïdal s'écrit : <strong>v(t) = V√2 · sin(ωt + φᵥ)</strong></p>
+        <p class="block-text">Sa représentation complexe (phaseur) est :</p>
+        <div class="formula-box">
+          <span class="formula-label">Phaseur — Notation complexe</span>
+          <div class="formula"><u>V</u> = V · e<sup>jφᵥ</sup></div>
+          <div class="formula-explain">
+            Le module = valeur efficace RMS = V = V<sub>max</sub>/√2<br>
+            L'argument = phase initiale φᵥ<br><br>
+            On perd l'information sur ω (mais à fréquence fixe, c'est inutile).
+          </div>
+        </div>
+        <table class="vtable">
+          <tr><th>Grandeur temporelle</th><th>Phaseur complexe</th><th>Module</th><th>Argument</th></tr>
+          <tr><td>v(t) = V√2·sin(ωt)</td><td class="mono"><u>V</u> = V·e<sup>j0</sup> = V</td><td class="accent">V</td><td class="mono">0°</td></tr>
+          <tr><td>i(t) = I√2·sin(ωt−φ)</td><td class="mono"><u>I</u> = I·e<sup>−jφ</sup></td><td class="accent">I</td><td class="mono">−φ</td></tr>
+        </table>
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text"><strong>Convention :</strong> On prend souvent la tension comme référence de phase (φᵥ = 0). Le courant est alors en retard de φ dans un circuit inductif.</div>
+        </div>
+      </div>
+
+      <!-- 1.6 Dérivation -->
+      <div class="content-block" id="c-derivation">
+        <div class="section-tag">1.6 — Opérateurs différentiels</div>
+        <h2 class="block-title">Dérivation et Intégration</h2>
+        <p class="block-text">C'est ici que la magie opère ! En notation complexe, dériver = multiplier par jω, intégrer = diviser par jω.</p>
+        <div class="formula-box">
+          <span class="formula-label">Dérivation complexe</span>
+          <div class="formula">d/dt [<u>V</u>] = jω · <u>V</u></div>
+          <div class="formula-explain">
+            Preuve : si v(t) = V√2·sin(ωt + φ), sa dérivée est ωV√2·sin(ωt + φ + π/2)<br>
+            Le facteur e<sup>jπ/2</sup> = j, donc multiplier par jω augmente le module par ω et avance la phase de 90°.
+          </div>
+        </div>
+        <div class="formula-box">
+          <span class="formula-label">Intégration complexe</span>
+          <div class="formula">∫<u>V</u>dt = <u>V</u> / (jω)</div>
+          <div class="formula-explain">
+            Rappel : 1/j = −j (voir conjugué)<br>
+            Donc intégrer retarde la phase de 90° et divise le module par ω.
+          </div>
+        </div>
+        <div class="alert">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-text"><strong>Application directe :</strong> La relation u = L·di/dt devient en complexe <code><u>U</u> = jLω·<u>I</u></code>. Et i = C·du/dt devient <code><u>I</u> = jCω·<u>U</u></code>, soit <code><u>U</u> = <u>I</u>/(jCω)</code>.</div>
+        </div>
+      </div>
+
+      <!-- 1.7 Calculatrice -->
+      <div class="content-block" id="c-calc">
+        <div class="section-tag">🧮 Outil interactif</div>
+        <h2 class="block-title">Calculatrice de complexes</h2>
+        <div class="calc-box">
+          <div class="calc-title">Convertisseur Algébrique ↔ Polaire <span>OUTIL</span></div>
+          <div class="calc-grid">
+            <div class="calc-field"><label class="calc-label">Partie réelle a</label><input class="calc-input" id="calcA" type="number" value="3" step="0.1"></div>
+            <div class="calc-field"><label class="calc-label">Partie imaginaire b</label><input class="calc-input" id="calcB" type="number" value="4" step="0.1"></div>
+          </div>
+          <button class="calc-btn" onclick="calcComplex()">Calculer →</button>
+          <div class="calc-result" id="calcResult">
+            <div class="result-line"><span class="result-key">Module |Z|</span><span class="result-val" id="rMod">–</span></div>
+            <div class="result-line"><span class="result-key">Argument φ (°)</span><span class="result-val" id="rArg">–</span></div>
+            <div class="result-line"><span class="result-key">Argument φ (rad)</span><span class="result-val" id="rArgR">–</span></div>
+            <div class="result-line"><span class="result-key">Conjugué Z*</span><span class="result-val" id="rConj">–</span></div>
+            <div class="result-line"><span class="result-key">Forme exp.</span><span class="result-val" id="rExp">–</span></div>
+          </div>
+        </div>
+
+        <div class="calc-box">
+          <div class="calc-title">Multiplication / Division <span>OUTIL</span></div>
+          <div class="calc-grid">
+            <div class="calc-field"><label class="calc-label">Z₁ : partie réelle</label><input class="calc-input" id="z1a" type="number" value="1" step="0.1"></div>
+            <div class="calc-field"><label class="calc-label">Z₁ : partie imaginaire</label><input class="calc-input" id="z1b" type="number" value="1" step="0.1"></div>
+            <div class="calc-field"><label class="calc-label">Z₂ : partie réelle</label><input class="calc-input" id="z2a" type="number" value="1" step="0.1"></div>
+            <div class="calc-field"><label class="calc-label">Z₂ : partie imaginaire</label><input class="calc-input" id="z2b" type="number" value="-1" step="0.1"></div>
+          </div>
+          <div style="display:flex;gap:.5rem;margin-top:.5rem;">
+            <button class="calc-btn" style="flex:1" onclick="calcProd()">Z₁ × Z₂</button>
+            <button class="calc-btn" style="flex:1;background:var(--bg3);color:var(--accent);border:1px solid var(--accent);" onclick="calcDiv()">Z₁ ÷ Z₂</button>
+          </div>
+          <div class="calc-result" id="prodResult">
+            <div class="result-line"><span class="result-key">Résultat</span><span class="result-val" id="rProd">–</span></div>
+            <div class="result-line"><span class="result-key">Module</span><span class="result-val" id="rProdMod">–</span></div>
+            <div class="result-line"><span class="result-key">Argument</span><span class="result-val" id="rProdArg">–</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QCM -->
+      <div class="content-block" id="c-qcm">
+        <div class="section-tag">📋 Test de connaissance</div>
+        <h2 class="block-title">QCM — Nombres Complexes</h2>
+        <div id="qcm-complexes"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LESSON: SIGNAUX ═══ -->
+<div id="lesson-signaux" class="section">
+  <button class="back-btn" onclick="showSection('modules')">← Retour aux modules</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE 02</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active">2.1 Grandeur sinusoïdale</li>
+        <li class="sidebar-item" onclick="scrollToId('s-valeurs')">2.2 Valeurs caractéristiques</li>
+        <li class="sidebar-item" onclick="scrollToId('s-regimes')">2.3 Types de régimes</li>
+        <li class="sidebar-item" onclick="scrollToId('s-calc')">🧮 Calculatrice</li>
+        <li class="sidebar-item" onclick="scrollToId('s-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+      <div class="content-block">
+        <div class="section-tag">2.1 — Définition</div>
+        <h2 class="block-title">Signal sinusoïdal</h2>
+        <div class="formula-box">
+          <span class="formula-label">Expression générale</span>
+          <div class="formula">s(t) = S<sub>max</sub> · sin(ωt + φ)</div>
+          <div class="formula-explain">
+            • S<sub>max</sub> = valeur crête (maximale)<br>
+            • ω = 2πf = pulsation en rad/s<br>
+            • f = 1/T = fréquence en Hz<br>
+            • T = période en secondes<br>
+            • φ = phase initiale (à t=0)
+          </div>
+        </div>
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text"><strong>En France :</strong> le réseau électrique fonctionne à f = 50 Hz, T = 20 ms, ω = 2π×50 ≈ 314 rad/s</div>
+        </div>
+      </div>
+
+      <div class="content-block" id="s-valeurs">
+        <div class="section-tag">2.2 — Valeurs caractéristiques</div>
+        <h2 class="block-title">Valeur efficace (RMS)</h2>
+        <p class="block-text">La valeur efficace est la grandeur qui produit le <strong>même effet de chauffage</strong> (même énergie) qu'une tension continue de même valeur.</p>
+        <div class="formula-box">
+          <span class="formula-label">Valeur efficace d'un sinusoïde</span>
+          <div class="formula">S<sub>eff</sub> = S<sub>max</sub> / √2 ≈ 0,707 · S<sub>max</sub></div>
+          <div class="formula-explain">
+            <strong>Exemple :</strong> Le réseau 230V est la valeur efficace.<br>
+            La valeur crête est : U<sub>max</sub> = 230 × √2 ≈ <strong>325 V</strong>
+          </div>
+        </div>
+        <div class="formula-box">
+          <span class="formula-label">Valeur moyenne d'un sinusoïde</span>
+          <div class="formula">&lt;s&gt; = 0</div>
+          <div class="formula-explain">Sur une période complète, un sinusoïde a une valeur moyenne nulle (autant positif que négatif). C'est pour cela qu'on utilise la valeur efficace !</div>
+        </div>
+        <table class="vtable">
+          <tr><th>Grandeur</th><th>Formule</th><th>Unité</th><th>Exemple (230V réseau)</th></tr>
+          <tr><td>Période T</td><td class="mono">T = 1/f</td><td>s</td><td class="accent">20 ms</td></tr>
+          <tr><td>Fréquence f</td><td class="mono">f = 1/T</td><td>Hz</td><td class="accent">50 Hz</td></tr>
+          <tr><td>Pulsation ω</td><td class="mono">ω = 2πf</td><td>rad/s</td><td class="accent">314 rad/s</td></tr>
+          <tr><td>Valeur efficace</td><td class="mono">V = V<sub>max</sub>/√2</td><td>V</td><td class="accent">230 V</td></tr>
+          <tr><td>Valeur crête</td><td class="mono">V<sub>max</sub> = V√2</td><td>V</td><td class="accent">≈ 325 V</td></tr>
+        </table>
+      </div>
+
+      <div class="content-block" id="s-regimes">
+        <div class="section-tag">2.3 — Types de régimes</div>
+        <h2 class="block-title">Régimes électriques</h2>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">⚡ Régime continu (DC)</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>La tension/courant ne change pas de signe ou est constante. Exemple : batteries, piles.</p>
+            <div class="formula-box">
+              <div class="formula">P = U·I = R·I²</div>
+              <div class="formula-explain">La puissance est simple à calculer. I<sub>max</sub> = E/R<sub>s</sub> en court-circuit, U = E en circuit ouvert.</div>
+            </div>
+          </div>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">🌊 Régime transitoire</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>Évolutions lors d'une modification brutale du circuit (ouverture/fermeture d'un interrupteur). Exemple : charge d'un condensateur.</p>
+            <p style="margin-top:.75rem;">Ces régimes disparaissent après un temps appelé <strong>constante de temps τ</strong> et laissent place au régime permanent.</p>
+          </div>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">〜 Régime sinusoïdal permanent (AC)</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>C'est le régime le plus important en électrotechnique. Les grandeurs oscillent à fréquence constante indéfiniment. C'est le régime du réseau électrique (50 Hz).</p>
+            <ul>
+              <li>Transformateurs et machines ont un rendement optimal</li>
+              <li>Le transport sous haute tension est possible</li>
+              <li>Les calculs se font avec la notation complexe (phaseurs)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block" id="s-calc">
+        <div class="section-tag">🧮 Outil interactif</div>
+        <h2 class="block-title">Calculatrice signal sinusoïdal</h2>
+        <div class="calc-box">
+          <div class="calc-title">Paramètres d'un signal <span>OUTIL</span></div>
+          <div class="calc-grid">
+            <div class="calc-field"><label class="calc-label">Valeur crête S_max</label><input class="calc-input" id="sMax" type="number" value="325" step="1"></div>
+            <div class="calc-field"><label class="calc-label">Fréquence f (Hz)</label><input class="calc-input" id="sFreq" type="number" value="50" step="1"></div>
+          </div>
+          <button class="calc-btn" onclick="calcSignal()">Calculer →</button>
+          <div class="calc-result" id="signalResult">
+            <div class="result-line"><span class="result-key">Valeur efficace (RMS)</span><span class="result-val" id="sEff">–</span></div>
+            <div class="result-line"><span class="result-key">Période T</span><span class="result-val" id="sPeriod">–</span></div>
+            <div class="result-line"><span class="result-key">Pulsation ω</span><span class="result-val" id="sOmega">–</span></div>
+            <div class="result-line"><span class="result-key">Expression temporelle</span><span class="result-val" id="sExpr">–</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block" id="s-qcm">
+        <div class="section-tag">📋 Test de connaissance</div>
+        <h2 class="block-title">QCM — Signaux Sinusoïdaux</h2>
+        <div id="qcm-signaux"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LESSON: IMPEDANCES ═══ -->
+<div id="lesson-impedances" class="section">
+  <button class="back-btn" onclick="showSection('modules')">← Retour aux modules</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE 03</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active">3.1 Lois de Kirchhoff</li>
+        <li class="sidebar-item" onclick="scrollToId('i-composants')">3.2 R, L, C en complexe</li>
+        <li class="sidebar-item" onclick="scrollToId('i-associations')">3.3 Associations</li>
+        <li class="sidebar-item" onclick="scrollToId('i-calc')">🧮 Calculatrice</li>
+        <li class="sidebar-item" onclick="scrollToId('i-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+      <div class="content-block">
+        <div class="section-tag">3.1 — Fondements</div>
+        <h2 class="block-title">Lois de Kirchhoff</h2>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">🔁 Loi des mailles (KVL)</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p><strong>Énoncé :</strong> La somme des tensions orientées le long d'une maille est nulle.</p>
+            <div class="formula-box">
+              <div class="formula">∑ tensions d'une maille = 0</div>
+              <div class="formula-explain">Exemple : u₁ − u₂ − u₃ + u₄ = 0<br>On respecte les signes selon le sens de parcours.</div>
+            </div>
+            <div class="alert">
+              <div class="alert-icon">⚠️</div>
+              <div class="alert-text"><strong>Important :</strong> Cette loi s'applique en valeurs instantanées ou en notation complexe, mais PAS directement en valeurs efficaces scalaires (sauf si tout est en phase).</div>
+            </div>
+          </div>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">🔀 Loi des nœuds (KCL)</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p><strong>Énoncé :</strong> La somme des courants entrant/sortant d'un nœud est nulle.</p>
+            <div class="formula-box">
+              <div class="formula">∑ courants à un nœud = 0</div>
+              <div class="formula-explain">Exemple : i₁ + i₂ + i₃ − i₄ = 0<br>Courants entrants positifs, sortants négatifs (ou l'inverse, selon convention).</div>
+            </div>
+          </div>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">📐 Convention générateur vs récepteur</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p><strong>Convention générateur :</strong> U et I sont dans le même sens. P = U·I > 0 ⟹ le dipôle fournit de la puissance.</p>
+            <p style="margin-top:.75rem;"><strong>Convention récepteur :</strong> U et I sont de sens opposés. P = U·I > 0 ⟹ le dipôle reçoit de la puissance.</p>
+            <p style="margin-top:.75rem;">R, L, C sont naturellement en convention récepteur.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block" id="i-composants">
+        <div class="section-tag">3.2 — Composants en complexe</div>
+        <h2 class="block-title">R, L, C : impédances complexes</h2>
+        <p class="block-text">En régime sinusoïdal, la loi d'Ohm généralisée s'écrit : <strong><u>U</u> = <u>Z</u> · <u>I</u></strong></p>
+        <table class="vtable">
+          <tr><th>Composant</th><th>Relation u(t)/i(t)</th><th>Impédance complexe Z</th><th>Déphasage φ</th></tr>
+          <tr>
+            <td><strong>Résistance R</strong></td>
+            <td class="mono">u = R·i</td>
+            <td class="mono accent"><u>Z</u><sub>R</sub> = R</td>
+            <td>φ = 0 (en phase)</td>
+          </tr>
+          <tr>
+            <td><strong>Inductance L</strong></td>
+            <td class="mono">u = L·di/dt</td>
+            <td class="mono accent"><u>Z</u><sub>L</sub> = jLω</td>
+            <td>φ = +90° (U en avance)</td>
+          </tr>
+          <tr>
+            <td><strong>Condensateur C</strong></td>
+            <td class="mono">i = C·du/dt</td>
+            <td class="mono accent"><u>Z</u><sub>C</sub> = 1/(jCω)</td>
+            <td>φ = −90° (I en avance)</td>
+          </tr>
+        </table>
+
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">🧮 Démonstration pour l'inductance</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>En temporel : <strong>u(t) = L·di/dt</strong></p>
+            <p style="margin-top:.75rem;">Si i(t) = I√2·sin(ωt), alors di/dt = Iω√2·cos(ωt) = Iω√2·sin(ωt + π/2)</p>
+            <p style="margin-top:.75rem;">En complexe :</p>
+            <ul>
+              <li><u>I</u> = I·e<sup>j0</sup> = I (référence de phase)</li>
+              <li>d/dt[<u>I</u>] = jω·<u>I</u></li>
+              <li><u>U</u> = L·jω·<u>I</u> = <strong>jLω · <u>I</u></strong></li>
+            </ul>
+            <p style="margin-top:.75rem;">Donc Z<sub>L</sub> = jLω. Le j signifie que la tension est en avance de 90° sur le courant.</p>
+          </div>
+        </div>
+
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text">
+            <strong>Moyen mnémotechnique :</strong><br>
+            <code>ICE</code> → pour le <strong>C</strong>ondensateur : <strong>I</strong> en avance sur <strong>E</strong> (tension)<br>
+            <code>ELI</code> → pour l'inductance <strong>L</strong> : <strong>E</strong> (tension) en avance sur <strong>I</strong>
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <span class="formula-label">Notation condensée — Réactances</span>
+          <div class="formula">
+            X<sub>L</sub> = Lω &nbsp;&nbsp; (réactance inductive, Ω)<br>
+            X<sub>C</sub> = 1/(Cω) &nbsp;&nbsp; (réactance capacitive, Ω)<br><br>
+            <u>Z</u> = R + jX &nbsp;&nbsp; avec X = X<sub>L</sub> − X<sub>C</sub>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block" id="i-associations">
+        <div class="section-tag">3.3 — Associations</div>
+        <h2 class="block-title">Série et Parallèle</h2>
+        <div class="formula-box">
+          <span class="formula-label">Association série</span>
+          <div class="formula"><u>Z</u><sub>éq</sub> = <u>Z</u>₁ + <u>Z</u>₂ + ... + <u>Z</u><sub>n</sub></div>
+          <div class="formula-explain">On additionne les impédances complexes (parties réelles + parties imaginaires séparément).</div>
+        </div>
+        <div class="formula-box">
+          <span class="formula-label">Association parallèle (2 impédances)</span>
+          <div class="formula"><u>Z</u><sub>éq</sub> = (<u>Z</u>₁ · <u>Z</u>₂) / (<u>Z</u>₁ + <u>Z</u>₂)</div>
+          <div class="formula-explain">Même règle que pour les résistances, mais avec des complexes !</div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Exemple série RLC</span>
+          <p><u>Z</u> = R + jLω + 1/(jCω) = R + j(Lω − 1/Cω)</p>
+          <p>|Z| = √(R² + (Lω − 1/Cω)²)</p>
+          <p>φ = arctan((Lω − 1/Cω)/R)</p>
+        </div>
+      </div>
+
+      <div class="content-block" id="i-calc">
+        <div class="section-tag">🧮 Outil interactif</div>
+        <h2 class="block-title">Calculatrice d'impédance</h2>
+        <div class="calc-box">
+          <div class="calc-title">Circuit RLC série <span>OUTIL</span></div>
+          <div class="calc-grid">
+            <div class="calc-field"><label class="calc-label">R (Ω)</label><input class="calc-input" id="iR" type="number" value="10" step="1"></div>
+            <div class="calc-field"><label class="calc-label">L (mH)</label><input class="calc-input" id="iL" type="number" value="100" step="1"></div>
+            <div class="calc-field"><label class="calc-label">C (µF)</label><input class="calc-input" id="iC" type="number" value="100" step="1"></div>
+            <div class="calc-field"><label class="calc-label">f (Hz)</label><input class="calc-input" id="iF" type="number" value="50" step="1"></div>
+          </div>
+          <button class="calc-btn" onclick="calcImpedance()">Calculer →</button>
+          <div class="calc-result" id="impedanceResult">
+            <div class="result-line"><span class="result-key">Réactance XL</span><span class="result-val" id="iXL">–</span></div>
+            <div class="result-line"><span class="result-key">Réactance XC</span><span class="result-val" id="iXC">–</span></div>
+            <div class="result-line"><span class="result-key">X total = XL − XC</span><span class="result-val" id="iX">–</span></div>
+            <div class="result-line"><span class="result-key">Impédance Z = R + jX</span><span class="result-val" id="iZ">–</span></div>
+            <div class="result-line"><span class="result-key">Module |Z|</span><span class="result-val" id="iMod">–</span></div>
+            <div class="result-line"><span class="result-key">Déphasage φ</span><span class="result-val" id="iPhi">–</span></div>
+            <div class="result-line"><span class="result-key">Caractère</span><span class="result-val" id="iChar">–</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block" id="i-qcm">
+        <div class="section-tag">📋 Test de connaissance</div>
+        <h2 class="block-title">QCM — Impédances</h2>
+        <div id="qcm-impedances"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LESSON: PUISSANCES ═══ -->
+<div id="lesson-puissances" class="section">
+  <button class="back-btn" onclick="showSection('modules')">← Retour aux modules</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE 04</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active">4.1 Les 3 puissances</li>
+        <li class="sidebar-item" onclick="scrollToId('p-complexe')">4.2 Puissance complexe</li>
+        <li class="sidebar-item" onclick="scrollToId('p-triangle')">4.3 Triangle des puissances</li>
+        <li class="sidebar-item" onclick="scrollToId('p-calc')">🧮 Calculatrice</li>
+        <li class="sidebar-item" onclick="scrollToId('p-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+      <div class="content-block">
+        <div class="section-tag">4.1 — Les 3 puissances</div>
+        <h2 class="block-title">Puissances électriques en AC</h2>
+        <p class="block-text">Pour un dipôle avec v(t) = V√2·sin(ωt) et i(t) = I√2·sin(ωt − φ) :</p>
+
+        <table class="vtable">
+          <tr><th>Puissance</th><th>Symbole</th><th>Formule</th><th>Unité</th><th>Signification</th></tr>
+          <tr>
+            <td><strong>Active</strong></td>
+            <td class="accent">P</td>
+            <td class="mono">V·I·cosφ</td>
+            <td>Watt (W)</td>
+            <td>Énergie réellement consommée (chaleur, mécanique)</td>
+          </tr>
+          <tr>
+            <td><strong>Réactive</strong></td>
+            <td class="accent">Q</td>
+            <td class="mono">V·I·sinφ</td>
+            <td>VAr</td>
+            <td>Énergie stockée/restituée (L, C) — aucun travail utile</td>
+          </tr>
+          <tr>
+            <td><strong>Apparente</strong></td>
+            <td class="accent">S</td>
+            <td class="mono">V·I</td>
+            <td>VA</td>
+            <td>Puissance totale "vue" par le générateur</td>
+          </tr>
+        </table>
+
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">📐 Démonstration de P = VI·cosφ</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>La puissance instantanée :</p>
+            <p>p(t) = v(t)·i(t) = V√2·sin(ωt) × I√2·sin(ωt−φ)</p>
+            <p style="margin-top:.5rem;">En développant avec la formule produit-somme :</p>
+            <p>p(t) = VI·cosφ − VI·cos(2ωt−φ)</p>
+            <p style="margin-top:.5rem;">La valeur moyenne (sur une période) :</p>
+            <p>P = &lt;p(t)&gt; = VI·cosφ (car &lt;cos(2ωt−φ)&gt; = 0)</p>
+          </div>
+        </div>
+
+        <div class="formula-box">
+          <span class="formula-label">Facteur de puissance</span>
+          <div class="formula">k = cosφ = P/S</div>
+          <div class="formula-explain">
+            • cosφ = 1 → charge purement résistive (P = S) — idéal<br>
+            • cosφ = 0 → charge purement réactive (P = 0) — aucun travail utile<br>
+            • 0 &lt; cosφ &lt; 1 → cas réel (moteurs, transformateurs)<br><br>
+            <strong>Relation fondamentale :</strong> S² = P² + Q²
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block" id="p-complexe">
+        <div class="section-tag">4.2 — Puissance complexe</div>
+        <h2 class="block-title">La puissance complexe <u>S</u></h2>
+        <div class="formula-box">
+          <span class="formula-label">Définition</span>
+          <div class="formula"><u>S</u> = <u>V</u> · <u>I</u>* = P + jQ</div>
+          <div class="formula-explain">
+            <u>I</u>* est le conjugué de <u>I</u>. Cette définition avec le conjugué est cruciale !<br>
+            • Re(<u>S</u>) = P (puissance active)<br>
+            • Im(<u>S</u>) = Q (puissance réactive)<br>
+            • |<u>S</u>| = S (puissance apparente)
+          </div>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">🧮 Autres expressions de S</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <div class="formula-box">
+              <div class="formula">
+                <u>S</u> = <u>Z</u> · I² &nbsp;&nbsp; (avec I = |<u>I</u>|)<br>
+                <u>S</u> = V²/<u>Z</u>* &nbsp;&nbsp; (avec V = |<u>V</u>|)
+              </div>
+              <div class="formula-explain">
+                Pour une impédance Z = R + jX :<br>
+                <u>S</u> = (R + jX)·I² = RI² + jXI²<br>
+                donc P = RI² et Q = XI²<br><br>
+                Si X &gt; 0 (inductif) → Q &gt; 0 (consomme du réactif)<br>
+                Si X &lt; 0 (capacitif) → Q &lt; 0 (produit du réactif)
+              </div>
+            </div>
+          </div>
+        </div>
+        <table class="vtable">
+          <tr><th>Composant</th><th>P</th><th>Q</th><th>S</th></tr>
+          <tr><td>Résistance R</td><td class="accent">RI² = U²/R</td><td class="mono">0</td><td class="accent">RI²</td></tr>
+          <tr><td>Inductance L</td><td class="mono">0</td><td class="accent">+LωI²</td><td class="accent">LωI²</td></tr>
+          <tr><td>Condensateur C</td><td class="mono">0</td><td class="accent">−I²/(Cω)</td><td class="accent">I²/(Cω)</td></tr>
+          <tr><td>Dipôle série R+jX</td><td class="accent">RI²</td><td class="accent">XI²</td><td class="mono">√(P²+Q²)</td></tr>
+        </table>
+      </div>
+
+      <div class="content-block" id="p-triangle">
+        <div class="section-tag">4.3 — Triangle des puissances</div>
+        <h2 class="block-title">Visualisation géométrique</h2>
+        <div class="diagram-container">
+          <span class="diagram-label">Triangle des puissances (φ &gt; 0 : inductif)</span>
+          <svg class="diagram" viewBox="0 0 400 220">
+            <defs>
+              <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#e8f428"/>
+              </marker>
+            </defs>
+            <!-- S hypotenuse -->
+            <line x1="60" y1="160" x2="320" y2="60" stroke="#e8f428" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <text x="195" y="90" fill="#e8f428" font-size="18" font-weight="bold" font-family="Space Mono" transform="rotate(-22,195,90)">S (VA)</text>
+            <!-- P horizontal -->
+            <line x1="60" y1="160" x2="320" y2="160" stroke="#3af4c8" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <text x="180" y="180" fill="#3af4c8" font-size="16" font-weight="bold" font-family="Space Mono">P (W)</text>
+            <!-- Q vertical -->
+            <line x1="320" y1="160" x2="320" y2="60" stroke="#ff5e3a" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <text x="330" y="115" fill="#ff5e3a" font-size="16" font-weight="bold" font-family="Space Mono">Q (VAr)</text>
+            <!-- angle arc -->
+            <path d="M 100,160 A 40,40 0 0,1 121,141" fill="none" stroke="#888" stroke-width="1.5"/>
+            <text x="103" y="148" fill="#8888aa" font-size="13" font-family="Space Mono">φ</text>
+            <!-- formulas -->
+            <text x="60" y="205" fill="#8888aa" font-size="12" font-family="Space Mono">S² = P² + Q²    cosφ = P/S    sinφ = Q/S</text>
+          </svg>
+        </div>
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text"><strong>Intérêt industriel :</strong> Un cosφ faible (proche de 0) signifie que S >> P. Le distributeur d'énergie doit fournir beaucoup de puissance apparente pour peu de travail utile. On installe des condensateurs pour "compenser" le réactif et relever le cosφ.</div>
+        </div>
+      </div>
+
+      <div class="content-block" id="p-calc">
+        <div class="section-tag">🧮 Outil interactif</div>
+        <h2 class="block-title">Calculatrice des puissances</h2>
+        <div class="calc-box">
+          <div class="calc-title">Calcul P, Q, S, cosφ <span>OUTIL</span></div>
+          <div class="calc-grid">
+            <div class="calc-field"><label class="calc-label">Tension V (V eff.)</label><input class="calc-input" id="pV" type="number" value="230" step="1"></div>
+            <div class="calc-field"><label class="calc-label">Courant I (A eff.)</label><input class="calc-input" id="pI" type="number" value="10" step="0.1"></div>
+            <div class="calc-field"><label class="calc-label">Déphasage φ (°)</label><input class="calc-input" id="pPhi" type="number" value="30" step="1"></div>
+          </div>
+          <button class="calc-btn" onclick="calcPower()">Calculer →</button>
+          <div class="calc-result" id="powerResult">
+            <div class="result-line"><span class="result-key">Puissance active P</span><span class="result-val" id="pP">–</span></div>
+            <div class="result-line"><span class="result-key">Puissance réactive Q</span><span class="result-val" id="pQ">–</span></div>
+            <div class="result-line"><span class="result-key">Puissance apparente S</span><span class="result-val" id="pS">–</span></div>
+            <div class="result-line"><span class="result-key">Facteur de puissance cosφ</span><span class="result-val" id="pCos">–</span></div>
+            <div class="result-line"><span class="result-key">Vérification S²=P²+Q²</span><span class="result-val" id="pVerif">–</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block" id="p-qcm">
+        <div class="section-tag">📋 Test de connaissance</div>
+        <h2 class="block-title">QCM — Puissances</h2>
+        <div id="qcm-puissances"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LESSON: METHODOLOGIE ═══ -->
+<div id="lesson-methodologie" class="section">
+  <button class="back-btn" onclick="showSection('modules')">← Retour aux modules</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE 05</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active">5.1 Méthode générale</li>
+        <li class="sidebar-item" onclick="scrollToId('m-ex1')">5.2 Exemple 1 : RL série</li>
+        <li class="sidebar-item" onclick="scrollToId('m-ex2')">5.3 Exemple 2 : RLC</li>
+        <li class="sidebar-item" onclick="scrollToId('m-qcm')">📋 QCM final</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+      <div class="content-block">
+        <div class="section-tag">5.1 — Méthode</div>
+        <h2 class="block-title">Résoudre un circuit AC</h2>
+        <p class="block-text">Voici la méthode systématique pour analyser n'importe quel circuit en régime sinusoïdal permanent :</p>
+
+        <div style="display:flex;flex-direction:column;gap:1rem;margin:1.5rem 0;">
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="background:var(--accent);color:var(--bg);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;flex-shrink:0;">1</div>
+            <div><strong style="color:var(--text);">Identifier les données</strong><br><span style="color:var(--text2);font-size:.9rem;">Tension source, fréquence, composants (R, L, C). Choisir φᵥ = 0 (tension référence).</span></div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="background:var(--accent);color:var(--bg);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;flex-shrink:0;">2</div>
+            <div><strong style="color:var(--text);">Calculer les impédances complexes</strong><br><span style="color:var(--text2);font-size:.9rem;">Z_R = R, Z_L = jLω, Z_C = 1/(jCω) = −j/(Cω)</span></div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="background:var(--accent);color:var(--bg);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;flex-shrink:0;">3</div>
+            <div><strong style="color:var(--text);">Calculer l'impédance totale</strong><br><span style="color:var(--text2);font-size:.9rem;">Associer série/parallèle. Résultat = R_eq + jX_eq</span></div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="background:var(--accent);color:var(--bg);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;flex-shrink:0;">4</div>
+            <div><strong style="color:var(--text);">Calculer le courant complexe</strong><br><span style="color:var(--text2);font-size:.9rem;"><u>I</u> = <u>V</u> / <u>Z</u> (loi d'Ohm généralisée)</span></div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="background:var(--accent);color:var(--bg);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;flex-shrink:0;">5</div>
+            <div><strong style="color:var(--text);">Calculer les tensions partielles</strong><br><span style="color:var(--text2);font-size:.9rem;"><u>U</u>_R = R·<u>I</u>, <u>U</u>_L = jLω·<u>I</u>, etc.</span></div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="background:var(--accent);color:var(--bg);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;flex-shrink:0;">6</div>
+            <div><strong style="color:var(--text);">Calculer les puissances</strong><br><span style="color:var(--text2);font-size:.9rem;">P = V·I·cosφ, Q = V·I·sinφ, S = V·I</span></div>
+          </div>
+          <div style="display:flex;gap:1rem;align-items:flex-start;">
+            <div style="background:var(--accent3);color:var(--bg);width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;flex-shrink:0;">✓</div>
+            <div><strong style="color:var(--accent3);">Vérifier avec la loi des mailles</strong><br><span style="color:var(--text2);font-size:.9rem;"><u>V</u>_source = <u>U</u>_R + <u>U</u>_L + <u>U</u>_C (en complexe !)</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block" id="m-ex1">
+        <div class="section-tag">5.2 — Exemple complet</div>
+        <h2 class="block-title">Exemple 1 : Circuit RL série</h2>
+        <div class="example-box">
+          <span class="example-label">Énoncé</span>
+          <p>Circuit RL série alimenté par v(t) = 230√2·sin(100πt) V</p>
+          <p>R = 10 Ω, L = 50 mH. Trouver i(t), P, Q, S, cosφ.</p>
+        </div>
+
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">Étape 1 — Données et phaseur de tension</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>f = 50 Hz → ω = 2π×50 = 100π ≈ 314 rad/s</p>
+            <p>V = 230 V (valeur efficace)</p>
+            <p>Phaseur tension : <u>V</u> = 230·e<sup>j0</sup> = 230 V (référence)</p>
+          </div>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">Étape 2 — Impédances complexes</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>Z_R = R = 10 Ω</p>
+            <p>Z_L = jLω = j × 0,050 × 314 = j15,7 Ω</p>
+            <p><strong>Z_total = 10 + j15,7 Ω</strong></p>
+          </div>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">Étape 3 — Module et argument de Z</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>|Z| = √(10² + 15,7²) = √(100 + 246,5) = √346,5 ≈ 18,6 Ω</p>
+            <p>φ = arctan(15,7/10) = arctan(1,57) ≈ 57,5°</p>
+          </div>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">Étape 4 — Courant complexe</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p><u>I</u> = <u>V</u> / <u>Z</u> = 230 / (10 + j15,7)</p>
+            <p>|<u>I</u>| = 230 / 18,6 ≈ <strong>12,4 A</strong></p>
+            <p>arg(<u>I</u>) = 0° − 57,5° = <strong>−57,5°</strong> (courant en retard : circuit inductif)</p>
+            <p style="margin-top:.75rem;"><strong>Forme temporelle :</strong></p>
+            <p>i(t) = 12,4√2 · sin(100πt − 57,5°) ≈ 17,5·sin(100πt − 57,5°) A</p>
+          </div>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">Étape 5 — Puissances</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>cosφ = cos(57,5°) ≈ 0,537</p>
+            <p>P = V·I·cosφ = 230 × 12,4 × 0,537 ≈ <strong>1531 W</strong></p>
+            <p>sinφ = sin(57,5°) ≈ 0,843</p>
+            <p>Q = V·I·sinφ = 230 × 12,4 × 0,843 ≈ <strong>2403 VAr</strong></p>
+            <p>S = V·I = 230 × 12,4 ≈ <strong>2852 VA</strong></p>
+            <p style="margin-top:.75rem;">Vérif : √(1531² + 2403²) = √(2344361 + 5774409) = √8118770 ≈ 2849 ≈ 2852 ✓</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block" id="m-ex2">
+        <div class="section-tag">5.3 — Exemple avancé</div>
+        <h2 class="block-title">Exemple 2 : Circuit RLC série</h2>
+        <div class="example-box">
+          <span class="example-label">Énoncé</span>
+          <p>V = 100 V, f = 50 Hz, R = 5 Ω, L = 30 mH, C = 150 µF</p>
+          <p>Trouver I, φ, P, Q, S. Le circuit est-il inductif ou capacitif ?</p>
+        </div>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">Solution complète pas à pas</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p><strong>ω = 2π×50 = 314 rad/s</strong></p>
+            <p style="margin-top:.5rem;">X_L = Lω = 0,03 × 314 = <strong>9,42 Ω</strong></p>
+            <p>X_C = 1/(Cω) = 1/(150×10⁻⁶ × 314) = 1/0,0471 = <strong>21,2 Ω</strong></p>
+            <p style="margin-top:.5rem;">X = X_L − X_C = 9,42 − 21,2 = <strong>−11,8 Ω</strong> (négatif → capacitif !)</p>
+            <p><u>Z</u> = 5 − j11,8</p>
+            <p>|Z| = √(5² + 11,8²) = √(25 + 139,2) = √164,2 ≈ <strong>12,8 Ω</strong></p>
+            <p>φ = arctan(−11,8/5) = arctan(−2,36) ≈ <strong>−67°</strong> (capacitif : courant en avance)</p>
+            <p style="margin-top:.75rem;">I = V/|Z| = 100/12,8 ≈ <strong>7,81 A</strong></p>
+            <p style="margin-top:.5rem;">P = RI² = 5 × 7,81² ≈ <strong>305 W</strong></p>
+            <p>Q = XI² = −11,8 × 7,81² ≈ <strong>−719 VAr</strong> (négatif : produit du réactif)</p>
+            <p>S = V·I = 100 × 7,81 = <strong>781 VA</strong></p>
+            <p>cosφ = cos(67°) ≈ <strong>0,39</strong></p>
+          </div>
+        </div>
+        <div class="alert">
+          <div class="alert-icon">💡</div>
+          <div class="alert-text"><strong>Conclusion :</strong> Q &lt; 0 → circuit capacitif. Le condensateur domine l'inductance. Le courant est en avance sur la tension. Pour relever le cosφ, on ajouterait une inductance.</div>
+        </div>
+      </div>
+
+      <div class="content-block" id="m-qcm">
+        <div class="section-tag">📋 QCM Final</div>
+        <h2 class="block-title">QCM — Méthodologie & Synthèse</h2>
+        <div id="qcm-methodologie"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!-- MODULE 06 — SYSTÈMES TRIPHASÉS -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<div id="lesson-triphasé" class="section">
+  <div class="lesson-wrap">
+    <aside class="sidebar">
+      <button class="back-btn" onclick="showHome()">← Accueil</button>
+      <div class="sidebar-title">MODULE 06</div>
+      <ul class="sidebar-nav">
+        <li><a href="#tri-intro">Système triphasé</a></li>
+        <li><a href="#tri-tensions">Tensions simples & composées</a></li>
+        <li><a href="#tri-recepteur">Récepteur étoile</a></li>
+        <li><a href="#tri-triangle">Récepteur triangle</a></li>
+        <li><a href="#tri-resume">Tableau récapitulatif</a></li>
+        <li><a href="#tri-boucherot">Théorème de Boucherot</a></li>
+        <li><a href="#tri-compensation">Compensation de Q</a></li>
+        <li><a href="#tri-exercices">Exercices</a></li>
+        <li><a href="#tri-desequilibre">Déséquilibre</a></li>
+        <li><a href="#tri-synthese">Synthèse</a></li>
+        <li><a href="#tri-qcm">QCM</a></li>
+      </ul>
+    </aside>
+    <main class="lesson-main">
+      <div class="lesson-header">
+        <div class="lesson-num">MODULE 06</div>
+        <h1 class="lesson-title">Systèmes Triphasés</h1>
+        <p class="lesson-intro">Le triphasé est le standard mondial de la distribution d'énergie électrique. Il permet de transporter trois fois plus de puissance avec seulement 50% de conducteurs supplémentaires par rapport au monophasé, et offre une puissance instantanée <strong>parfaitement constante</strong> — aucune vibration mécanique dans les moteurs.</p>
+      </div>
+
+      <!-- SECTION 1: INTRO TRIPHASÉ -->
+      <div class="block" id="tri-intro">
+        <h2 class="block-title">1. Présentation du système triphasé</h2>
+        <p>Un réseau triphasé comprend <strong>3 phases</strong> (notées 1,2,3 ou A,B,C ou R,S,T) et un neutre N. On distingue :</p>
+        <div class="formula-box">
+          <div class="formula-sym">⚡</div>
+          <p><strong>Système équilibré direct :</strong> Trois tensions sinusoïdales de même amplitude V, déphasées entre elles de <strong>120° = 2π/3 rad</strong>.</p>
+        </div>
+        <div class="example-box">
+          <div class="example-label">Vecteurs de Fresnel (tensions simples)</div>
+          <div style="text-align:center;margin:1rem 0">
+            <svg viewBox="-180 -160 360 320" width="300" height="260" style="display:inline-block">
+              <!-- Axes -->
+              <line x1="-170" y1="0" x2="170" y2="0" stroke="#444" stroke-width="1"/>
+              <line x1="0" y1="-150" x2="0" y2="150" stroke="#444" stroke-width="1"/>
+              <!-- V1 (0°) -->
+              <line x1="0" y1="0" x2="120" y2="0" stroke="#e8f428" stroke-width="2.5"/>
+              <polygon points="120,0 108,-5 108,5" fill="#e8f428"/>
+              <text x="128" y="5" fill="#e8f428" font-size="13" font-family="Space Mono">V₁</text>
+              <!-- V2 (-120°) -->
+              <line x1="0" y1="0" x2="-60" y2="103.9" stroke="#3af4c8" stroke-width="2.5"/>
+              <polygon points="-60,103.9 -51.5,94.7 -68.5,93.9" fill="#3af4c8"/>
+              <text x="-85" y="118" fill="#3af4c8" font-size="13" font-family="Space Mono">V₂</text>
+              <!-- V3 (+120°) -->
+              <line x1="0" y1="0" x2="-60" y2="-103.9" stroke="#ff5e3a" stroke-width="2.5"/>
+              <polygon points="-60,-103.9 -51.5,-94.7 -68.5,-93.9" fill="#ff5e3a"/>
+              <text x="-85" y="-108" fill="#ff5e3a" font-size="13" font-family="Space Mono">V₃</text>
+              <!-- Angles -->
+              <path d="M 40,0 A 40,40 0 0,0 -20,-34.6" stroke="#888" fill="none" stroke-dasharray="4"/>
+              <text x="10" y="-20" fill="#888" font-size="11">120°</text>
+              <text x="-160" y="-5" fill="#666" font-size="11">Im</text>
+              <text x="155" y="-8" fill="#666" font-size="11">Re</text>
+              <text x="20" y="-145" fill="#666" font-size="11">+</text>
+            </svg>
+          </div>
+          <p style="text-align:center">ΣV⃗ᵢ = 0 &nbsp;→&nbsp; La somme vectorielle est nulle</p>
+        </div>
+
+        <div class="expandable">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span>Équations horaires et représentation complexe</span><span class="expand-icon">+</span>
+          </div>
+          <div class="expand-body">
+            <p>Les trois tensions simples s'écrivent :</p>
+            <div style="background:#111;border-radius:6px;padding:1.2rem;margin:.8rem 0;font-family:'Space Mono',monospace;color:#e8f428;line-height:2">
+              v₁(t) = V√2 · sin(ωt)<br>
+              v₂(t) = V√2 · sin(ωt − 2π/3)<br>
+              v₃(t) = V√2 · sin(ωt + 2π/3)
+            </div>
+            <p>En notation complexe (vecteurs de Fresnel) :</p>
+            <div style="background:#111;border-radius:6px;padding:1.2rem;margin:.8rem 0;font-family:'Space Mono',monospace;color:#3af4c8;line-height:2">
+              <u>V</u>₁ = V·e<sup>j·0</sup><br>
+              <u>V</u>₂ = V·e<sup>j(-2π/3)</sup><br>
+              <u>V</u>₃ = V·e<sup>j(+2π/3)</sup>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: TENSIONS COMPOSÉES -->
+      <div class="block" id="tri-tensions">
+        <h2 class="block-title">2. Tensions composées</h2>
+        <p>Les <strong>tensions composées</strong> (ou tensions de ligne) sont les différences entre phases :</p>
+        <div style="background:#111;border-radius:6px;padding:1.2rem;margin:.8rem 0;font-family:'Space Mono',monospace;color:#e8f428;line-height:2.2;font-size:.9rem">
+          <u>U</u>₁₂ = <u>V</u>₁ − <u>V</u>₂ &nbsp;→&nbsp; u₁₂(t) = U√2·sin(ωt + π/6)<br>
+          <u>U</u>₂₃ = <u>V</u>₂ − <u>V</u>₃ &nbsp;→&nbsp; u₂₃(t) = U√2·sin(ωt − π/2)<br>
+          <u>U</u>₃₁ = <u>V</u>₃ − <u>V</u>₁ &nbsp;→&nbsp; u₃₁(t) = U√2·sin(ωt − 7π/6)
+        </div>
+        <div class="formula-box">
+          <div class="formula-sym">√3</div>
+          <div>
+            <p><strong>Relation fondamentale tension composée / simple :</strong></p>
+            <p style="font-size:1.4rem;font-family:'Space Mono',monospace;color:#e8f428">U = √3 · V</p>
+            <p>En France : V = 230 V (simple) → U = 400 V (composée)</p>
+          </div>
+        </div>
+        <div class="tip-box">
+          💡 <strong>Moyen mémo :</strong> Les tensions composées sont en avance de <strong>π/6 = 30°</strong> sur les tensions simples correspondantes, et leur amplitude est multipliée par √3 ≈ 1,732.
+        </div>
+      </div>
+
+      <!-- SECTION 3: RÉCEPTEUR ÉTOILE -->
+      <div class="block" id="tri-recepteur">
+        <h2 class="block-title">3. Récepteur étoile (Y)</h2>
+        <p>Dans un couplage étoile, chaque phase du récepteur est connectée entre une ligne et le neutre.</p>
+
+        <div class="formula-box">
+          <div class="formula-sym">Y</div>
+          <div>
+            <p><strong>Relations courant/tension (étoile) :</strong></p>
+            <div style="font-family:'Space Mono',monospace;line-height:2.2;color:#e8f428">
+              I = J &nbsp;&nbsp;&nbsp;&nbsp;(courant de ligne = courant de phase)<br>
+              V<sub>ph</sub> = V = U/√3 &nbsp;&nbsp;(tension de phase = tension simple)
+            </div>
+          </div>
+        </div>
+
+        <h3 style="color:#3af4c8;margin:1.5rem 0 .8rem">Puissances — récepteur étoile</h3>
+        <div style="display:grid;gap:1rem">
+          <div class="formula-box" style="border-color:#3af4c8">
+            <div class="formula-sym" style="color:#3af4c8">P</div>
+            <div>
+              <p>Puissance active (W) :</p>
+              <p style="font-size:1.2rem;font-family:'Space Mono',monospace;color:#3af4c8">P = 3·V·I·cosφ = √3·U·I·cosφ</p>
+            </div>
+          </div>
+          <div class="formula-box" style="border-color:#ff5e3a">
+            <div class="formula-sym" style="color:#ff5e3a">Q</div>
+            <div>
+              <p>Puissance réactive (VAr) :</p>
+              <p style="font-size:1.2rem;font-family:'Space Mono',monospace;color:#ff5e3a">Q = 3·V·I·sinφ = √3·U·I·sinφ</p>
+            </div>
+          </div>
+          <div class="formula-box">
+            <div class="formula-sym">S</div>
+            <div>
+              <p>Puissance apparente (VA) :</p>
+              <p style="font-size:1.2rem;font-family:'Space Mono',monospace;color:#e8f428">S = 3·V·I = √3·U·I</p>
+              <p>Puissance complexe : <span style="font-family:'Space Mono',monospace;color:#e8f428"><u>S</u> = 3·V²/<u>Z</u>*</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-box" style="margin-top:1.2rem">
+          ⚡ <strong>Avantage triphasé :</strong> La puissance instantanée totale p₃φ = 3VI·cos(φ) est <strong>CONSTANTE</strong> (pas de pulsation à 2ω comme en monophasé). Cela explique pourquoi les moteurs triphasés tournent sans vibrations.
+        </div>
+
+        <div class="expandable">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span>Pertes Joule — récepteur étoile résistif (3 résistances r)</span><span class="expand-icon">+</span>
+          </div>
+          <div class="expand-body">
+            <p>Pour un récepteur étoile purement résistif (3 résistances r identiques) :</p>
+            <div style="font-family:'Space Mono',monospace;color:#e8f428;background:#111;padding:1rem;border-radius:6px;line-height:2">
+              P_J = 3·r·J² = 3·V²<sub>ph</sub>/r
+            </div>
+            <p style="margin-top:.8rem">Résistance équivalente vue du réseau : <strong>R' = 2r</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: RÉCEPTEUR TRIANGLE -->
+      <div class="block" id="tri-triangle">
+        <h2 class="block-title">4. Récepteur triangle (Δ)</h2>
+        <p>Dans un couplage triangle, les phases du récepteur sont connectées directement entre les lignes. Chaque impédance voit la tension composée U.</p>
+
+        <div class="formula-box">
+          <div class="formula-sym">Δ</div>
+          <div>
+            <p><strong>Relations courant/tension (triangle) :</strong></p>
+            <div style="font-family:'Space Mono',monospace;line-height:2.2;color:#e8f428">
+              V<sub>ph</sub> = U &nbsp;&nbsp;&nbsp;&nbsp;(tension de phase = tension composée)<br>
+              I = J·√3 &nbsp;&nbsp;(courant de ligne = √3 × courant de phase)<br>
+              J<sub>k</sub> = U<sub>kl</sub> / Z &nbsp;&nbsp;(courant dans chaque bras)
+            </div>
+          </div>
+        </div>
+
+        <h3 style="color:#3af4c8;margin:1.5rem 0 .8rem">Puissances — récepteur triangle</h3>
+        <div class="formula-box">
+          <div class="formula-sym">⚡</div>
+          <div style="font-family:'Space Mono',monospace;line-height:2.2;color:#e8f428">
+            P = 3·J·U·cosφ = √3·U·I·cosφ (W)<br>
+            Q = 3·J·U·sinφ = √3·U·I·sinφ (VAr)<br>
+            S = 3·J·U = √3·U·I (VA)
+          </div>
+        </div>
+
+        <div class="tip-box">
+          ✅ <strong>Résultat important :</strong> Les formules de puissance <strong>P = √3·U·I·cosφ</strong>, <strong>Q = √3·U·I·sinφ</strong> et <strong>S = √3·U·I</strong> sont <strong>identiques</strong> pour les couplages étoile ET triangle. La différence est dans les relations entre V, U, I et J.
+        </div>
+
+        <div class="expandable">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span>Pertes Joule — récepteur triangle résistif (3 résistances r)</span><span class="expand-icon">+</span>
+          </div>
+          <div class="expand-body">
+            <div style="font-family:'Space Mono',monospace;color:#e8f428;background:#111;padding:1rem;border-radius:6px;line-height:2">
+              P_J = 3·r·J² = 3·r·(I/√3)² = r·I²
+            </div>
+            <p style="margin-top:.8rem">Résistance équivalente vue du réseau : <strong>R' = (2/3)r</strong></p>
+            <p>On remarque que les pertes Joule en triangle sont <strong>3 fois plus faibles</strong> qu'en étoile pour la même résistance r → d'où l'intérêt du démarrage étoile-triangle des moteurs !</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 5: TABLEAU RÉCAP -->
+      <div class="block" id="tri-resume">
+        <h2 class="block-title">5. Tableau récapitulatif</h2>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+            <thead>
+              <tr style="background:#1a1a2e">
+                <th style="padding:.8rem;border:1px solid #333;text-align:left;color:#888">Grandeur</th>
+                <th style="padding:.8rem;border:1px solid #333;text-align:center;color:#e8f428">Couplage étoile (Y)</th>
+                <th style="padding:.8rem;border:1px solid #333;text-align:center;color:#3af4c8">Couplage triangle (Δ)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">V<sub>ph</sub> (tension de phase)</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">V = U/√3</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#3af4c8">V<sub>ph</sub> = U</td></tr>
+              <tr style="background:#111"><td style="padding:.7rem .8rem;border:1px solid #222">I (courant de ligne) vs J (phase)</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">J = I</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#3af4c8">I = J√3</td></tr>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">Puissance active P</td><td colspan="2" style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">3VI·cosφ = √3·U·I·cosφ</td></tr>
+              <tr style="background:#111"><td style="padding:.7rem .8rem;border:1px solid #222">Puissance réactive Q</td><td colspan="2" style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#ff5e3a">3VI·sinφ = √3·U·I·sinφ</td></tr>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">Puissance apparente S</td><td colspan="2" style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">3VI = √3·U·I</td></tr>
+              <tr style="background:#111"><td style="padding:.7rem .8rem;border:1px solid #222">Puissance complexe <u>S</u></td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">3·V²/<u>Z</u>*</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#3af4c8">3·U²/<u>Z</u>*</td></tr>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">Pertes Joule (charge résistive r)</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">3rI²&nbsp; (R'=2r)</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#3af4c8">rI²&nbsp; (R'=2r/3)</td></tr>
+              <tr style="background:#111"><td style="padding:.7rem .8rem;border:1px solid #222">Déphasage φ</td><td style="padding:.7rem;border:1px solid #222;text-align:center">φ(I₁,V₁)</td><td style="padding:.7rem;border:1px solid #222;text-align:center">φ(J₁,U₁₂) = φ(I₁,V₁)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION 6: BOUCHEROT -->
+      <div class="block" id="tri-boucherot">
+        <h2 class="block-title">6. Théorème de Boucherot</h2>
+        <div class="formula-box">
+          <div class="formula-sym">Σ</div>
+          <div>
+            <p><strong>Théorème de Boucherot :</strong></p>
+            <p>La puissance active <strong>P<sub>tot</sub></strong> d'un système est la <em>somme</em> des puissances actives des éléments qui le constituent. Idem pour la puissance réactive <strong>Q<sub>tot</sub></strong> et la puissance apparente complexe <strong><u>S</u><sub>tot</sub></strong>.</p>
+            <div style="font-family:'Space Mono',monospace;line-height:2.2;color:#e8f428;margin-top:.8rem">
+              P<sub>tot</sub> = ΣPᵢ &nbsp;&nbsp; Q<sub>tot</sub> = ΣQᵢ &nbsp;&nbsp; <u>S</u><sub>tot</sub> = Σ<u>S</u>ᵢ
+            </div>
+          </div>
+        </div>
+        <div class="alert-box">
+          ⚠️ <strong>Attention !</strong> La puissance apparente <em>scalaire</em> S n'est <strong>PAS</strong> additive : S<sub>tot</sub> ≠ ΣSᵢ. On calcule S<sub>tot</sub> = |<u>S</u><sub>tot</sub>| = √(P<sub>tot</sub>² + Q<sub>tot</sub>²).
+        </div>
+        <p style="margin-top:1rem">Application pratique pour un système avec n charges :</p>
+        <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2">
+          P<sub>tot</sub> = P₁ + P₂ + ... + Pₙ<br>
+          Q<sub>tot</sub> = Q₁ + Q₂ + ... + Qₙ<br>
+          S<sub>tot</sub> = √(P<sub>tot</sub>² + Q<sub>tot</sub>²)<br>
+          cosφ<sub>tot</sub> = P<sub>tot</sub>/S<sub>tot</sub>
+        </div>
+      </div>
+
+      <!-- SECTION 7: COMPENSATION -->
+      <div class="block" id="tri-compensation">
+        <h2 class="block-title">7. Compensation de puissance réactive (relèvement du cosφ)</h2>
+        <p>Les charges inductives (moteurs) consomment de la puissance réactive Q > 0, ce qui dégrade le facteur de puissance. On ajoute des condensateurs pour compenser Q.</p>
+
+        <h3 style="color:#3af4c8;margin:1.2rem 0 .8rem">Puissance réactive d'un banc de 3 condensateurs</h3>
+        <div class="formula-box" style="border-color:#3af4c8">
+          <div class="formula-sym" style="color:#3af4c8">C</div>
+          <div style="font-family:'Space Mono',monospace;line-height:2.2;color:#e8f428">
+            Q_c = −3ωCV² &nbsp;&nbsp; (couplage étoile)<br>
+            Q_c = −3ωCU² &nbsp;&nbsp; (couplage triangle)
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;margin-top:1rem">
+          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+            <thead>
+              <tr style="background:#1a1a2e">
+                <th style="padding:.8rem;border:1px solid #333;text-align:left;color:#888">Situation</th>
+                <th style="padding:.8rem;border:1px solid #333;text-align:center;color:#e8f428">P active</th>
+                <th style="padding:.8rem;border:1px solid #333;text-align:center;color:#ff5e3a">Q réactive</th>
+                <th style="padding:.8rem;border:1px solid #333;text-align:center;color:#888">cosφ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">Charge seule</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace">P</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#ff5e3a">Q = P·tgφ</td><td style="padding:.7rem;border:1px solid #222;text-align:center">cosφ</td></tr>
+              <tr style="background:#111"><td style="padding:.7rem .8rem;border:1px solid #222">3 condensateurs seuls</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace">0</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#3af4c8">Q_c = −3CωU²</td><td style="padding:.7rem;border:1px solid #222;text-align:center">0</td></tr>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">Charge + condensateurs</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace">P</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">Q' = Q + Q_c = P·tgφ'</td><td style="padding:.7rem;border:1px solid #222;text-align:center;color:#3af4c8">cosφ' &gt; cosφ ✓</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="expandable" style="margin-top:1.2rem">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span>Calcul de la capacité C pour atteindre un cosφ' cible</span><span class="expand-icon">+</span>
+          </div>
+          <div class="expand-body">
+            <p>Pour relever le facteur de puissance de cosφ à cosφ' :</p>
+            <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.5">
+              Q_c = P·(tgφ − tgφ')<br><br>
+              En étoile : C = Q_c / (3ωV²)<br>
+              En triangle : C = Q_c / (3ωU²) = C_étoile / 3
+            </div>
+            <div class="tip-box" style="margin-top:1rem">
+              ℹ️ Le condensateur en <strong>triangle</strong> est 3× plus petit qu'en étoile pour le même effet. On préfère souvent le triangle pour réduire la valeur et le coût des condensateurs.
+            </div>
+          </div>
+        </div>
+
+        <!-- Calculatrice compensation -->
+        <div class="calculator-box" style="margin-top:1.5rem">
+          <div class="calc-title">🔧 Calculatrice — Compensation de puissance réactive</div>
+          <div class="calc-grid">
+            <div class="calc-field"><label>P (kW)</label><input type="number" id="comp-P" value="25" step="0.1"></div>
+            <div class="calc-field"><label>cosφ initial</label><input type="number" id="comp-cosphi1" value="0.7" step="0.01" min="0.1" max="1"></div>
+            <div class="calc-field"><label>cosφ' cible</label><input type="number" id="comp-cosphi2" value="0.92" step="0.01" min="0.1" max="1"></div>
+            <div class="calc-field"><label>U (V) tension composée</label><input type="number" id="comp-U" value="400" step="1"></div>
+            <div class="calc-field"><label>f (Hz)</label><input type="number" id="comp-f" value="50" step="1"></div>
+          </div>
+          <button class="calc-btn" onclick="calcCompensation()">Calculer</button>
+          <div id="comp-result" class="calc-result"></div>
+        </div>
+      </div>
+
+      <!-- SECTION 8: EXERCICES -->
+      <div class="block" id="tri-exercices">
+        <h2 class="block-title">8. Exercices résolus</h2>
+
+        <!-- Exercice 1 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 1 — Charge monophasée (p.54)</div>
+          <p><strong>Circuit :</strong> V = 230 V, f = 50 Hz. L = 20 mH en série avec R₁ = 20 Ω, le tout en parallèle avec R₂ = 10 Ω.</p>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir la solution complète</span><span class="expand-icon">+</span></div>
+            <div class="expand-body">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.85rem">
+                ω = 2π×50 = 314.2 rad/s<br>
+                Z_L = jLω = j×0.02×314.2 = j6.28 Ω<br>
+                Z_branche1 = R₁ + jLω = 20 + j6.28 Ω<br>
+                |Z₁| = √(20² + 6.28²) = √(400+39.4) = 20.97 Ω<br><br>
+                I₁ = V/|Z₁| = 230/20.97 = <span style="color:#3af4c8">10.97 A</span><br>
+                I₂ = V/R₂ = 230/10 = <span style="color:#3af4c8">23 A</span><br><br>
+                Par Boucherot :<br>
+                P = R₁·I₁² + R₂·I₂² = 20×10.97² + 10×23²<br>
+                P = 2408 + 5290 = <span style="color:#3af4c8">7698 W</span><br>
+                Q = Lω·I₁² = 6.28×10.97² = <span style="color:#ff5e3a">756 VAr</span><br>
+                S = √(P²+Q²) = √(7698²+756²) = <span style="color:#3af4c8">7735 VA</span><br>
+                I = S/V = 7735/230 = <span style="color:#3af4c8">33.6 A</span><br>
+                cosφ = P/S = 7698/7735 = <span style="color:#e8f428">0.995</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercice 2 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 2 — Représentation vectorielle (p.55)</div>
+          <p><strong>Circuit :</strong> V = 100 V, f = 50 Hz. En série : j10 Ω (inductif), −j5 Ω (capacitif), 20 Ω (résistif).</p>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir la solution</span><span class="expand-icon">+</span></div>
+            <div class="expand-body">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.82rem">
+                Z = 20 + j10 − j5 = <span style="color:#3af4c8">20 + j5 Ω</span><br>
+                |Z| = √(20²+5²) = √425 ≈ <span style="color:#3af4c8">20.6 Ω</span><br>
+                φ = arctan(5/20) ≈ <span style="color:#3af4c8">14.04°</span> (circuit inductif AR)<br>
+                I = V/|Z| = 100/20.6 ≈ <span style="color:#3af4c8">4.85 A</span><br>
+                v(t) = 100√2 sin(ωt) ; i(t) = 4.85√2 sin(ωt − 14.04°)<br>
+                Loi de maille : <span style="color:#ff5e3a">V = (20+j5)·I</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercice 3 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 3 — Diviseur de courant (p.56)</div>
+          <p>I = 2,5 A. Branche 1 : −j0,002 + 4 Ω. Branche 2 : j40 + 10 Ω.</p>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir la solution</span><span class="expand-icon">+</span></div>
+            <div class="expand-body">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.82rem">
+                Z₁ ≈ 4 Ω (partie capacitive négligeable)<br>
+                Z₂ = 10+j40, |Z₂| ≈ 41.2 Ω<br>
+                Z_eq parallèle : |Z_eq| ≈ <span style="color:#3af4c8">3.89 Ω</span><br>
+                V = I × |Z_eq| = 2.5 × 3.89 ≈ <span style="color:#3af4c8">9.72 V</span><br>
+                I₁ = V/|Z₁| ≈ <span style="color:#3af4c8">2.43 A</span> ; I₂ = V/|Z₂| ≈ <span style="color:#3af4c8">0.236 A</span><br>
+                P = R₁I₁² + R₂I₂² ≈ <span style="color:#3af4c8">24.2 W</span><br>
+                Q = X_L·I₂² ≈ <span style="color:#ff5e3a">+2.23 VAr</span> (inductif dominant)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercice 4 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 4 — Ligne monophasée vs triphasée (p.75–76)</div>
+          <p>Comparaison de deux lignes distribuant la même puissance active P = V²/R sur une distance L.</p>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir les résultats clés</span><span class="expand-icon">+</span></div>
+            <div class="expand-body">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.82rem">
+                <span style="color:#3af4c8">Puissance identique :</span> P_mono = P_tri = V²/R ✓<br>
+                <span style="color:#3af4c8">Volume de cuivre :</span><br>
+                  Vol_mono = 2 fils × L × S = 2LV/(Rδ)<br>
+                  Vol_tri = 3 fils × L × S/3 = LV/(Rδ)<br>
+                  → <span style="color:#3af4c8">Triphasé utilise 2× moins de cuivre !</span><br>
+                <span style="color:#3af4c8">Puissance instantanée :</span><br>
+                  Monophasé : p(t) pulsatoire à 2ω → vibrations<br>
+                  Triphasé : p₃φ = 3VI·cosφ = <span style="color:#3af4c8">CONSTANTE</span> → moteurs sans vibrations<br>
+                <span style="color:#e8f428">✓ Le triphasé : même puissance, 2× moins de cuivre, puissance instantanée constante.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercice 5 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 5 — Atelier triphasé (p.77)</div>
+          <p><strong>Réseau :</strong> 230V/400V, 50Hz. L'atelier comprend :</p>
+          <ul style="margin:.5rem 0 .8rem 1.2rem;line-height:1.8">
+            <li>Luminaires/bureautique : P₁ = 6 kW, cosφ₁ = 1 (fp unitaire)</li>
+            <li>3 machines triphasées : P₂ = 3×5 = 15 kW, cosφ₂ = 0,8 AR</li>
+            <li>3 impédances en triangle : Z = 10 + j15 Ω</li>
+          </ul>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir la solution complète</span><span class="expand-icon">+</span></div>
+            <div class="expand-body">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.82rem">
+                <span style="color:#3af4c8">— Impédances en triangle (Z = 10+j15 Ω) —</span><br>
+                |Z| = √(10²+15²) = √325 = 18.03 Ω<br>
+                J = U/|Z| = 400/18.03 = 22.18 A<br>
+                P_Z = 3×10×22.18² ≈ <span style="color:#3af4c8">14.77 kW</span><br>
+                Q_Z = 3×15×22.18² ≈ <span style="color:#ff5e3a">22.16 kVAr</span><br><br>
+                <span style="color:#3af4c8">— Machines (cosφ=0.8 AR → tgφ=0.75) —</span><br>
+                Q₂ = 15000×0.75 = <span style="color:#ff5e3a">11.25 kVAr</span><br><br>
+                <span style="color:#3af4c8">— Boucherot total —</span><br>
+                P_tot = 6 + 15 + 14.77 = <span style="color:#3af4c8">35.77 kW</span><br>
+                Q_tot = 0 + 11.25 + 22.16 = <span style="color:#ff5e3a">33.41 kVAr</span><br>
+                S_tot = √(35.77²+33.41²) = <span style="color:#e8f428">48.88 kVA</span><br>
+                I = S/(√3·U) = 48880/692.8 = <span style="color:#3af4c8">70.6 A</span><br>
+                cosφ_tot = 35.77/48.88 = <span style="color:#e8f428">0.732</span> → non tolérable (min 0.92)<br><br>
+                <span style="color:#3af4c8">— Condensateurs étoile pour cosφ'=1 —</span><br>
+                C = Q_tot/(3ωV²) = 33410/(3×314.2×230²) = <span style="color:#3af4c8">671 µF</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercice 6 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 6 — Compensation de puissance réactive (p.78)</div>
+          <p><strong>Charge :</strong> 230V/400V, 50Hz. P = 25 kW, cosφ = 0,7 AR → relèvement à cosφ' = 0,92 AR.</p>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir la solution complète</span><span class="expand-icon">+</span></div>
+            <div class="expand-body">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.82rem">
+                φ = arccos(0.7) ≈ 45.57° → tgφ ≈ 1.020<br>
+                φ' = arccos(0.92) ≈ 23.07° → tgφ' ≈ 0.426<br>
+                Q_c = P×(tgφ−tgφ') = 25000×(1.020−0.426) ≈ <span style="color:#3af4c8">14.85 kVAr</span><br><br>
+                <span style="color:#3af4c8">1) Étoile (V = 230 V) :</span><br>
+                C = Q_c/(3ωV²) = 14850/(3×314.2×230²) ≈ <span style="color:#3af4c8">298 µF</span><br><br>
+                <span style="color:#3af4c8">2) Triangle pour cosφ'=0,92 AR (U = 400 V) :</span><br>
+                C' = Q_c/(3ωU²) = 14850/(3×314.2×400²) ≈ <span style="color:#3af4c8">98.5 µF</span><br>
+                <span style="color:#ff5e3a">→ 3× moins que l'étoile : C' = C/3</span><br><br>
+                <span style="color:#3af4c8">3) Triangle pour cosφ''=0,92 AV (sur-compensation) :</span><br>
+                Q_c = P×(tgφ+tgφ') = 25000×1.446 = 36.15 kVAr<br>
+                C'' = 36150/(3×314.2×400²) ≈ <span style="color:#3af4c8">240 µF</span><br><br>
+                <span style="color:#e8f428">✓ Solution préférée : condensateurs en TRIANGLE — même effet avec des condensateurs 3× plus petits (voient la tension U au lieu de V).</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Système déséquilibré -->
+      <div class="block" id="tri-desequilibre">
+        <h2 class="block-title">10. Système triphasé déséquilibré</h2>
+        <div class="tip-box" style="margin-bottom:1.2rem">
+          ⚖️ Un système est <strong>équilibré</strong> si Z₁=Z₂=Z₃ (étoile) ou Z₁₂=Z₂₃=Z₃₁ (triangle). Alors I₁=I₂=I₃ et toutes les formules simplifiées s'appliquent.
+        </div>
+        <p>Un système est <strong>déséquilibré</strong> si les impédances diffèrent d'une phase à l'autre. On revient aux relations générales :</p>
+        <div class="formula-box" style="margin:1rem 0;line-height:2.2;font-size:.9rem">
+          <span style="color:#ff5e3a">Charge étoile déséquilibrée :</span><br>
+          P = V<sub>Z1</sub>·I₁·cosφ₁ + V<sub>Z2</sub>·I₂·cosφ₂ + V<sub>Z3</sub>·I₃·cosφ₃<br>
+          Q = V<sub>Z1</sub>·I₁·sinφ₁ + V<sub>Z2</sub>·I₂·sinφ₂ + V<sub>Z3</sub>·I₃·sinφ₃<br><br>
+          <span style="color:#ff5e3a">Charge triangle déséquilibrée :</span><br>
+          P = U·(J₁₂·cosφ₁₂ + J₂₃·cosφ₂₃ + J₃₁·cosφ₃₁)<br>
+          Q = U·(J₁₂·sinφ₁₂ + J₂₃·sinφ₂₃ + J₃₁·sinφ₃₁)
+        </div>
+        <p>Le théorème de Boucherot (additivité de P et Q) reste toujours applicable, même en système déséquilibré.</p>
+      </div>
+
+      <!-- Synthèse -->
+      <div class="block" id="tri-synthese">
+        <h2 class="block-title">11. Synthèse — Équivalences étoile / triangle</h2>
+        <p>Une charge étoile (Z par phase) est équivalente à une charge triangle (3Z par phase) vue du réseau. Les formules de puissance sont <strong>identiques</strong> dans les deux cas :</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.2rem 0">
+          <div style="background:#1a1a2e;border:1px solid #3af4c840;border-radius:8px;padding:1rem">
+            <div style="color:#3af4c8;font-weight:700;margin-bottom:.7rem">⭐ Étoile équilibrée</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.8rem;line-height:2">
+              V_ph = V = U/√3<br>
+              I = J<br>
+              P = 3·V·I·cosφ<br>
+              Q = 3·V·I·sinφ<br>
+              S = 3·V·I = √3·U·I
+            </div>
+          </div>
+          <div style="background:#1a1a2e;border:1px solid #ff5e3a40;border-radius:8px;padding:1rem">
+            <div style="color:#ff5e3a;font-weight:700;margin-bottom:.7rem">△ Triangle équilibrée</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.8rem;line-height:2">
+              V_ph = U<br>
+              I = J√3<br>
+              P = 3·U·J·cosφ = √3·U·I·cosφ<br>
+              Q = 3·U·J·sinφ = √3·U·I·sinφ<br>
+              S = 3·U·J = √3·U·I
+            </div>
+          </div>
+        </div>
+        <div style="background:#1a1a2e;border-left:4px solid #e8f428;padding:1rem;border-radius:6px;margin-top:1rem">
+          <strong style="color:#e8f428">📐 Règle d'or :</strong> Z<sub>Δ</sub> = 3·Z<sub>Y</sub> pour l'équivalence. Pour les condensateurs de compensation : C<sub>Δ</sub> = C<sub>Y</sub>/3. Le condensateur triangle est 3× plus petit pour le même effet.
+        </div>
+      </div>
+
+      <!-- QCM -->
+      <div class="block" id="tri-qcm">
+        <h2 class="block-title">QCM — Systèmes Triphasés</h2>
+        <div id="qcm-triphasé"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════
+// STATE
+// ═══════════════════════════════
+const state = {
+  currentSection: 'home',
+  progress: {complexes:0, signaux:0, impedances:0, puissances:0, methodologie:0, 'triphasé':0},
+  scores: {}
+};
+
+// ═══════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════
+function showHome() {
+  hideAll();
+  document.getElementById('home').style.display = 'flex';
+  state.currentSection = 'home';
+  updateProgress(0);
+}
+
+function showSection(id) {
+  hideAll();
+  const el = document.getElementById(id);
+  el.style.display = 'block';
+  el.classList.add('active');
+  state.currentSection = id;
+  window.scrollTo(0,0);
+  updateProgress(id === 'modules' ? 10 : 20);
+  if (id === 'progression') renderProgression();
+}
+
+function showLesson(id) {
+  hideAll();
+  const el = document.getElementById('lesson-' + id);
+  el.style.display = 'block';
+  el.classList.add('active');
+  state.currentSection = 'lesson-' + id;
+  window.scrollTo(0,0);
+  updateProgress(40);
+}
+
+function hideAll() {
+  document.querySelectorAll('.hero, .section').forEach(el => {
+    el.style.display = 'none';
+    el.classList.remove('active');
+  });
+}
+
+function scrollToId(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// Progress bar
+function updateProgress(pct) {
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+window.addEventListener('scroll', () => {
+  const scrolled = window.scrollY;
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  if (total > 0) {
+    const pct = Math.max(10, (scrolled/total)*100);
+    document.getElementById('progressBar').style.width = pct + '%';
+  }
+});
+
+// ═══════════════════════════════
+// EXPAND CARDS
+// ═══════════════════════════════
+function toggleExpand(header) {
+  const content = header.nextElementSibling;
+  const icon = header.querySelector('.expand-icon');
+  const isOpen = content.classList.contains('open');
+  content.classList.toggle('open');
+  icon.textContent = isOpen ? '+' : '−';
+}
+
+// ═══════════════════════════════
+// FORM SWITCHER
+// ═══════════════════════════════
+function showForm(idx) {
+  [0,1,2].forEach(i => {
+    document.getElementById('form-'+i).style.display = i === idx ? 'block' : 'none';
+  });
+  document.querySelectorAll('.step').forEach((s,i) => {
+    s.classList.toggle('active', i === idx);
+  });
+}
+
+// ═══════════════════════════════
+// CANVAS PLAN COMPLEXE
+// ═══════════════════════════════
+function drawComplex() {
+  const a = parseFloat(document.getElementById('cRe').value) || 0;
+  const b = parseFloat(document.getElementById('cIm').value) || 0;
+  const canvas = document.getElementById('complexCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2;
+  const scale = Math.min(W,H) / (2 * Math.max(Math.abs(a), Math.abs(b), 3) * 1.4);
+
+  ctx.clearRect(0,0,W,H);
+
+  // Background
+  ctx.fillStyle = '#12121a';
+  ctx.fillRect(0,0,W,H);
+
+  // Grid
+  ctx.strokeStyle = '#2a2a3a';
+  ctx.lineWidth = 1;
+  for(let i=-10;i<=10;i++) {
+    ctx.beginPath(); ctx.moveTo(cx+i*scale*2,0); ctx.lineTo(cx+i*scale*2,H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0,cy+i*scale*2); ctx.lineTo(W,cy+i*scale*2); ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = '#3a3a5a';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+
+  // Labels axes
+  ctx.fillStyle = '#8888aa';
+  ctx.font = '12px Space Mono';
+  ctx.fillText('Re', W-25, cy-8);
+  ctx.fillText('Im', cx+8, 15);
+  ctx.fillText('0', cx+5, cy+15);
+
+  // Point Z
+  const px = cx + a*scale;
+  const py = cy - b*scale;
+
+  // Dashed projections
+  ctx.strokeStyle = '#2a2a3a';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([5,5]);
+  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(cx,py); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Vector
+  ctx.strokeStyle = '#e8f428';
+  ctx.lineWidth = 2.5;
+  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
+
+  // Arrow head
+  const angle = Math.atan2(-(py-cy), px-cx);
+  ctx.fillStyle = '#e8f428';
+  ctx.beginPath();
+  ctx.moveTo(px,py);
+  ctx.lineTo(px-12*Math.cos(angle-0.4), py+12*Math.sin(angle-0.4));
+  ctx.lineTo(px-12*Math.cos(angle+0.4), py+12*Math.sin(angle+0.4));
+  ctx.fill();
+
+  // Point
+  ctx.fillStyle = '#e8f428';
+  ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2); ctx.fill();
+
+  // Angle arc
+  const mod = Math.sqrt(a*a+b*b);
+  if(mod > 0) {
+    const phi = Math.atan2(b,a);
+    ctx.strokeStyle = '#ff5e3a';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 30, 0, -phi, phi < 0);
+    ctx.stroke();
+    ctx.fillStyle = '#ff5e3a';
+    ctx.font = '13px Space Mono';
+    ctx.fillText('φ', cx+32, cy-5);
+  }
+
+  // Label Z
+  ctx.fillStyle = '#e8f428';
+  ctx.font = 'bold 14px Space Mono';
+  ctx.fillText(`Z(${a},${b>0?'+'+b:b}j)`, px+8, py-8);
+
+  // Label a on x
+  ctx.fillStyle = '#3af4c8';
+  ctx.font = '11px Space Mono';
+  ctx.fillText('a='+a, px-15, cy+18);
+  // Label b on y
+  ctx.fillStyle = '#ff5e3a';
+  ctx.fillText('b='+b, cx+5, py+4);
+
+  // Update info
+  const modZ = Math.sqrt(a*a+b*b);
+  const argDeg = Math.atan2(b,a) * 180 / Math.PI;
+  document.getElementById('cMod').textContent = modZ.toFixed(3);
+  document.getElementById('cArg').textContent = argDeg.toFixed(1) + '°';
+  document.getElementById('cExp').textContent = modZ.toFixed(2) + '·e^(j' + argDeg.toFixed(0) + '°)';
+}
+
+// Draw on input change
+document.getElementById('cRe').addEventListener('input', drawComplex);
+document.getElementById('cIm').addEventListener('input', drawComplex);
+
+// ═══════════════════════════════
+// CALCULATORS
+// ═══════════════════════════════
+function calcComplex() {
+  const a = parseFloat(document.getElementById('calcA').value);
+  const b = parseFloat(document.getElementById('calcB').value);
+  const mod = Math.sqrt(a*a+b*b);
+  const argRad = Math.atan2(b,a);
+  const argDeg = argRad * 180 / Math.PI;
+  document.getElementById('rMod').textContent = mod.toFixed(4);
+  document.getElementById('rArg').textContent = argDeg.toFixed(2) + '°';
+  document.getElementById('rArgR').textContent = argRad.toFixed(4) + ' rad';
+  document.getElementById('rConj').textContent = a + (b>=0 ? ' − j' + Math.abs(b) : ' + j' + Math.abs(b));
+  document.getElementById('rExp').textContent = mod.toFixed(3) + ' · e^(j' + argDeg.toFixed(1) + '°)';
+  document.getElementById('calcResult').classList.add('show');
+}
+
+function calcProd() {
+  const a1=parseFloat(document.getElementById('z1a').value), b1=parseFloat(document.getElementById('z1b').value);
+  const a2=parseFloat(document.getElementById('z2a').value), b2=parseFloat(document.getElementById('z2b').value);
+  const ra = a1*a2 - b1*b2, rb = a1*b2 + b1*a2;
+  const mod = Math.sqrt(ra*ra+rb*rb);
+  const arg = Math.atan2(rb,ra)*180/Math.PI;
+  document.getElementById('rProd').textContent = ra.toFixed(3) + (rb>=0?' + j':' − j') + Math.abs(rb).toFixed(3);
+  document.getElementById('rProdMod').textContent = mod.toFixed(4);
+  document.getElementById('rProdArg').textContent = arg.toFixed(2) + '°';
+  document.getElementById('prodResult').classList.add('show');
+}
+
+function calcDiv() {
+  const a1=parseFloat(document.getElementById('z1a').value), b1=parseFloat(document.getElementById('z1b').value);
+  const a2=parseFloat(document.getElementById('z2a').value), b2=parseFloat(document.getElementById('z2b').value);
+  const denom = a2*a2 + b2*b2;
+  if(denom===0){alert('Z₂ ne peut pas être nul !');return;}
+  const ra = (a1*a2 + b1*b2)/denom, rb = (b1*a2 - a1*b2)/denom;
+  const mod = Math.sqrt(ra*ra+rb*rb);
+  const arg = Math.atan2(rb,ra)*180/Math.PI;
+  document.getElementById('rProd').textContent = ra.toFixed(3) + (rb>=0?' + j':' − j') + Math.abs(rb).toFixed(3);
+  document.getElementById('rProdMod').textContent = mod.toFixed(4);
+  document.getElementById('rProdArg').textContent = arg.toFixed(2) + '°';
+  document.getElementById('prodResult').classList.add('show');
+}
+
+function calcSignal() {
+  const smax=parseFloat(document.getElementById('sMax').value);
+  const freq=parseFloat(document.getElementById('sFreq').value);
+  const seff = smax/Math.sqrt(2);
+  const T = 1/freq;
+  const omega = 2*Math.PI*freq;
+  document.getElementById('sEff').textContent = seff.toFixed(2) + ' V (ou A)';
+  document.getElementById('sPeriod').textContent = (T*1000).toFixed(2) + ' ms';
+  document.getElementById('sOmega').textContent = omega.toFixed(2) + ' rad/s';
+  document.getElementById('sExpr').textContent = smax.toFixed(1) + '·sin(' + omega.toFixed(0) + 't)';
+  document.getElementById('signalResult').classList.add('show');
+}
+
+function calcImpedance() {
+  const R=parseFloat(document.getElementById('iR').value);
+  const L=parseFloat(document.getElementById('iL').value)*1e-3;
+  const C=parseFloat(document.getElementById('iC').value)*1e-6;
+  const f=parseFloat(document.getElementById('iF').value);
+  const omega=2*Math.PI*f;
+  const XL=L*omega, XC=1/(C*omega), X=XL-XC;
+  const modZ=Math.sqrt(R*R+X*X);
+  const phi=Math.atan2(X,R)*180/Math.PI;
+  document.getElementById('iXL').textContent = XL.toFixed(3) + ' Ω';
+  document.getElementById('iXC').textContent = XC.toFixed(3) + ' Ω';
+  document.getElementById('iX').textContent = X.toFixed(3) + ' Ω';
+  document.getElementById('iZ').textContent = R.toFixed(2) + (X>=0?' + j':' − j') + Math.abs(X).toFixed(2) + ' Ω';
+  document.getElementById('iMod').textContent = modZ.toFixed(3) + ' Ω';
+  document.getElementById('iPhi').textContent = phi.toFixed(2) + '°';
+  document.getElementById('iChar').textContent = X>0 ? '⚡ Inductif (Q>0)' : X<0 ? '⚡ Capacitif (Q<0)' : '⚡ Résistif pur';
+  document.getElementById('impedanceResult').classList.add('show');
+}
+
+function calcPower() {
+  const V=parseFloat(document.getElementById('pV').value);
+  const I=parseFloat(document.getElementById('pI').value);
+  const phi=parseFloat(document.getElementById('pPhi').value)*Math.PI/180;
+  const P=V*I*Math.cos(phi), Q=V*I*Math.sin(phi), S=V*I;
+  const cosP=Math.cos(phi);
+  document.getElementById('pP').textContent = P.toFixed(1) + ' W';
+  document.getElementById('pQ').textContent = Q.toFixed(1) + ' VAr';
+  document.getElementById('pS').textContent = S.toFixed(1) + ' VA';
+  document.getElementById('pCos').textContent = cosP.toFixed(4);
+  document.getElementById('pVerif').textContent = '√('+ P.toFixed(0)+'²+'+Q.toFixed(0)+'²) = ' + Math.sqrt(P*P+Q*Q).toFixed(1) + ' ≈ ' + S.toFixed(1) + ' ✓';
+  document.getElementById('powerResult').classList.add('show');
+}
+
+// ═══════════════════════════════
+// QCM DATA
+// ═══════════════════════════════
+const QCMs = {
+  complexes: [
+    {
+      q: "Quelle est la valeur de <strong>j²</strong> ?",
+      opts: ["1", "−1", "j", "0"],
+      correct: 1,
+      expl: "<strong>j² = −1</strong> est la définition fondamentale de l'unité imaginaire. C'est pour cela que j = √(−1). Cette propriété est à la base de tous les calculs en complexes."
+    },
+    {
+      q: "Le module de Z = 3 + j4 est :",
+      opts: ["3", "4", "5", "7"],
+      correct: 2,
+      expl: "<strong>|Z| = √(3² + 4²) = √(9 + 16) = √25 = 5</strong>. C'est le théorème de Pythagore appliqué au plan complexe."
+    },
+    {
+      q: "L'argument du nombre complexe Z = j (avec a=0, b=1) est :",
+      opts: ["0°", "45°", "90°", "180°"],
+      correct: 2,
+      expl: "<strong>φ = arctan(1/0) = 90°</strong>. Le nombre j se trouve sur l'axe imaginaire positif, donc son argument est exactement π/2 = 90°."
+    },
+    {
+      q: "Pour diviser deux complexes Z₁/Z₂, quelle opération effectue-t-on en forme exponentielle ?",
+      opts: [
+        "On divise les modules et on additionne les arguments",
+        "On additionne les modules et on divise les arguments",
+        "On divise les modules et on soustrait les arguments",
+        "On multiplie les modules et on divise les arguments"
+      ],
+      correct: 2,
+      expl: "En forme exponentielle : <strong>Z₁/Z₂ = (|Z₁|/|Z₂|)·e^{j(φ₁−φ₂)}</strong>. On divise les modules et on soustrait les arguments. Symétrique de la multiplication."
+    },
+    {
+      q: "En notation complexe, la dérivée d/dt[<u>V</u>] vaut :",
+      opts: ["ω·<u>V</u>", "jω·<u>V</u>", "<u>V</u>/jω", "j·<u>V</u>"],
+      correct: 1,
+      expl: "<strong>d/dt[V] = jω·V</strong>. Multiplier par jω en complexe équivaut à dériver dans le domaine temporel. Le facteur j traduit l'avance de phase de 90°."
+    }
+  ],
+  signaux: [
+    {
+      q: "Un signal sinusoïdal a une valeur crête de 141,4 V. Quelle est sa valeur efficace (RMS) ?",
+      opts: ["141,4 V", "200 V", "100 V", "70,7 V"],
+      correct: 2,
+      expl: "<strong>V_eff = V_max / √2 = 141,4 / √2 = 100 V</strong>. Le réseau français 230 V est une valeur efficace ; sa crête est 230×√2 ≈ 325 V."
+    },
+    {
+      q: "La valeur moyenne d'un signal sinusoïdal pur sur une période complète est :",
+      opts: ["V_max", "V_max/√2", "V_max/2", "Zéro"],
+      correct: 3,
+      expl: "La valeur moyenne d'un sinusoïde est <strong>toujours nulle</strong> sur une période : les alternances positive et négative se compensent. C'est pourquoi on utilise la valeur efficace pour caractériser la 'puissance' du signal."
+    },
+    {
+      q: "Pour f = 50 Hz, quelle est la pulsation ω ?",
+      opts: ["50 rad/s", "100 rad/s", "100π rad/s", "50π rad/s"],
+      correct: 2,
+      expl: "<strong>ω = 2πf = 2π × 50 = 100π ≈ 314 rad/s</strong>. La pulsation est liée à la fréquence par le facteur 2π."
+    },
+    {
+      q: "Si le courant i(t) = I√2·sin(ωt − 30°), quel est son phaseur complexe (tension à l'origine) ?",
+      opts: ["I·e^{j30°}", "I·e^{−j30°}", "I·e^{j0}", "√2·I·e^{−j30°}"],
+      correct: 1,
+      expl: "<strong>I = I·e^{−j30°}</strong>. Le module est la valeur efficace I, et l'argument est la phase initiale −30°. On n'inclut PAS le √2 dans le phaseur."
+    }
+  ],
+  impedances: [
+    {
+      q: "L'impédance complexe d'une inductance L à la pulsation ω est :",
+      opts: ["R", "jLω", "1/(jCω)", "Lω"],
+      correct: 1,
+      expl: "<strong>Z_L = jLω</strong>. Le j indique que la tension est en avance de 90° sur le courant. La réactance inductive est X_L = Lω (Ohm)."
+    },
+    {
+      q: "Dans un circuit RLC série, Z = 10 − j5 Ω. Quel est le caractère du circuit ?",
+      opts: ["Résistif", "Inductif (φ > 0)", "Capacitif (φ < 0)", "Impossible à déterminer"],
+      correct: 2,
+      expl: "La partie imaginaire est <strong>négative (−j5)</strong>, donc X < 0 → circuit capacitif. Le courant est en avance sur la tension, φ < 0."
+    },
+    {
+      q: "Pour deux impédances Z₁ = 3 + j4 Ω et Z₂ = 3 − j4 Ω en série, quelle est Z_eq ?",
+      opts: ["6 Ω", "j8 Ω", "0 Ω", "6 + j0 Ω"],
+      correct: 3,
+      expl: "<strong>Z_eq = Z₁ + Z₂ = (3+3) + j(4−4) = 6 + j0 = 6 Ω</strong>. C'est une impédance purement résistive ! Les parties réactives se compensent."
+    },
+    {
+      q: "Que vaut 1/(jω) ? (utilisé pour l'intégration)",
+      opts: ["jω", "−jω", "j/ω", "−j/ω"],
+      correct: 3,
+      expl: "<strong>1/(jω) = −j/ω</strong> car 1/j = −j (multiplier par j*/j* = −j/1). Intégrer en temporel = diviser par jω en complexe."
+    }
+  ],
+  puissances: [
+    {
+      q: "Quelle est la relation entre S, P et Q ?",
+      opts: ["S = P + Q", "S = P − Q", "S² = P² + Q²", "S = √P·Q"],
+      correct: 2,
+      expl: "<strong>S² = P² + Q²</strong>. C'est le théorème de Pythagore appliqué au triangle des puissances. S est l'hypoténuse."
+    },
+    {
+      q: "Un moteur consomme P = 5 kW avec cosφ = 0,8. Quelle est la puissance apparente S ?",
+      opts: ["4 kVA", "5 kVA", "6,25 kVA", "8 kVA"],
+      correct: 2,
+      expl: "<strong>S = P / cosφ = 5000 / 0,8 = 6250 VA = 6,25 kVA</strong>. Un mauvais facteur de puissance oblige le générateur à fournir plus de puissance apparente."
+    },
+    {
+      q: "La puissance complexe S est définie comme :",
+      opts: ["S = V·I", "S = V·I*", "S = V*·I", "S = V²/Z"],
+      correct: 1,
+      expl: "<strong>S = V·I*</strong> (avec I* le conjugué de I). Cette définition avec le conjugué garantit que Re(S) = P = VI·cosφ > 0 pour un récepteur."
+    },
+    {
+      q: "Un condensateur pur (sans résistance) a une puissance active P égale à :",
+      opts: ["V²·Cω", "V²/(Cω)", "0", "Cω"],
+      correct: 2,
+      expl: "Pour un condensateur pur : <strong>P = 0</strong>. Un composant réactif pur (L ou C) ne consomme aucune puissance active — il stocke et restitue l'énergie alternativement."
+    },
+    {
+      q: "Pour améliorer le facteur de puissance d'une installation inductive, on installe :",
+      opts: ["Une résistance en série", "Une inductance supplémentaire", "Un condensateur en parallèle", "Un transformateur"],
+      correct: 2,
+      expl: "<strong>Un condensateur en parallèle</strong> produit de la puissance réactive négative (Q_C < 0) qui compense la puissance réactive positive de l'inductance (Q_L > 0). Cela réduit Q_total et augmente cosφ."
+    }
+  ],
+  'triphasé': [
+    {
+      q: "Dans un réseau 230V/400V équilibré direct, quelle est la relation entre la tension composée U et la tension simple V ?",
+      opts: ["U = V", "U = V/√3", "U = √3·V", "U = 3·V"],
+      correct: 2,
+      expl: "U = √3·V est la relation fondamentale. 400 = √3 × 230 ≈ 1,732 × 230 = 398 V ≈ 400 V. Les tensions composées (entre phases) sont √3 fois plus grandes que les tensions simples (phase-neutre)."
+    },
+    {
+      q: "Pour un récepteur étoile équilibré, quelle relation unit le courant de ligne I et le courant de phase J ?",
+      opts: ["I = J√3", "I = J/√3", "I = J", "I = 3J"],
+      correct: 2,
+      expl: "En couplage étoile : I = J. Le courant traversant chaque impédance de phase est identique au courant de ligne. C'est la différence avec le triangle où I = J√3."
+    },
+    {
+      q: "La puissance instantanée totale en triphasé équilibré est :",
+      opts: ["Pulsatoire à 2ω comme en monophasé", "Constante et égale à 3VI·cosφ", "Nulle en régime permanent", "Proportionnelle à sin(ωt)"],
+      correct: 1,
+      expl: "C'est l'avantage majeur du triphasé ! La puissance instantanée totale p₃φ = 3VI·cosφ est CONSTANTE (pas de fluctuation à 2ω). Cela explique l'absence de vibrations dans les moteurs triphasés et leur couple régulier."
+    },
+    {
+      q: "Pour un récepteur triangle, quelle est la tension aux bornes de chaque impédance ?",
+      opts: ["La tension simple V", "La tension composée U", "U/√3", "√3·V/2"],
+      correct: 1,
+      expl: "En couplage triangle, chaque impédance est branchée directement entre deux phases : elle voit donc la tension composée U = √3·V. C'est pourquoi on utilise le triangle quand les appareils sont conçus pour la tension composée."
+    },
+    {
+      q: "Pour relever le facteur de puissance d'une charge inductive, on place des condensateurs en parallèle. La puissance réactive Qc fournie par un banc de 3 condensateurs en étoile vaut :",
+      opts: ["Qc = +3ωCV²", "Qc = −3ωCU²", "Qc = −3ωCV²", "Qc = −ωCU²/3"],
+      correct: 2,
+      expl: "Qc = −3ωCV² pour un couplage étoile (V = tension simple). Le signe négatif indique que les condensateurs fournissent de la puissance réactive capacitive, compensant la puissance réactive inductive (positive) de la charge."
+    },
+    {
+      q: "Le théorème de Boucherot affirme que pour un système triphasé avec plusieurs charges, S_tot (puissance apparente scalaire) est-elle additive ?",
+      opts: ["Oui, S_tot = ΣSᵢ", "Non, seules P_tot et Q_tot sont additives", "Oui si les charges sont identiques", "Non, aucune puissance n'est additive"],
+      correct: 1,
+      expl: "Boucherot : P_tot = ΣPᵢ ✓ et Q_tot = ΣQᵢ ✓ et Ŝ_tot = ΣŜᵢ ✓ MAIS S_tot ≠ ΣSᵢ ✗. La puissance apparente scalaire ne s'additionne PAS. On calcule S_tot = √(P_tot² + Q_tot²) après avoir additionné P et Q séparément."
+    }
+  ],
+  methodologie: [
+    {
+      q: "Pour un circuit RL série avec R = 10 Ω et X_L = 10 Ω, quel est le déphasage φ ?",
+      opts: ["0°", "30°", "45°", "90°"],
+      correct: 2,
+      expl: "<strong>φ = arctan(X_L/R) = arctan(10/10) = arctan(1) = 45°</strong>. Les parties réelle et imaginaire sont égales, donc l'angle est 45°."
+    },
+    {
+      q: "Dans un circuit RL série avec V = 100 V et Z = 10+j10 Ω, quelle est l'intensité I ?",
+      opts: ["10 A", "7,07 A", "14,1 A", "5 A"],
+      correct: 1,
+      expl: "<strong>|Z| = √(10²+10²) = 10√2 ≈ 14,14 Ω</strong><br>I = V/|Z| = 100/14,14 ≈ <strong>7,07 A</strong>"
+    },
+    {
+      q: "On dit qu'un circuit est en résonance série quand :",
+      opts: ["R = 0", "X_L = X_C", "Z est maximum", "P = 0"],
+      correct: 1,
+      expl: "À la résonance série : <strong>X_L = X_C → Lω = 1/(Cω) → ω₀ = 1/√(LC)</strong>. L'impédance est purement résistive (|Z| minimum = R), le courant est maximum."
+    },
+    {
+      q: "La loi des mailles peut s'appliquer directement :",
+      opts: [
+        "En valeurs efficaces scalaires",
+        "En valeurs instantanées ou en complexes",
+        "Uniquement en régime continu",
+        "Uniquement en régime sinusoïdal"
+      ],
+      correct: 1,
+      expl: "<strong>En valeurs instantanées ou en complexes.</strong> PAS directement en valeurs efficaces scalaires, car les déphasages s'ajoutent vectoriellement. ΣU_eff ≠ V_source en général."
+    },
+    {
+      q: "Un circuit RLC série a R=5Ω, L=0,1H, C=100µF, f=50Hz. Le circuit est :",
+      opts: [
+        "Résistif (φ=0°)",
+        "Inductif (X_L > X_C)",
+        "Capacitif (X_C > X_L)",
+        "À la résonance"
+      ],
+      correct: 1,
+      expl: "X_L = 0,1×100π ≈ 31,4 Ω<br>X_C = 1/(100×10⁻⁶×100π) ≈ 31,8 Ω<br>X_C > X_L → circuit <strong>capacitif</strong>. (Réponse c)"
+    }
+  ]
+};
+
+// ═══════════════════════════════
+// QCM RENDERER
+// ═══════════════════════════════
+function renderQCM(moduleId, questions) {
+  const container = document.getElementById('qcm-' + moduleId);
+  if (!container) return;
+  container.innerHTML = '';
+  let answered = 0, correct = 0;
+
+  questions.forEach((q, qi) => {
+    const card = document.createElement('div');
+    card.className = 'qcm-card';
+    card.id = 'qcard-' + moduleId + '-' + qi;
+
+    const letters = ['A','B','C','D'];
+    const optsHTML = q.opts.map((o,oi) => `
+      <div class="qcm-opt" id="opt-${moduleId}-${qi}-${oi}" onclick="selectOpt('${moduleId}',${qi},${oi},${q.correct})">
+        <div class="opt-letter">${letters[oi]}</div>${o}
+      </div>`).join('');
+
+    card.innerHTML = `
+      <div class="qcm-q"><strong>Q${qi+1}.</strong> ${q.q}</div>
+      <div class="qcm-options">${optsHTML}</div>
+      <div class="qcm-explanation" id="expl-${moduleId}-${qi}">💡 ${q.expl}</div>`;
+    container.appendChild(card);
+  });
+
+  // Score total
+  const scoreDiv = document.createElement('div');
+  scoreDiv.className = 'qcm-total';
+  scoreDiv.id = 'score-' + moduleId;
+  scoreDiv.innerHTML = `
+    <div class="score-big" id="score-num-${moduleId}">0/${questions.length}</div>
+    <div class="score-msg" id="score-msg-${moduleId}">Répondez à toutes les questions</div>
+    <button class="retry-btn" onclick="retryQCM('${moduleId}')">Recommencer</button>`;
+  container.appendChild(scoreDiv);
+}
+
+const qcmState = {};
+
+function selectOpt(mid, qi, oi, correct) {
+  const key = mid + '-' + qi;
+  if (qcmState[key]) return; // already answered
+  qcmState[key] = {chosen: oi, correct: correct, isCorrect: oi === correct};
+
+  // Visual feedback
+  const opts = document.querySelectorAll(`[id^="opt-${mid}-${qi}-"]`);
+  opts.forEach((opt, i) => {
+    opt.classList.add('disabled');
+    if (i === correct) opt.classList.add('correct-answer');
+  });
+  const chosen = document.getElementById(`opt-${mid}-${qi}-${oi}`);
+  if (oi === correct) {
+    chosen.classList.add('selected', 'correct');
+    document.getElementById(`qcard-${mid}-${qi}`).classList.add('correct');
+  } else {
+    chosen.classList.add('selected', 'wrong');
+    document.getElementById(`qcard-${mid}-${qi}`).classList.add('wrong');
+  }
+
+  // Show explanation
+  document.getElementById(`expl-${mid}-${qi}`).classList.add('show');
+
+  // Check if all answered
+  checkAllAnswered(mid);
+}
+
+function checkAllAnswered(mid) {
+  const qs = QCMs[mid];
+  let total = qs.length, answered = 0, correct = 0;
+  qs.forEach((q,i) => {
+    const k = mid + '-' + i;
+    if (qcmState[k]) { answered++; if(qcmState[k].isCorrect) correct++; }
+  });
+  if (answered === total) {
+    const scoreDiv = document.getElementById('score-' + mid);
+    scoreDiv.classList.add('show');
+    document.getElementById('score-num-' + mid).textContent = correct + '/' + total;
+    const pct = Math.round(correct/total*100);
+    let msg = pct >= 80 ? '🎉 Excellent ! Vous maîtrisez ce module.' :
+              pct >= 60 ? '👍 Bien ! Revoyez les points incorrects.' :
+              '📚 Continuez à réviser — relisez les explications.';
+    document.getElementById('score-msg-' + mid).textContent = msg;
+    state.progress[mid] = pct;
+    state.scores[mid] = {correct, total};
+  }
+}
+
+function retryQCM(mid) {
+  // Reset state
+  const qs = QCMs[mid];
+  qs.forEach((q,i) => { delete qcmState[mid+'-'+i]; });
+  document.getElementById('score-' + mid).classList.remove('show');
+  renderQCM(mid, qs);
+}
+
+// ═══════════════════════════════
+// PROGRESSION
+// ═══════════════════════════════
+const modules = ['complexes','signaux','impedances','puissances','methodologie','triphasé'];
+const moduleNames = ['Nombres Complexes','Signaux Sinusoïdaux','Lois & Impédances','Puissances','Méthodologie','Systèmes Triphasés'];
+
+function renderProgression() {
+  const container = document.getElementById('progressItems');
+  container.innerHTML = modules.map((m,i) => {
+    const pct = state.progress[m] || 0;
+    const score = state.scores[m] ? `${state.scores[m].correct}/${state.scores[m].total}` : '—';
+    return `
+      <div class="prog-item">
+        <span class="prog-label">${moduleNames[i]}</span>
+        <div class="prog-bar-wrap"><div class="prog-bar-fill" style="width:${pct}%"></div></div>
+        <span class="prog-pct">${pct}%</span>
+      </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════
+// INIT
+// ═══════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // Render all QCMs
+  Object.keys(QCMs).forEach(mid => renderQCM(mid, QCMs[mid]));
+  // Draw initial complex plane
+  setTimeout(drawComplex, 100);
+  // Show home
+  showHome();
+});
+</script>
+</body>
+</html>
