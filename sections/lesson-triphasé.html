@@ -1,0 +1,554 @@
+<div id="lesson-triphasé" class="section">
+  <div class="lesson-wrap">
+    <aside class="sidebar">
+      <button class="back-btn" onclick="showHome()">← Accueil</button>
+      <div class="sidebar-title">MODULE 06</div>
+      <ul class="sidebar-nav">
+        <li><a href="#tri-intro">Système triphasé</a></li>
+        <li><a href="#tri-tensions">Tensions simples & composées</a></li>
+        <li><a href="#tri-recepteur">Récepteur étoile</a></li>
+        <li><a href="#tri-triangle">Récepteur triangle</a></li>
+        <li><a href="#tri-resume">Tableau récapitulatif</a></li>
+        <li><a href="#tri-boucherot">Théorème de Boucherot</a></li>
+        <li><a href="#tri-compensation">Compensation de Q</a></li>
+        <li><a href="#tri-exercices">Exercices</a></li>
+        <li><a href="#tri-desequilibre">Déséquilibre</a></li>
+        <li><a href="#tri-synthese">Synthèse</a></li>
+        <li><a href="#tri-qcm">QCM</a></li>
+      </ul>
+    </aside>
+    <main class="lesson-main">
+      <div class="lesson-header">
+        <div class="lesson-num">MODULE 06</div>
+        <h1 class="lesson-title">Systèmes Triphasés</h1>
+        <p class="lesson-intro">Le triphasé est le standard mondial de la distribution d'énergie électrique. Il permet de transporter trois fois plus de puissance avec seulement 50% de conducteurs supplémentaires par rapport au monophasé, et offre une puissance instantanée <strong>parfaitement constante</strong> — aucune vibration mécanique dans les moteurs.</p>
+      </div>
+
+      <!-- SECTION 1: INTRO TRIPHASÉ -->
+      <div class="block" id="tri-intro">
+        <h2 class="block-title">1. Présentation du système triphasé</h2>
+        <p>Un réseau triphasé comprend <strong>3 phases</strong> (notées 1,2,3 ou A,B,C ou R,S,T) et un neutre N. On distingue :</p>
+        <div class="formula-box">
+          <div class="formula-sym">⚡</div>
+          <p><strong>Système équilibré direct :</strong> Trois tensions sinusoïdales de même amplitude V, déphasées entre elles de <strong>120° = 2π/3 rad</strong>.</p>
+        </div>
+        <div class="example-box">
+          <div class="example-label">Vecteurs de Fresnel (tensions simples)</div>
+          <div style="text-align:center;margin:1rem 0">
+            <svg viewBox="-180 -160 360 320" width="300" height="260" style="display:inline-block">
+              <!-- Axes -->
+              <line x1="-170" y1="0" x2="170" y2="0" stroke="#444" stroke-width="1"/>
+              <line x1="0" y1="-150" x2="0" y2="150" stroke="#444" stroke-width="1"/>
+              <!-- V1 (0°) -->
+              <line x1="0" y1="0" x2="120" y2="0" stroke="#e8f428" stroke-width="2.5"/>
+              <polygon points="120,0 108,-5 108,5" fill="#e8f428"/>
+              <text x="128" y="5" fill="#e8f428" font-size="13" font-family="Space Mono">V₁</text>
+              <!-- V2 (-120°) -->
+              <line x1="0" y1="0" x2="-60" y2="103.9" stroke="#3af4c8" stroke-width="2.5"/>
+              <polygon points="-60,103.9 -51.5,94.7 -68.5,93.9" fill="#3af4c8"/>
+              <text x="-85" y="118" fill="#3af4c8" font-size="13" font-family="Space Mono">V₂</text>
+              <!-- V3 (+120°) -->
+              <line x1="0" y1="0" x2="-60" y2="-103.9" stroke="#ff5e3a" stroke-width="2.5"/>
+              <polygon points="-60,-103.9 -51.5,-94.7 -68.5,-93.9" fill="#ff5e3a"/>
+              <text x="-85" y="-108" fill="#ff5e3a" font-size="13" font-family="Space Mono">V₃</text>
+              <!-- Angles -->
+              <path d="M 40,0 A 40,40 0 0,0 -20,-34.6" stroke="#888" fill="none" stroke-dasharray="4"/>
+              <text x="10" y="-20" fill="#888" font-size="11">120°</text>
+              <text x="-160" y="-5" fill="#666" font-size="11">Im</text>
+              <text x="155" y="-8" fill="#666" font-size="11">Re</text>
+              <text x="20" y="-145" fill="#666" font-size="11">+</text>
+            </svg>
+          </div>
+          <p style="text-align:center">ΣV⃗ᵢ = 0 &nbsp;→&nbsp; La somme vectorielle est nulle</p>
+        </div>
+
+        <div class="expandable">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span>Équations horaires et représentation complexe</span><span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>Les trois tensions simples s'écrivent :</p>
+            <div style="background:#111;border-radius:6px;padding:1.2rem;margin:.8rem 0;font-family:'Space Mono',monospace;color:#e8f428;line-height:2">
+              v₁(t) = V√2 · sin(ωt)<br>
+              v₂(t) = V√2 · sin(ωt − 2π/3)<br>
+              v₃(t) = V√2 · sin(ωt + 2π/3)
+            </div>
+            <p>En notation complexe (vecteurs de Fresnel) :</p>
+            <div style="background:#111;border-radius:6px;padding:1.2rem;margin:.8rem 0;font-family:'Space Mono',monospace;color:#3af4c8;line-height:2">
+              <u>V</u>₁ = V·e<sup>j·0</sup><br>
+              <u>V</u>₂ = V·e<sup>j(-2π/3)</sup><br>
+              <u>V</u>₃ = V·e<sup>j(+2π/3)</sup>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: TENSIONS COMPOSÉES -->
+      <div class="block" id="tri-tensions">
+        <h2 class="block-title">2. Tensions composées</h2>
+        <p>Les <strong>tensions composées</strong> (ou tensions de ligne) sont les différences entre phases :</p>
+        <div style="background:#111;border-radius:6px;padding:1.2rem;margin:.8rem 0;font-family:'Space Mono',monospace;color:#e8f428;line-height:2.2;font-size:.9rem">
+          <u>U</u>₁₂ = <u>V</u>₁ − <u>V</u>₂ &nbsp;→&nbsp; u₁₂(t) = U√2·sin(ωt + π/6)<br>
+          <u>U</u>₂₃ = <u>V</u>₂ − <u>V</u>₃ &nbsp;→&nbsp; u₂₃(t) = U√2·sin(ωt − π/2)<br>
+          <u>U</u>₃₁ = <u>V</u>₃ − <u>V</u>₁ &nbsp;→&nbsp; u₃₁(t) = U√2·sin(ωt − 7π/6)
+        </div>
+        <div class="formula-box">
+          <div class="formula-sym">√3</div>
+          <div>
+            <p><strong>Relation fondamentale tension composée / simple :</strong></p>
+            <p style="font-size:1.4rem;font-family:'Space Mono',monospace;color:#e8f428">U = √3 · V</p>
+            <p>En France : V = 230 V (simple) → U = 400 V (composée)</p>
+          </div>
+        </div>
+        <div class="tip-box">
+          💡 <strong>Moyen mémo :</strong> Les tensions composées sont en avance de <strong>π/6 = 30°</strong> sur les tensions simples correspondantes, et leur amplitude est multipliée par √3 ≈ 1,732.
+        </div>
+      </div>
+
+      <!-- SECTION 3: RÉCEPTEUR ÉTOILE -->
+      <div class="block" id="tri-recepteur">
+        <h2 class="block-title">3. Récepteur étoile (Y)</h2>
+        <p>Dans un couplage étoile, chaque phase du récepteur est connectée entre une ligne et le neutre.</p>
+
+        <div class="formula-box">
+          <div class="formula-sym">Y</div>
+          <div>
+            <p><strong>Relations courant/tension (étoile) :</strong></p>
+            <div style="font-family:'Space Mono',monospace;line-height:2.2;color:#e8f428">
+              I = J &nbsp;&nbsp;&nbsp;&nbsp;(courant de ligne = courant de phase)<br>
+              V<sub>ph</sub> = V = U/√3 &nbsp;&nbsp;(tension de phase = tension simple)
+            </div>
+          </div>
+        </div>
+
+        <h3 style="color:#3af4c8;margin:1.5rem 0 .8rem">Puissances — récepteur étoile</h3>
+        <div style="display:grid;gap:1rem">
+          <div class="formula-box" style="border-color:#3af4c8">
+            <div class="formula-sym" style="color:#3af4c8">P</div>
+            <div>
+              <p>Puissance active (W) :</p>
+              <p style="font-size:1.2rem;font-family:'Space Mono',monospace;color:#3af4c8">P = 3·V·I·cosφ = √3·U·I·cosφ</p>
+            </div>
+          </div>
+          <div class="formula-box" style="border-color:#ff5e3a">
+            <div class="formula-sym" style="color:#ff5e3a">Q</div>
+            <div>
+              <p>Puissance réactive (VAr) :</p>
+              <p style="font-size:1.2rem;font-family:'Space Mono',monospace;color:#ff5e3a">Q = 3·V·I·sinφ = √3·U·I·sinφ</p>
+            </div>
+          </div>
+          <div class="formula-box">
+            <div class="formula-sym">S</div>
+            <div>
+              <p>Puissance apparente (VA) :</p>
+              <p style="font-size:1.2rem;font-family:'Space Mono',monospace;color:#e8f428">S = 3·V·I = √3·U·I</p>
+              <p>Puissance complexe : <span style="font-family:'Space Mono',monospace;color:#e8f428"><u>S</u> = 3·V²/<u>Z</u>*</span></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-box" style="margin-top:1.2rem">
+          ⚡ <strong>Avantage triphasé :</strong> La puissance instantanée totale p₃φ = 3VI·cos(φ) est <strong>CONSTANTE</strong> (pas de pulsation à 2ω comme en monophasé). Cela explique pourquoi les moteurs triphasés tournent sans vibrations.
+        </div>
+
+        <div class="expandable">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span>Pertes Joule — récepteur étoile résistif (3 résistances r)</span><span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>Pour un récepteur étoile purement résistif (3 résistances r identiques) :</p>
+            <div style="font-family:'Space Mono',monospace;color:#e8f428;background:#111;padding:1rem;border-radius:6px;line-height:2">
+              P_J = 3·r·J² = 3·V²<sub>ph</sub>/r
+            </div>
+            <p style="margin-top:.8rem">Résistance équivalente vue du réseau : <strong>R' = 2r</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 4: RÉCEPTEUR TRIANGLE -->
+      <div class="block" id="tri-triangle">
+        <h2 class="block-title">4. Récepteur triangle (Δ)</h2>
+        <p>Dans un couplage triangle, les phases du récepteur sont connectées directement entre les lignes. Chaque impédance voit la tension composée U.</p>
+
+        <div class="formula-box">
+          <div class="formula-sym">Δ</div>
+          <div>
+            <p><strong>Relations courant/tension (triangle) :</strong></p>
+            <div style="font-family:'Space Mono',monospace;line-height:2.2;color:#e8f428">
+              V<sub>ph</sub> = U &nbsp;&nbsp;&nbsp;&nbsp;(tension de phase = tension composée)<br>
+              I = J·√3 &nbsp;&nbsp;(courant de ligne = √3 × courant de phase)<br>
+              J<sub>k</sub> = U<sub>kl</sub> / Z &nbsp;&nbsp;(courant dans chaque bras)
+            </div>
+          </div>
+        </div>
+
+        <h3 style="color:#3af4c8;margin:1.5rem 0 .8rem">Puissances — récepteur triangle</h3>
+        <div class="formula-box">
+          <div class="formula-sym">⚡</div>
+          <div style="font-family:'Space Mono',monospace;line-height:2.2;color:#e8f428">
+            P = 3·J·U·cosφ = √3·U·I·cosφ (W)<br>
+            Q = 3·J·U·sinφ = √3·U·I·sinφ (VAr)<br>
+            S = 3·J·U = √3·U·I (VA)
+          </div>
+        </div>
+
+        <div class="tip-box">
+          ✅ <strong>Résultat important :</strong> Les formules de puissance <strong>P = √3·U·I·cosφ</strong>, <strong>Q = √3·U·I·sinφ</strong> et <strong>S = √3·U·I</strong> sont <strong>identiques</strong> pour les couplages étoile ET triangle. La différence est dans les relations entre V, U, I et J.
+        </div>
+
+        <div class="expandable">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span>Pertes Joule — récepteur triangle résistif (3 résistances r)</span><span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <div style="font-family:'Space Mono',monospace;color:#e8f428;background:#111;padding:1rem;border-radius:6px;line-height:2">
+              P_J = 3·r·J² = 3·r·(I/√3)² = r·I²
+            </div>
+            <p style="margin-top:.8rem">Résistance équivalente vue du réseau : <strong>R' = (2/3)r</strong></p>
+            <p>On remarque que les pertes Joule en triangle sont <strong>3 fois plus faibles</strong> qu'en étoile pour la même résistance r → d'où l'intérêt du démarrage étoile-triangle des moteurs !</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 5: TABLEAU RÉCAP -->
+      <div class="block" id="tri-resume">
+        <h2 class="block-title">5. Tableau récapitulatif</h2>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+            <thead>
+              <tr style="background:#1a1a2e">
+                <th style="padding:.8rem;border:1px solid #333;text-align:left;color:#888">Grandeur</th>
+                <th style="padding:.8rem;border:1px solid #333;text-align:center;color:#e8f428">Couplage étoile (Y)</th>
+                <th style="padding:.8rem;border:1px solid #333;text-align:center;color:#3af4c8">Couplage triangle (Δ)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">V<sub>ph</sub> (tension de phase)</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">V = U/√3</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#3af4c8">V<sub>ph</sub> = U</td></tr>
+              <tr style="background:#111"><td style="padding:.7rem .8rem;border:1px solid #222">I (courant de ligne) vs J (phase)</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">J = I</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#3af4c8">I = J√3</td></tr>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">Puissance active P</td><td colspan="2" style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">3VI·cosφ = √3·U·I·cosφ</td></tr>
+              <tr style="background:#111"><td style="padding:.7rem .8rem;border:1px solid #222">Puissance réactive Q</td><td colspan="2" style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#ff5e3a">3VI·sinφ = √3·U·I·sinφ</td></tr>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">Puissance apparente S</td><td colspan="2" style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">3VI = √3·U·I</td></tr>
+              <tr style="background:#111"><td style="padding:.7rem .8rem;border:1px solid #222">Puissance complexe <u>S</u></td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">3·V²/<u>Z</u>*</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#3af4c8">3·U²/<u>Z</u>*</td></tr>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">Pertes Joule (charge résistive r)</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">3rI²&nbsp; (R'=2r)</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#3af4c8">rI²&nbsp; (R'=2r/3)</td></tr>
+              <tr style="background:#111"><td style="padding:.7rem .8rem;border:1px solid #222">Déphasage φ</td><td style="padding:.7rem;border:1px solid #222;text-align:center">φ(I₁,V₁)</td><td style="padding:.7rem;border:1px solid #222;text-align:center">φ(J₁,U₁₂) = φ(I₁,V₁)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SECTION 6: BOUCHEROT -->
+      <div class="block" id="tri-boucherot">
+        <h2 class="block-title">6. Théorème de Boucherot</h2>
+        <div class="formula-box">
+          <div class="formula-sym">Σ</div>
+          <div>
+            <p><strong>Théorème de Boucherot :</strong></p>
+            <p>La puissance active <strong>P<sub>tot</sub></strong> d'un système est la <em>somme</em> des puissances actives des éléments qui le constituent. Idem pour la puissance réactive <strong>Q<sub>tot</sub></strong> et la puissance apparente complexe <strong><u>S</u><sub>tot</sub></strong>.</p>
+            <div style="font-family:'Space Mono',monospace;line-height:2.2;color:#e8f428;margin-top:.8rem">
+              P<sub>tot</sub> = ΣPᵢ &nbsp;&nbsp; Q<sub>tot</sub> = ΣQᵢ &nbsp;&nbsp; <u>S</u><sub>tot</sub> = Σ<u>S</u>ᵢ
+            </div>
+          </div>
+        </div>
+        <div class="alert-box">
+          ⚠️ <strong>Attention !</strong> La puissance apparente <em>scalaire</em> S n'est <strong>PAS</strong> additive : S<sub>tot</sub> ≠ ΣSᵢ. On calcule S<sub>tot</sub> = |<u>S</u><sub>tot</sub>| = √(P<sub>tot</sub>² + Q<sub>tot</sub>²).
+        </div>
+        <p style="margin-top:1rem">Application pratique pour un système avec n charges :</p>
+        <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2">
+          P<sub>tot</sub> = P₁ + P₂ + ... + Pₙ<br>
+          Q<sub>tot</sub> = Q₁ + Q₂ + ... + Qₙ<br>
+          S<sub>tot</sub> = √(P<sub>tot</sub>² + Q<sub>tot</sub>²)<br>
+          cosφ<sub>tot</sub> = P<sub>tot</sub>/S<sub>tot</sub>
+        </div>
+      </div>
+
+      <!-- SECTION 7: COMPENSATION -->
+      <div class="block" id="tri-compensation">
+        <h2 class="block-title">7. Compensation de puissance réactive (relèvement du cosφ)</h2>
+        <p>Les charges inductives (moteurs) consomment de la puissance réactive Q > 0, ce qui dégrade le facteur de puissance. On ajoute des condensateurs pour compenser Q.</p>
+
+        <h3 style="color:#3af4c8;margin:1.2rem 0 .8rem">Puissance réactive d'un banc de 3 condensateurs</h3>
+        <div class="formula-box" style="border-color:#3af4c8">
+          <div class="formula-sym" style="color:#3af4c8">C</div>
+          <div style="font-family:'Space Mono',monospace;line-height:2.2;color:#e8f428">
+            Q_c = −3ωCV² &nbsp;&nbsp; (couplage étoile)<br>
+            Q_c = −3ωCU² &nbsp;&nbsp; (couplage triangle)
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;margin-top:1rem">
+          <table style="width:100%;border-collapse:collapse;font-size:.85rem">
+            <thead>
+              <tr style="background:#1a1a2e">
+                <th style="padding:.8rem;border:1px solid #333;text-align:left;color:#888">Situation</th>
+                <th style="padding:.8rem;border:1px solid #333;text-align:center;color:#e8f428">P active</th>
+                <th style="padding:.8rem;border:1px solid #333;text-align:center;color:#ff5e3a">Q réactive</th>
+                <th style="padding:.8rem;border:1px solid #333;text-align:center;color:#888">cosφ</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">Charge seule</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace">P</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#ff5e3a">Q = P·tgφ</td><td style="padding:.7rem;border:1px solid #222;text-align:center">cosφ</td></tr>
+              <tr style="background:#111"><td style="padding:.7rem .8rem;border:1px solid #222">3 condensateurs seuls</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace">0</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#3af4c8">Q_c = −3CωU²</td><td style="padding:.7rem;border:1px solid #222;text-align:center">0</td></tr>
+              <tr><td style="padding:.7rem .8rem;border:1px solid #222">Charge + condensateurs</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace">P</td><td style="padding:.7rem;border:1px solid #222;text-align:center;font-family:'Space Mono',monospace;color:#e8f428">Q' = Q + Q_c = P·tgφ'</td><td style="padding:.7rem;border:1px solid #222;text-align:center;color:#3af4c8">cosφ' &gt; cosφ ✓</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="expandable" style="margin-top:1.2rem">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span>Calcul de la capacité C pour atteindre un cosφ' cible</span><span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p>Pour relever le facteur de puissance de cosφ à cosφ' :</p>
+            <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.5">
+              Q_c = P·(tgφ − tgφ')<br><br>
+              En étoile : C = Q_c / (3ωV²)<br>
+              En triangle : C = Q_c / (3ωU²) = C_étoile / 3
+            </div>
+            <div class="tip-box" style="margin-top:1rem">
+              ℹ️ Le condensateur en <strong>triangle</strong> est 3× plus petit qu'en étoile pour le même effet. On préfère souvent le triangle pour réduire la valeur et le coût des condensateurs.
+            </div>
+          </div>
+        </div>
+
+        <!-- Calculatrice compensation -->
+        <div class="calculator-box" style="margin-top:1.5rem">
+          <div class="calc-title">🔧 Calculatrice — Compensation de puissance réactive</div>
+          <div class="calc-grid">
+            <div class="calc-field"><label>P (kW)</label><input type="number" id="comp-P" value="25" step="0.1"></div>
+            <div class="calc-field"><label>cosφ initial</label><input type="number" id="comp-cosphi1" value="0.7" step="0.01" min="0.1" max="1"></div>
+            <div class="calc-field"><label>cosφ' cible</label><input type="number" id="comp-cosphi2" value="0.92" step="0.01" min="0.1" max="1"></div>
+            <div class="calc-field"><label>U (V) tension composée</label><input type="number" id="comp-U" value="400" step="1"></div>
+            <div class="calc-field"><label>f (Hz)</label><input type="number" id="comp-f" value="50" step="1"></div>
+          </div>
+          <button class="calc-btn" onclick="calcCompensation()">Calculer</button>
+          <div id="comp-result" class="calc-result"></div>
+        </div>
+      </div>
+
+      <!-- SECTION 8: EXERCICES -->
+      <div class="block" id="tri-exercices">
+        <h2 class="block-title">8. Exercices résolus</h2>
+
+        <!-- Exercice 1 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 1 — Charge monophasée (p.54)</div>
+          <p><strong>Circuit :</strong> V = 230 V, f = 50 Hz. L = 20 mH en série avec R₁ = 20 Ω, le tout en parallèle avec R₂ = 10 Ω.</p>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir la solution complète</span><span class="expand-icon">+</span></div>
+            <div class="expand-content">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.85rem">
+                ω = 2π×50 = 314.2 rad/s<br>
+                Z_L = jLω = j×0.02×314.2 = j6.28 Ω<br>
+                Z_branche1 = R₁ + jLω = 20 + j6.28 Ω<br>
+                |Z₁| = √(20² + 6.28²) = √(400+39.4) = 20.97 Ω<br><br>
+                I₁ = V/|Z₁| = 230/20.97 = <span style="color:#3af4c8">10.97 A</span><br>
+                I₂ = V/R₂ = 230/10 = <span style="color:#3af4c8">23 A</span><br><br>
+                Par Boucherot :<br>
+                P = R₁·I₁² + R₂·I₂² = 20×10.97² + 10×23²<br>
+                P = 2408 + 5290 = <span style="color:#3af4c8">7698 W</span><br>
+                Q = Lω·I₁² = 6.28×10.97² = <span style="color:#ff5e3a">756 VAr</span><br>
+                S = √(P²+Q²) = √(7698²+756²) = <span style="color:#3af4c8">7735 VA</span><br>
+                I = S/V = 7735/230 = <span style="color:#3af4c8">33.6 A</span><br>
+                cosφ = P/S = 7698/7735 = <span style="color:#e8f428">0.995</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercice 2 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 2 — Représentation vectorielle (p.55)</div>
+          <p><strong>Circuit :</strong> V = 100 V, f = 50 Hz. En série : j10 Ω (inductif), −j5 Ω (capacitif), 20 Ω (résistif).</p>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir la solution</span><span class="expand-icon">+</span></div>
+            <div class="expand-content">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.82rem">
+                Z = 20 + j10 − j5 = <span style="color:#3af4c8">20 + j5 Ω</span><br>
+                |Z| = √(20²+5²) = √425 ≈ <span style="color:#3af4c8">20.6 Ω</span><br>
+                φ = arctan(5/20) ≈ <span style="color:#3af4c8">14.04°</span> (circuit inductif AR)<br>
+                I = V/|Z| = 100/20.6 ≈ <span style="color:#3af4c8">4.85 A</span><br>
+                v(t) = 100√2 sin(ωt) ; i(t) = 4.85√2 sin(ωt − 14.04°)<br>
+                Loi de maille : <span style="color:#ff5e3a">V = (20+j5)·I</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercice 3 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 3 — Diviseur de courant (p.56)</div>
+          <p>I = 2,5 A. Branche 1 : −j0,002 + 4 Ω. Branche 2 : j40 + 10 Ω.</p>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir la solution</span><span class="expand-icon">+</span></div>
+            <div class="expand-content">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.82rem">
+                Z₁ ≈ 4 Ω (partie capacitive négligeable)<br>
+                Z₂ = 10+j40, |Z₂| ≈ 41.2 Ω<br>
+                Z_eq parallèle : |Z_eq| ≈ <span style="color:#3af4c8">3.89 Ω</span><br>
+                V = I × |Z_eq| = 2.5 × 3.89 ≈ <span style="color:#3af4c8">9.72 V</span><br>
+                I₁ = V/|Z₁| ≈ <span style="color:#3af4c8">2.43 A</span> ; I₂ = V/|Z₂| ≈ <span style="color:#3af4c8">0.236 A</span><br>
+                P = R₁I₁² + R₂I₂² ≈ <span style="color:#3af4c8">24.2 W</span><br>
+                Q = X_L·I₂² ≈ <span style="color:#ff5e3a">+2.23 VAr</span> (inductif dominant)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercice 4 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 4 — Ligne monophasée vs triphasée (p.75–76)</div>
+          <p>Comparaison de deux lignes distribuant la même puissance active P = V²/R sur une distance L.</p>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir les résultats clés</span><span class="expand-icon">+</span></div>
+            <div class="expand-content">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.82rem">
+                <span style="color:#3af4c8">Puissance identique :</span> P_mono = P_tri = V²/R ✓<br>
+                <span style="color:#3af4c8">Volume de cuivre :</span><br>
+                  Vol_mono = 2 fils × L × S = 2LV/(Rδ)<br>
+                  Vol_tri = 3 fils × L × S/3 = LV/(Rδ)<br>
+                  → <span style="color:#3af4c8">Triphasé utilise 2× moins de cuivre !</span><br>
+                <span style="color:#3af4c8">Puissance instantanée :</span><br>
+                  Monophasé : p(t) pulsatoire à 2ω → vibrations<br>
+                  Triphasé : p₃φ = 3VI·cosφ = <span style="color:#3af4c8">CONSTANTE</span> → moteurs sans vibrations<br>
+                <span style="color:#e8f428">✓ Le triphasé : même puissance, 2× moins de cuivre, puissance instantanée constante.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercice 5 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 5 — Atelier triphasé (p.77)</div>
+          <p><strong>Réseau :</strong> 230V/400V, 50Hz. L'atelier comprend :</p>
+          <ul style="margin:.5rem 0 .8rem 1.2rem;line-height:1.8">
+            <li>Luminaires/bureautique : P₁ = 6 kW, cosφ₁ = 1 (fp unitaire)</li>
+            <li>3 machines triphasées : P₂ = 3×5 = 15 kW, cosφ₂ = 0,8 AR</li>
+            <li>3 impédances en triangle : Z = 10 + j15 Ω</li>
+          </ul>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir la solution complète</span><span class="expand-icon">+</span></div>
+            <div class="expand-content">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.82rem">
+                <span style="color:#3af4c8">— Impédances en triangle (Z = 10+j15 Ω) —</span><br>
+                |Z| = √(10²+15²) = √325 = 18.03 Ω<br>
+                J = U/|Z| = 400/18.03 = 22.18 A<br>
+                P_Z = 3×10×22.18² ≈ <span style="color:#3af4c8">14.77 kW</span><br>
+                Q_Z = 3×15×22.18² ≈ <span style="color:#ff5e3a">22.16 kVAr</span><br><br>
+                <span style="color:#3af4c8">— Machines (cosφ=0.8 AR → tgφ=0.75) —</span><br>
+                Q₂ = 15000×0.75 = <span style="color:#ff5e3a">11.25 kVAr</span><br><br>
+                <span style="color:#3af4c8">— Boucherot total —</span><br>
+                P_tot = 6 + 15 + 14.77 = <span style="color:#3af4c8">35.77 kW</span><br>
+                Q_tot = 0 + 11.25 + 22.16 = <span style="color:#ff5e3a">33.41 kVAr</span><br>
+                S_tot = √(35.77²+33.41²) = <span style="color:#e8f428">48.88 kVA</span><br>
+                I = S/(√3·U) = 48880/692.8 = <span style="color:#3af4c8">70.6 A</span><br>
+                cosφ_tot = 35.77/48.88 = <span style="color:#e8f428">0.732</span> → non tolérable (min 0.92)<br><br>
+                <span style="color:#3af4c8">— Condensateurs étoile pour cosφ'=1 —</span><br>
+                C = Q_tot/(3ωV²) = 33410/(3×314.2×230²) = <span style="color:#3af4c8">671 µF</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exercice 6 -->
+        <div class="example-box" style="margin-bottom:1.5rem">
+          <div class="example-label">Exercice 6 — Compensation de puissance réactive (p.78)</div>
+          <p><strong>Charge :</strong> 230V/400V, 50Hz. P = 25 kW, cosφ = 0,7 AR → relèvement à cosφ' = 0,92 AR.</p>
+          <div class="expandable">
+            <div class="expand-header" onclick="toggleExpand(this)"><span>Voir la solution complète</span><span class="expand-icon">+</span></div>
+            <div class="expand-content">
+              <div style="font-family:'Space Mono',monospace;background:#111;padding:1.2rem;border-radius:6px;color:#e8f428;line-height:2.2;font-size:.82rem">
+                φ = arccos(0.7) ≈ 45.57° → tgφ ≈ 1.020<br>
+                φ' = arccos(0.92) ≈ 23.07° → tgφ' ≈ 0.426<br>
+                Q_c = P×(tgφ−tgφ') = 25000×(1.020−0.426) ≈ <span style="color:#3af4c8">14.85 kVAr</span><br><br>
+                <span style="color:#3af4c8">1) Étoile (V = 230 V) :</span><br>
+                C = Q_c/(3ωV²) = 14850/(3×314.2×230²) ≈ <span style="color:#3af4c8">298 µF</span><br><br>
+                <span style="color:#3af4c8">2) Triangle pour cosφ'=0,92 AR (U = 400 V) :</span><br>
+                C' = Q_c/(3ωU²) = 14850/(3×314.2×400²) ≈ <span style="color:#3af4c8">98.5 µF</span><br>
+                <span style="color:#ff5e3a">→ 3× moins que l'étoile : C' = C/3</span><br><br>
+                <span style="color:#3af4c8">3) Triangle pour cosφ''=0,92 AV (sur-compensation) :</span><br>
+                Q_c = P×(tgφ+tgφ') = 25000×1.446 = 36.15 kVAr<br>
+                C'' = 36150/(3×314.2×400²) ≈ <span style="color:#3af4c8">240 µF</span><br><br>
+                <span style="color:#e8f428">✓ Solution préférée : condensateurs en TRIANGLE — même effet avec des condensateurs 3× plus petits (voient la tension U au lieu de V).</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Système déséquilibré -->
+      <div class="block" id="tri-desequilibre">
+        <h2 class="block-title">10. Système triphasé déséquilibré</h2>
+        <div class="tip-box" style="margin-bottom:1.2rem">
+          ⚖️ Un système est <strong>équilibré</strong> si Z₁=Z₂=Z₃ (étoile) ou Z₁₂=Z₂₃=Z₃₁ (triangle). Alors I₁=I₂=I₃ et toutes les formules simplifiées s'appliquent.
+        </div>
+        <p>Un système est <strong>déséquilibré</strong> si les impédances diffèrent d'une phase à l'autre. On revient aux relations générales :</p>
+        <div class="formula-box" style="margin:1rem 0;line-height:2.2;font-size:.9rem">
+          <span style="color:#ff5e3a">Charge étoile déséquilibrée :</span><br>
+          P = V<sub>Z1</sub>·I₁·cosφ₁ + V<sub>Z2</sub>·I₂·cosφ₂ + V<sub>Z3</sub>·I₃·cosφ₃<br>
+          Q = V<sub>Z1</sub>·I₁·sinφ₁ + V<sub>Z2</sub>·I₂·sinφ₂ + V<sub>Z3</sub>·I₃·sinφ₃<br><br>
+          <span style="color:#ff5e3a">Charge triangle déséquilibrée :</span><br>
+          P = U·(J₁₂·cosφ₁₂ + J₂₃·cosφ₂₃ + J₃₁·cosφ₃₁)<br>
+          Q = U·(J₁₂·sinφ₁₂ + J₂₃·sinφ₂₃ + J₃₁·sinφ₃₁)
+        </div>
+        <p>Le théorème de Boucherot (additivité de P et Q) reste toujours applicable, même en système déséquilibré.</p>
+      </div>
+
+      <!-- Synthèse -->
+      <div class="block" id="tri-synthese">
+        <h2 class="block-title">11. Synthèse — Équivalences étoile / triangle</h2>
+        <p>Une charge étoile (Z par phase) est équivalente à une charge triangle (3Z par phase) vue du réseau. Les formules de puissance sont <strong>identiques</strong> dans les deux cas :</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.2rem 0">
+          <div style="background:#1a1a2e;border:1px solid #3af4c840;border-radius:8px;padding:1rem">
+            <div style="color:#3af4c8;font-weight:700;margin-bottom:.7rem">⭐ Étoile équilibrée</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.8rem;line-height:2">
+              V_ph = V = U/√3<br>
+              I = J<br>
+              P = 3·V·I·cosφ<br>
+              Q = 3·V·I·sinφ<br>
+              S = 3·V·I = √3·U·I
+            </div>
+          </div>
+          <div style="background:#1a1a2e;border:1px solid #ff5e3a40;border-radius:8px;padding:1rem">
+            <div style="color:#ff5e3a;font-weight:700;margin-bottom:.7rem">△ Triangle équilibrée</div>
+            <div style="font-family:'Space Mono',monospace;font-size:.8rem;line-height:2">
+              V_ph = U<br>
+              I = J√3<br>
+              P = 3·U·J·cosφ = √3·U·I·cosφ<br>
+              Q = 3·U·J·sinφ = √3·U·I·sinφ<br>
+              S = 3·U·J = √3·U·I
+            </div>
+          </div>
+        </div>
+        <div style="background:#1a1a2e;border-left:4px solid #e8f428;padding:1rem;border-radius:6px;margin-top:1rem">
+          <strong style="color:#e8f428">📐 Règle d'or :</strong> Z<sub>Δ</sub> = 3·Z<sub>Y</sub> pour l'équivalence. Pour les condensateurs de compensation : C<sub>Δ</sub> = C<sub>Y</sub>/3. Le condensateur triangle est 3× plus petit pour le même effet.
+        </div>
+      </div>
+
+      <!-- 12. Approfondissement -->
+      <div class="block" id="tri-approfondissement">
+        <h2 class="block-title">12. Exercice approfondi — dimensionnement d'une compensation</h2>
+        <div class="tip-box" style="margin-bottom:1rem">
+          🎯 Objectif : passer un atelier triphasé de <strong>cosφ = 0,72</strong> à <strong>cosφ = 0,95</strong> à puissance active constante.
+        </div>
+        <p>Données : réseau 400 V, 50 Hz, puissance active totale P = 45 kW. Calculer Q<sub>c</sub> nécessaire puis la capacité par phase en montage <strong>triangle</strong>.</p>
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Correction pas à pas</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>φ₁ = arccos(0,72) → tanφ₁ ≈ 0,964 ; φ₂ = arccos(0,95) → tanφ₂ ≈ 0,329.</p>
+            <p>Q<sub>c</sub> = P·(tanφ₁ − tanφ₂) = 45000×(0,964−0,329) ≈ <strong>28,6 kVAr</strong>.</p>
+            <p>En triangle : Q<sub>c</sub> = 3·ω·C·U² ⇒ C = Q<sub>c</sub> / (3·ω·U²).</p>
+            <p>Avec ω=2π50=314 rad/s et U=400 V :</p>
+            <p>C = 28600 / (3×314×400²) ≈ <strong>190 µF par branche</strong>.</p>
+            <p><strong>Vérification :</strong> Q après compensation = P·tanφ₂ ≈ 14,8 kVAr, cohérent avec cosφ cible 0,95.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- QCM -->
+      <div class="block" id="tri-qcm">
+        <h2 class="block-title">QCM — Systèmes Triphasés</h2>
+        <div id="qcm-triphasé"></div>
+      </div>
+    </main>
+  </div>
+</div>
