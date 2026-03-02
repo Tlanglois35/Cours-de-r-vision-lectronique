@@ -7,7 +7,7 @@ Site web interactif et pédagogique reprenant et enrichissant le cours **"Résea
 
 ## Objectif du projet
 
-Transformer un cours PDF assez dense en une ressource **interactive, claire et complète** pour les étudiants FISA 3 :
+Transformer le cours « Réseau électrique (régime monophasé/triphasé) » en une ressource **interactive, claire et complète** pour les étudiants FISA 3 :
 - Explications détaillées + rappels visuels
 - Calculateurs interactifs (impédances, puissances, AOP, etc.)
 - QCM avec correction et explications
@@ -24,7 +24,7 @@ Transformer un cours PDF assez dense en une ressource **interactive, claire et c
 - **Module 04** → Puissances électriques (P, Q, S, cosφ, compensation)
 - **Module 05** → Méthodologie de résolution
 - **Module 06** → Systèmes triphasés
-- Exercices officiels du PDF (p.54 à p.60+ déjà intégrés ou en cours)
+- Exercices officiels du cours (p.54 à p.60+ déjà intégrés ou en cours)
 
 ## Fonctionnalités phares
 
