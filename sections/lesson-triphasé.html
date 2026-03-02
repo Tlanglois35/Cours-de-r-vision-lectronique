@@ -524,43 +524,6 @@
         </div>
       </div>
 
-      <!-- 12. Approfondissement -->
-      <div class="block" id="tri-approfondissement">
-        <h2 class="block-title">12. Exercice approfondi — dimensionnement d'une compensation</h2>
-        <div class="tip-box" style="margin-bottom:1rem">
-          🎯 Objectif : passer un atelier triphasé de <strong>cosφ = 0,72</strong> à <strong>cosφ = 0,95</strong> à puissance active constante.
-        </div>
-        <p>Données : réseau 400 V, 50 Hz, puissance active totale P = 45 kW. Calculer Q<sub>c</sub> nécessaire puis la capacité par phase en montage <strong>triangle</strong>.</p>
-        <div class="expand-card">
-          <div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Correction pas à pas</span><span class="expand-icon">+</span></div>
-          <div class="expand-content">
-            <p>φ₁ = arccos(0,72) → tanφ₁ ≈ 0,964 ; φ₂ = arccos(0,95) → tanφ₂ ≈ 0,329.</p>
-            <p>Q<sub>c</sub> = P·(tanφ₁ − tanφ₂) = 45000×(0,964−0,329) ≈ <strong>28,6 kVAr</strong>.</p>
-            <p>En triangle : Q<sub>c</sub> = 3·ω·C·U² ⇒ C = Q<sub>c</sub> / (3·ω·U²).</p>
-            <p>Avec ω=2π50=314 rad/s et U=400 V :</p>
-            <p>C = 28600 / (3×314×400²) ≈ <strong>190 µF par branche</strong>.</p>
-            <p><strong>Vérification :</strong> Q après compensation = P·tanφ₂ ≈ 14,8 kVAr, cohérent avec cosφ cible 0,95.</p>
-          </div>
-        </div>
-      </div>
-
-      <!-- 13. Approfondissement -->
-      <div class="block" id="tri-exam2">
-        <h2 class="block-title">13. Exercice approfondi — bilan complet étoile équilibrée</h2>
-        <div class="example-box">
-          <span class="example-label">Données</span>
-          <p>Réseau 400/230 V, charge étoile équilibrée : Z = 18 + j24 Ω par phase.</p>
-          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution</span><span class="expand-icon">+</span></div>
-          <div class="expand-content">
-            <p>|Z|=30 Ω ; cosφ=18/30=0,6 ; sinφ=0,8.</p>
-            <p>Courant de phase (et ligne) : I = V/|Z| = 230/30 = <strong>7,67 A</strong>.</p>
-            <p>P = 3·V·I·cosφ = 3×230×7,67×0,6 ≈ <strong>3,17 kW</strong></p>
-            <p>Q = 3·V·I·sinφ = 3×230×7,67×0,8 ≈ <strong>4,22 kVAr</strong></p>
-            <p>S = 3·V·I ≈ <strong>5,29 kVA</strong> ; vérif : √(P²+Q²) ≈ 5,28 kVA.</p>
-          </div></div>
-        </div>
-      </div>
-
       <!-- QCM -->
       <div class="block" id="tri-qcm">
         <h2 class="block-title">QCM — Systèmes Triphasés</h2>
