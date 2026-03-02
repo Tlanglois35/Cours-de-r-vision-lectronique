@@ -1,0 +1,269 @@
+<div id="lesson-complexes" class="section">
+  <button class="back-btn" onclick="showSection('modules-elec')">← Retour aux modules</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE 01</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active" onclick="scrollTo(0,0)">1.1 Pourquoi les complexes ?</li>
+        <li class="sidebar-item" onclick="scrollToId('c-formes')">1.2 Les 3 formes</li>
+        <li class="sidebar-item" onclick="scrollToId('c-operations')">1.3 Opérations</li>
+        <li class="sidebar-item" onclick="scrollToId('c-valeurs')">1.4 Valeurs remarquables</li>
+        <li class="sidebar-item" onclick="scrollToId('c-conjuge')">1.5 Conjugué</li>
+        <li class="sidebar-item" onclick="scrollToId('c-derivation')">1.6 Dérivation & Intégration</li>
+        <li class="sidebar-item" onclick="scrollToId('c-plan')">1.7 Plan complexe interactif</li>
+        <li class="sidebar-item" onclick="scrollToId('c-exercices')">📐 Exercices</li>
+        <li class="sidebar-item" onclick="scrollToId('c-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+
+      <!-- 1.1 Pourquoi -->
+      <div class="content-block">
+        <div class="section-tag">1.1 — Motivation</div>
+        <h2 class="block-title">Pourquoi les nombres complexes ?</h2>
+        <p class="block-text">En électricité sinusoïdale, résoudre les équations différentielles des circuits RLC est très lourd. Les <strong>nombres complexes</strong> transforment ces équations en simples opérations algébriques.</p>
+        <div class="tip"><div class="tip-icon">💡</div><div class="tip-text"><strong>Idée clé :</strong> Un nombre complexe encode simultanément l'<strong>amplitude</strong> et le <strong>déphasage</strong> d'un signal. Multiplier = changer l'amplitude ET le déphasage en une seule opération.</div></div>
+        <div class="formula-box">
+          <span class="formula-label">Définition fondamentale</span>
+          <div class="formula">j² = −1 &nbsp;→&nbsp; j = √(−1) &nbsp;→&nbsp; 1/j = −j</div>
+          <div class="formula-explain">En maths on note i, mais en électricité j évite la confusion avec le courant i(t). La relation <strong>1/j = −j</strong> est très utile (car j × (−j) = −j² = 1).</div>
+        </div>
+        <div class="alert"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>Convention :</strong> Les lois de Kirchhoff (mailles, nœuds) s'appliquent en valeurs instantanées ou en complexes — mais PAS directement en valeurs efficaces scalaires, sauf si tous les éléments sont en phase.</div></div>
+      </div>
+
+      <!-- 1.2 Les 3 formes -->
+      <div class="content-block" id="c-formes">
+        <div class="section-tag">1.2 — Représentations</div>
+        <h2 class="block-title">Les 3 formes d'un nombre complexe</h2>
+        <div class="steps">
+          <div class="step active" onclick="showForm(0)">Algébrique</div>
+          <div class="step" onclick="showForm(1)">Trigonométrique</div>
+          <div class="step" onclick="showForm(2)">Exponentielle</div>
+        </div>
+        <div id="form-0">
+          <div class="formula-box">
+            <span class="formula-label">Forme algébrique (cartésienne)</span>
+            <div class="formula">Z = a + j·b</div>
+            <div class="formula-explain">a = Re(Z) = partie réelle &nbsp;|&nbsp; b = Im(Z) = partie imaginaire<br>
+            <strong>Conversion :</strong> |Z| = √(a²+b²) &nbsp;|&nbsp; φ = arctan(b/a) si a > 0<br>
+            Si a &lt; 0 : φ = arctan(b/a) + π &nbsp;|&nbsp; Si a = 0, b > 0 : φ = +π/2<br>
+            <strong>Utile pour :</strong> additionner, soustraire.</div>
+          </div>
+          <div class="example-box"><span class="example-label">Exemple</span>
+            <p>Z = 3 − j·2 &nbsp;→&nbsp; |Z| = √(9+4) = √13 ≈ 3,61 &nbsp;|&nbsp; φ = arctan(−2/3) ≈ −33,7°</p>
+          </div>
+        </div>
+        <div id="form-1" style="display:none">
+          <div class="formula-box">
+            <span class="formula-label">Forme trigonométrique</span>
+            <div class="formula">Z = |Z|·(cosφ + j·sinφ)</div>
+            <div class="formula-explain">Projections : a = |Z|·cosφ &nbsp;|&nbsp; b = |Z|·sinφ<br><strong>Utile pour :</strong> visualiser sur le plan complexe (diagramme de Fresnel).</div>
+          </div>
+        </div>
+        <div id="form-2" style="display:none">
+          <div class="formula-box">
+            <span class="formula-label">Forme exponentielle (formule d'Euler)</span>
+            <div class="formula">Z = |Z|·e<sup>jφ</sup> &nbsp;avec&nbsp; e<sup>jφ</sup> = cosφ + j·sinφ</div>
+            <div class="formula-explain">
+              Produit : Z₁·Z₂ = |Z₁||Z₂|·e<sup>j(φ₁+φ₂)</sup> → modules × , arguments + <br>
+              Quotient : Z₁/Z₂ = (|Z₁|/|Z₂|)·e<sup>j(φ₁−φ₂)</sup> → modules ÷ , arguments − <br>
+              <strong>Notation phaseur :</strong> Z = |Z|∠φ (notation courte)<br>
+              <strong>Utile pour :</strong> multiplications, divisions, impédances.
+            </div>
+          </div>
+          <div class="example-box"><span class="example-label">Application électricité</span>
+            <p>Courant I = 5∠−30° A. Impédance Z = 10∠45° Ω.<br>
+            Tension V = Z·I = (10×5)∠(45°+(−30°)) = <strong>50∠15° V</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 1.3 Opérations -->
+      <div class="content-block" id="c-operations">
+        <div class="section-tag">1.3 — Calculs</div>
+        <h2 class="block-title">Opérations sur les complexes</h2>
+        <table class="vtable">
+          <tr><th>Opération</th><th>Méthode</th><th>Exemple</th></tr>
+          <tr><td class="accent">Addition/Soustraction</td><td>Partie réelle + partie réelle, idem imaginaire</td><td class="mono">(3+j2)+(1−j4) = 4−j2</td></tr>
+          <tr><td class="accent">Multiplication</td><td>Développer ou : modules×, arguments+</td><td class="mono">(3+j2)×(1+j) = 1+j5</td></tr>
+          <tr><td class="accent">Division</td><td>Multiplier par conjugué ou : modules÷, arguments−</td><td class="mono">(3+j4)/(1−j) = −½+j7/2</td></tr>
+          <tr><td class="accent">Module</td><td>√(a²+b²)</td><td class="mono">|3+j4| = 5</td></tr>
+          <tr><td class="accent">Argument</td><td>arctan(b/a) selon quadrant</td><td class="mono">arg(3+j4) = 53,1°</td></tr>
+        </table>
+        <div class="formula-box">
+          <span class="formula-label">Multiplication — développement algébrique</span>
+          <div class="formula">Z₁·Z₂ = (a+jb)(c+jd) = (ac−bd) + j(ad+bc)</div>
+          <div class="formula-explain">Car j² = −1, donc jb×jd = j²bd = −bd. Très important à retenir !</div>
+        </div>
+        <div class="formula-box">
+          <span class="formula-label">Division — technique du conjugué</span>
+          <div class="formula">Z₁/Z₂ = (a+jb)/(c+jd) = [(a+jb)(c−jd)] / (c²+d²)</div>
+          <div class="formula-explain">On multiplie numérateur et dénominateur par le conjugué de Z₂ pour obtenir un dénominateur réel.</div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Exercice du cours — Application (p.17-19)</span>
+          <p><strong>Somme :</strong> Z₁ = 3−j2, Z₂ = 5+j4, Z = Z₁+Z₂ = 8+j2 &nbsp;→&nbsp; |Z| = √68 ≈ 8,25, φ ≈ 14°</p>
+          <p style="margin-top:.5rem"><strong>Quotient :</strong> Z₁ = 3−j, Z₂ = 1−j, Z = Z₁/Z₂</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Voir le détail du calcul</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>Z = (3−j)/(1−j) × (1+j)/(1+j) = [(3−j)(1+j)] / (1+1)</p>
+            <p>(3−j)(1+j) = 3+3j−j−j² = 3+2j+1 = 4+2j</p>
+            <p>Z = (4+2j)/2 = <strong>2+j</strong> &nbsp;→&nbsp; |Z| = √5 ≈ 2,24, φ = arctan(1/2) ≈ 26,6°</p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- 1.4 Valeurs remarquables -->
+      <div class="content-block" id="c-valeurs">
+        <div class="section-tag">1.4 — À mémoriser</div>
+        <h2 class="block-title">Valeurs remarquables de e<sup>jφ</sup></h2>
+        <table class="vtable">
+          <tr><th>φ</th><th>e<sup>jφ</sup></th><th>Forme algébrique</th><th>Signification</th></tr>
+          <tr><td class="accent">0</td><td class="mono">e<sup>j·0</sup></td><td class="mono">1 + j·0 = 1</td><td>Axe réel positif</td></tr>
+          <tr><td class="accent">+π/2 = +90°</td><td class="mono">e<sup>jπ/2</sup></td><td class="mono">0 + j·1 = <strong>j</strong></td><td>Axe imaginaire positif</td></tr>
+          <tr><td class="accent">−π/2 = −90°</td><td class="mono">e<sup>−jπ/2</sup></td><td class="mono">0 − j·1 = <strong>−j</strong></td><td>Axe imaginaire négatif</td></tr>
+          <tr><td class="accent">π = 180°</td><td class="mono">e<sup>jπ</sup></td><td class="mono">−1 + j·0 = <strong>−1</strong></td><td>Axe réel négatif</td></tr>
+          <tr><td class="accent">±2π/3 = ±120°</td><td class="mono">e<sup>±j2π/3</sup></td><td class="mono">−½ ± j·√3/2</td><td>Phases triphasées !</td></tr>
+        </table>
+        <div class="tip"><div class="tip-icon">💡</div><div class="tip-text"><strong>Rotation de 90° :</strong> Multiplier par j = rotation de +90°. Multiplier par −j = rotation de −90°. Multiplier par −1 = rotation de 180°. Très utile pour les impédances L et C !</div></div>
+      </div>
+
+      <!-- 1.5 Conjugué -->
+      <div class="content-block" id="c-conjuge">
+        <div class="section-tag">1.5 — Conjugué</div>
+        <h2 class="block-title">Nombre complexe conjugué</h2>
+        <div class="formula-box">
+          <span class="formula-label">Définition et propriétés</span>
+          <div class="formula">Si Z = a + jb = |Z|·e<sup>jφ</sup> &nbsp;alors&nbsp; Z* = a − jb = |Z|·e<sup>−jφ</sup></div>
+          <div class="formula-explain">
+            Propriétés fondamentales :<br>
+            • Z·Z* = |Z|² (nombre réel !) &nbsp;→&nbsp; utile pour calculer |Z|²<br>
+            • Z + Z* = 2·Re(Z) = 2a (nombre réel)<br>
+            • |Z*| = |Z| &nbsp;|&nbsp; arg(Z*) = −arg(Z)<br>
+            <strong>Application clé :</strong> Puissance complexe S = V·I* (le conjugué de I garantit S = P + jQ avec P > 0)
+          </div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Exemple — Puissance complexe</span>
+          <p>V = 230∠0° V, I = 10∠−30° A (charge inductive)</p>
+          <p>I* = 10∠+30°</p>
+          <p>S = V·I* = 230×10·∠(0°+30°) = 2300∠30° VA</p>
+          <p>P = Re(S) = 2300·cos30° = <strong>1992 W</strong> &nbsp;|&nbsp; Q = Im(S) = 2300·sin30° = <strong>1150 VAr</strong></p>
+        </div>
+      </div>
+
+      <!-- 1.6 Dérivation/Intégration -->
+      <div class="content-block" id="c-derivation">
+        <div class="section-tag">1.6 — Opérateurs</div>
+        <h2 class="block-title">Dérivation et Intégration en complexe</h2>
+        <p class="block-text">En régime sinusoïdal, la dérivation et l'intégration temporelles correspondent à de simples multiplications par jω ou 1/jω en notation complexe.</p>
+        <div class="formula-box">
+          <span class="formula-label">Opérateurs fondamentaux (p.21 du cours)</span>
+          <div class="formula">
+            d/dt &nbsp;↔&nbsp; ×jω &nbsp;&nbsp;(dérivation)<br>
+            ∫ dt &nbsp;↔&nbsp; ×1/(jω) = ×(−j/ω) &nbsp;&nbsp;(intégration)
+          </div>
+          <div class="formula-explain">
+            <strong>Démonstration :</strong> Si v(t) = V√2·sin(ωt+φ) → V = V·e<sup>jφ</sup><br>
+            dv/dt = V√2·ω·cos(ωt+φ) = V√2·ω·sin(ωt+φ+π/2)<br>
+            En complexe : jω·V = ω·e<sup>jπ/2</sup>·V·e<sup>jφ</sup> = ωV·e<sup>j(φ+π/2)</sup> ✓<br>
+            <strong>Rappel :</strong> 1/(jω) = −j/ω car 1/j = j/j² = j/(−1) = −j
+          </div>
+        </div>
+        <table class="vtable">
+          <tr><th>Composant</th><th>Loi temporelle</th><th>En complexe</th><th>Impédance Z</th></tr>
+          <tr><td class="accent">Résistance R</td><td class="mono">u = R·i</td><td class="mono">U = R·I</td><td class="mono"><strong>Z = R</strong></td></tr>
+          <tr><td class="accent">Inductance L</td><td class="mono">u = L·di/dt</td><td class="mono">U = jωL·I</td><td class="mono"><strong>Z = jωL = jX<sub>L</sub></strong></td></tr>
+          <tr><td class="accent">Condensateur C</td><td class="mono">i = C·du/dt</td><td class="mono">U = I/(jωC)</td><td class="mono"><strong>Z = 1/(jωC) = −jX<sub>C</sub></strong></td></tr>
+        </table>
+        <div class="tip"><div class="tip-icon">💡</div><div class="tip-text"><strong>Mémo déphasage :</strong> L (inductance) → courant en <strong>retard</strong> de 90° (jωL, positif). C (condensateur) → courant en <strong>avance</strong> de 90° (−j/ωC, négatif). Moyen mnémotechnique : <em>CIVIL</em> = Condensateur : I avant V ; Inductance : V avant I.</div></div>
+      </div>
+
+      <!-- 1.7 Plan complexe interactif -->
+      <div class="content-block" id="c-plan">
+        <div class="section-tag">1.7 — Outil interactif</div>
+        <h2 class="block-title">Plan complexe (Diagramme de Fresnel)</h2>
+        <div class="complex-plane">
+          <div class="plane-controls">
+            <div class="plane-input-group"><label>Partie réelle a</label><input type="number" id="cRe" value="3" step="0.5"></div>
+            <div class="plane-input-group"><label>Partie imaginaire b</label><input type="number" id="cIm" value="4" step="0.5"></div>
+            <button class="plane-btn" onclick="drawComplex()">Tracer →</button>
+          </div>
+          <canvas id="complexCanvas" width="400" height="300"></canvas>
+          <div class="complex-info">
+            <div class="cinfo"><span class="cinfo-label">Module |Z|</span><span class="cinfo-val" id="cMod">5.00</span></div>
+            <div class="cinfo"><span class="cinfo-label">Argument φ</span><span class="cinfo-val" id="cArg">53.1°</span></div>
+            <div class="cinfo"><span class="cinfo-label">Forme exp.</span><span class="cinfo-val" id="cExp">5·e^j53°</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exercices -->
+      <div class="content-block" id="c-exercices">
+        <div class="section-tag">📐 Exercices</div>
+        <h2 class="block-title">Exercices résolus</h2>
+        <div class="example-box" style="margin-bottom:1rem">
+          <span class="example-label">Exercice A — Module et argument</span>
+          <p>Donner module et argument de Z₁ = 3−j2, Z₂ = 5+j4, Z = Z₁+Z₂</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution complète</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>Z = (3+5) + j(−2+4) = 8+j2</p>
+            <p>|Z| = √(64+4) = √68 ≈ <strong>8,25</strong></p>
+            <p>φ = arctan(2/8) = arctan(0,25) ≈ <strong>14°</strong></p>
+          </div></div>
+        </div>
+        <div class="example-box" style="margin-bottom:1rem">
+          <span class="example-label">Exercice B — Produit (p.18)</span>
+          <p>Z₁ = 3−j, Z₂ = 1−j. Calculer Z = Z₁·Z₂</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution complète</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>Z = (3−j)(1−j) = 3−3j−j+j² = 3−4j+(−1) = 2−4j</p>
+            <p>|Z| = √(4+16) = √20 = 2√5 ≈ <strong>4,47</strong></p>
+            <p>φ = arctan(−4/2) = arctan(−2) ≈ <strong>−63,4°</strong></p>
+            <p><em>Vérif. par modules/arguments :</em> |Z₁|=√10, φ₁=arctan(−1/3)≈−18,4° | |Z₂|=√2, φ₂=−45°</p>
+            <p>|Z|=√10×√2=√20 ✓ | φ=−18,4°+(−45°)=−63,4° ✓</p>
+          </div></div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Exercice C — Quotient (p.20)</span>
+          <p>Z₁ = 3−j, Z₂ = 1−j. Calculer Z = Z₁/Z₂</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution complète</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>Z = (3−j)/(1−j) × (1+j)/(1+j)</p>
+            <p>Numérateur : (3−j)(1+j) = 3+3j−j−j² = 3+2j+1 = 4+2j</p>
+            <p>Dénominateur : (1−j)(1+j) = 1−j² = 1+1 = 2</p>
+            <p>Z = (4+2j)/2 = <strong>2+j</strong></p>
+            <p>|Z| = √(4+1) = √5 ≈ 2,24 | φ = arctan(1/2) ≈ 26,6°</p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- 1.8 Approfondissement -->
+      <div class="content-block" id="c-approfondissement">
+        <div class="section-tag">1.8 — Approfondissement</div>
+        <h2 class="block-title">Exercice approfondi — impédance équivalente en forme polaire</h2>
+        <div class="example-box">
+          <span class="example-label">Données</span>
+          <p>Z₁ = 8∠25° Ω et Z₂ = 12∠−40° Ω en série. Calculer Z<sub>eq</sub> sous forme algébrique puis polaire.</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Correction détaillée</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>Z₁ = 8(cos25° + j sin25°) ≈ 7,25 + j3,38</p>
+            <p>Z₂ = 12(cos(−40°) + j sin(−40°)) ≈ 9,19 − j7,71</p>
+            <p>Z<sub>eq</sub> = Z₁ + Z₂ = (7,25+9,19) + j(3,38−7,71) = <strong>16,44 − j4,33 Ω</strong></p>
+            <p>|Z<sub>eq</sub>| = √(16,44² + (−4,33)²) ≈ <strong>17,00 Ω</strong></p>
+            <p>arg(Z<sub>eq</sub>) = arctan(−4,33/16,44) ≈ <strong>−14,7°</strong></p>
+            <p>Donc : <strong>Z<sub>eq</sub> ≈ 17∠−14,7° Ω</strong>.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- QCM -->
+      <div class="content-block" id="c-qcm">
+        <div class="section-tag">📋 QCM</div>
+        <h2 class="block-title">QCM — Nombres Complexes</h2>
+        <div id="qcm-complexes"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
