@@ -1,0 +1,217 @@
+<div id="lesson-signaux" class="section">
+  <button class="back-btn" onclick="showSection('modules-elec')">← Retour aux modules</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE 02</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active" onclick="scrollTo(0,0)">2.1 Signal sinusoïdal</li>
+        <li class="sidebar-item" onclick="scrollToId('s-valeurs')">2.2 Valeurs caractéristiques</li>
+        <li class="sidebar-item" onclick="scrollToId('s-regimes')">2.3 Types de régimes</li>
+        <li class="sidebar-item" onclick="scrollToId('s-continu')">2.4 Régime continu</li>
+        <li class="sidebar-item" onclick="scrollToId('s-phaseur')">2.5 Notation phaseur</li>
+        <li class="sidebar-item" onclick="scrollToId('s-conventions')">2.6 Conventions G/R</li>
+        <li class="sidebar-item" onclick="scrollToId('s-calc')">🧮 Calculatrice</li>
+        <li class="sidebar-item" onclick="scrollToId('s-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+
+      <!-- 2.1 Signal sinusoïdal -->
+      <div class="content-block">
+        <div class="section-tag">2.1 — Définition</div>
+        <h2 class="block-title">Le signal sinusoïdal</h2>
+        <p class="block-text">C'est en régime sinusoïdal que les transformateurs et machines tournantes ont un fonctionnement optimal. C'est le régime de la quasi-totalité de l'énergie électrique distribuée.</p>
+        <div class="formula-box">
+          <span class="formula-label">Expression générale (figure 1.8 du cours)</span>
+          <div class="formula">s(t) = S<sub>max</sub>·sin(ωt + φ) = S<sub>eff</sub>·√2·sin(ωt + φ)</div>
+          <div class="formula-explain">
+            • S<sub>max</sub> = amplitude (valeur crête) en V ou A<br>
+            • ω = 2πf = pulsation en rad/s &nbsp;|&nbsp; f = fréquence en Hz &nbsp;|&nbsp; T = 1/f période en s<br>
+            • φ = phase initiale à t = 0 (en radians ou degrés)<br>
+            • S<sub>eff</sub> = S<sub>max</sub>/√2 = valeur efficace (RMS)
+          </div>
+        </div>
+        <div class="tip"><div class="tip-icon">💡</div><div class="tip-text"><strong>Réseau français :</strong> f = 50 Hz, T = 20 ms, ω = 2π×50 ≈ 314,16 rad/s. Tension nominale : U = 230 V (eff.) → U<sub>max</sub> = 230×√2 ≈ 325 V.</div></div>
+
+        <!-- SVG signal sinusoïdal -->
+        <div class="diagram-container">
+          <span class="diagram-label">Signal sinusoïdal — Paramètres clés</span>
+          <svg viewBox="0 0 500 200" class="diagram">
+            <!-- Axes -->
+            <line x1="30" y1="100" x2="480" y2="100" stroke="#3a3a5a" stroke-width="1.5"/>
+            <line x1="50" y1="15" x2="50" y2="185" stroke="#3a3a5a" stroke-width="1.5"/>
+            <!-- Sinusoïde -->
+            <path d="M 50,100 Q 100,15 160,100 Q 220,185 280,100 Q 340,15 400,100 Q 460,185 480,145" fill="none" stroke="#e8f428" stroke-width="2.5"/>
+            <!-- Smax annotation -->
+            <line x1="160" y1="15" x2="160" y2="100" stroke="#3af4c8" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="165" y="58" fill="#3af4c8" font-size="11" font-family="Space Mono">S_max</text>
+            <!-- Seff annotation -->
+            <line x1="50" y1="29" x2="410" y2="29" stroke="#ff5e3a" stroke-width="1" stroke-dasharray="4,3"/>
+            <text x="415" y="33" fill="#ff5e3a" font-size="10" font-family="Space Mono">S_eff</text>
+            <!-- Période T -->
+            <line x1="50" y1="175" x2="280" y2="175" stroke="#e8f428" stroke-width="1"/>
+            <line x1="50" y1="170" x2="50" y2="180" stroke="#e8f428" stroke-width="1"/>
+            <line x1="280" y1="170" x2="280" y2="180" stroke="#e8f428" stroke-width="1"/>
+            <text x="155" y="193" fill="#e8f428" font-size="11" text-anchor="middle" font-family="Space Mono">T (période)</text>
+            <!-- Labels axes -->
+            <text x="474" y="96" fill="#8888aa" font-size="11" font-family="Space Mono">t</text>
+            <text x="55" y="14" fill="#8888aa" font-size="11" font-family="Space Mono">s(t)</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 2.2 Valeurs caractéristiques -->
+      <div class="content-block" id="s-valeurs">
+        <div class="section-tag">2.2 — Valeurs caractéristiques</div>
+        <h2 class="block-title">Valeur efficace, moyenne, crête</h2>
+        <div class="formula-box">
+          <span class="formula-label">Valeur efficace (RMS — Root Mean Square)</span>
+          <div class="formula">S<sub>eff</sub> = S<sub>max</sub>/√2 ≈ 0,707·S<sub>max</sub></div>
+          <div class="formula-explain">C'est la valeur qui produit le même effet thermique (même puissance dissipée dans une résistance) qu'une grandeur continue de même valeur. Formule générale : S<sub>eff</sub> = √(1/T·∫₀ᵀ s²(t)dt)</div>
+        </div>
+        <div class="formula-box">
+          <span class="formula-label">Valeur moyenne d'un sinusoïde</span>
+          <div class="formula">&lt;s&gt; = 0</div>
+          <div class="formula-explain">Sur une période, autant positif que négatif → moyenne nulle. Pour un signal redressé mono-alternance : &lt;s&gt; = S<sub>max</sub>/π. Double alternance : &lt;s&gt; = 2S<sub>max</sub>/π.</div>
+        </div>
+        <table class="vtable">
+          <tr><th>Grandeur</th><th>Formule</th><th>230V réseau</th><th>Unité</th></tr>
+          <tr><td class="accent">Période T</td><td class="mono">T = 1/f</td><td class="mono">20 ms</td><td>s</td></tr>
+          <tr><td class="accent">Fréquence f</td><td class="mono">f = 1/T</td><td class="mono">50 Hz</td><td>Hz</td></tr>
+          <tr><td class="accent">Pulsation ω</td><td class="mono">ω = 2πf</td><td class="mono">314,16 rad/s</td><td>rad/s</td></tr>
+          <tr><td class="accent">Valeur crête</td><td class="mono">S<sub>max</sub> = S<sub>eff</sub>·√2</td><td class="mono">≈ 325 V</td><td>V</td></tr>
+          <tr><td class="accent">Valeur efficace</td><td class="mono">S<sub>eff</sub> = S<sub>max</sub>/√2</td><td class="mono">230 V</td><td>V</td></tr>
+          <tr><td class="accent">Valeur crête-à-crête</td><td class="mono">2·S<sub>max</sub></td><td class="mono">≈ 650 V</td><td>V</td></tr>
+        </table>
+      </div>
+
+      <!-- 2.3 Types de régimes -->
+      <div class="content-block" id="s-regimes">
+        <div class="section-tag">2.3 — Classification (p.28)</div>
+        <h2 class="block-title">Types de régimes électriques</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0">
+          <div style="background:var(--bg2);border:1px solid var(--accent);border-radius:8px;padding:1rem">
+            <div style="color:var(--accent);font-weight:700;margin-bottom:.5rem">Régime continu (DC)</div>
+            <p style="font-size:.85rem;color:var(--text2)">La grandeur ne change pas de signe ou est constante. Exemples : batteries, alimentations DC.</p>
+            <p style="font-family:'Space Mono',monospace;font-size:.8rem;color:var(--accent);margin-top:.5rem">U = E·R/(R+Rs) — Loi d'Ohm simple</p>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--accent3);border-radius:8px;padding:1rem">
+            <div style="color:var(--accent3);font-weight:700;margin-bottom:.5rem">Régime sinusoïdal (AC)</div>
+            <p style="font-size:.85rem;color:var(--text2)">Grandeur périodique sinusoïdale. Le réseau EDF, la grande majorité de l'énergie électrique.</p>
+            <p style="font-family:'Space Mono',monospace;font-size:.8rem;color:var(--accent3);margin-top:.5rem">Utilise impédances Z = R + jX</p>
+          </div>
+        </div>
+        <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">📌 Régimes transitoires vs régimes entretenus</span><span class="expand-icon">+</span></div>
+        <div class="expand-content">
+          <p><strong>Régimes transitoires :</strong> évolutions lors de modifications brutales (interrupteur, court-circuit). Non répétés, durée courte. Exemple : charge d'un condensateur via résistance (e^{−t/RC}).</p>
+          <p style="margin-top:.5rem"><strong>Régimes entretenus périodiques :</strong> grandeurs qui se répètent à chaque période T. Inclut le sinusoïdal, le carré, le triangulaire, etc.</p>
+          <p style="margin-top:.5rem"><strong>En électrotechnique :</strong> on étudie principalement le régime sinusoïdal établi car c'est le régime de fonctionnement normal des machines et réseaux.</p>
+        </div></div>
+      </div>
+
+      <!-- 2.4 Régime continu -->
+      <div class="content-block" id="s-continu">
+        <div class="section-tag">2.4 — Rappels régime DC</div>
+        <h2 class="block-title">Régime continu — Rappels</h2>
+        <div class="formula-box">
+          <span class="formula-label">Circuit générateur + charge (p.27)</span>
+          <div class="formula">
+            I = E/(R + R<sub>s</sub>) &nbsp;|&nbsp; U = R·I = E·R/(R+R<sub>s</sub>)<br>
+            P<sub>charge</sub> = U·I = R·I² &nbsp;|&nbsp; P<sub>générateur</sub> = E·I
+          </div>
+          <div class="formula-explain">
+            E = force électromotrice (fém) | Rs = résistance interne du générateur | R = charge<br>
+            Cas idéal (Rs = 0) : U = E (tension de sortie = fém)<br>
+            Cas extrême (R → ∞) : I = 0, U = E (circuit ouvert)
+          </div>
+        </div>
+        <div class="alert"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>Adaptation d'impédance :</strong> La puissance transmise à la charge est maximale quand R = Rs (théorème d'adaptation). P<sub>max</sub> = E²/(4Rs). Ce cas est important en électronique de signal mais à éviter en énergie (rendement 50%).</div></div>
+      </div>
+
+      <!-- 2.5 Notation phaseur -->
+      <div class="content-block" id="s-phaseur">
+        <div class="section-tag">2.5 — Représentation complexe</div>
+        <h2 class="block-title">Notation phaseur (p.32-36)</h2>
+        <p class="block-text">Un signal sinusoïdal est entièrement caractérisé par sa <strong>valeur efficace</strong> et sa <strong>phase initiale</strong>. La notation complexe (phaseur) encode ces deux informations.</p>
+        <div class="formula-box">
+          <span class="formula-label">Convention de notation (référence à la tension)</span>
+          <div class="formula">
+            u(t) = U·√2·sin(ωt) → <strong>U = U·e<sup>j·0</sup> = U</strong> (référence φ<sub>u</sub>=0)<br>
+            i(t) = I·√2·sin(ωt−φ) → <strong>I = I·e<sup>−jφ</sup></strong>
+          </div>
+          <div class="formula-explain">
+            En électrotechnique, on prend la tension comme référence de phase (φ<sub>u</sub> = 0).<br>
+            φ = φ<sub>u</sub> − φ<sub>i</sub> = déphasage tension-courant. φ > 0 → charge inductive (courant en retard).<br>
+            <strong>Passage temporel → complexe :</strong> on garde la valeur efficace et la phase initiale.
+          </div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Exemple complet de passage temporel ↔ complexe</span>
+          <p>v(t) = 325·sin(314t) V → V = 230·e<sup>j·0</sup> = <strong>230 V</strong></p>
+          <p>i(t) = 14,1·sin(314t − π/4) A → I = 10·e<sup>−jπ/4</sup> = <strong>10∠−45° A</strong></p>
+          <p style="margin-top:.5rem">Impédance : Z = V/I = 230/10·e<sup>j45°</sup> = <strong>23∠45° = 16,3+j16,3 Ω</strong></p>
+          <p>→ Circuit RL avec R = 16,3 Ω et X<sub>L</sub> = ωL = 16,3 Ω → L = 16,3/314 ≈ 52 mH</p>
+        </div>
+      </div>
+
+      <!-- 2.6 Conventions G/R -->
+      <div class="content-block" id="s-conventions">
+        <div class="section-tag">2.6 — Conventions (p.24-25)</div>
+        <h2 class="block-title">Conventions Générateur & Récepteur</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0">
+          <div style="background:var(--bg2);border:1px solid rgba(232,244,40,.3);border-radius:8px;padding:1.2rem">
+            <div style="color:var(--accent);font-weight:700;margin-bottom:.8rem">⚡ Convention Générateur</div>
+            <p style="font-size:.85rem;color:var(--text2);margin-bottom:.5rem">Courant sort par la borne +. Tension et courant sont <strong>dans le même sens</strong>.</p>
+            <div style="font-family:'Space Mono',monospace;font-size:.8rem;line-height:2;color:var(--accent)">
+              p = u·i<br>
+              p > 0 → fournit de l'énergie<br>
+              p &lt; 0 → reçoit de l'énergie
+            </div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid rgba(58,244,200,.3);border-radius:8px;padding:1.2rem">
+            <div style="color:var(--accent3);font-weight:700;margin-bottom:.8rem">🔌 Convention Récepteur</div>
+            <p style="font-size:.85rem;color:var(--text2);margin-bottom:.5rem">Courant entre par la borne +. Tension et courant sont <strong>en sens opposé</strong>.</p>
+            <div style="font-family:'Space Mono',monospace;font-size:.8rem;line-height:2;color:var(--accent3)">
+              p = u·i<br>
+              p > 0 → reçoit de l'énergie<br>
+              p &lt; 0 → fournit de l'énergie
+            </div>
+          </div>
+        </div>
+        <div class="tip"><div class="tip-icon">💡</div><div class="tip-text"><strong>Récepteurs passifs R, L, C :</strong> toujours en convention récepteur. Le générateur est en convention générateur. En pratique, si on ne précise pas, on suppose convention récepteur pour les composants.</div></div>
+        <div class="formula-box">
+          <span class="formula-label">Relations composants — Convention récepteur (p.26)</span>
+          <div class="formula">
+            Résistance R : u<sub>R</sub> = R·i &nbsp;→&nbsp; Z<sub>R</sub> = R<br>
+            Inductance L : u<sub>L</sub> = L·di/dt &nbsp;→&nbsp; Z<sub>L</sub> = jωL<br>
+            Condensateur C : i<sub>C</sub> = C·du/dt &nbsp;→&nbsp; Z<sub>C</sub> = 1/(jωC)
+          </div>
+        </div>
+      </div>
+
+      <!-- Calculatrice -->
+      <div class="content-block" id="s-calc">
+        <div class="section-tag">🧮 Outil interactif</div>
+        <h2 class="block-title">Calculatrice — Conversions signal</h2>
+        <div class="calc-box">
+          <div class="calc-title">⚡ Convertisseur <span>Signal sinusoïdal</span></div>
+          <div class="calc-grid">
+            <div class="calc-field"><label class="calc-label">Valeur efficace S<sub>eff</sub> (V ou A)</label><input type="number" class="calc-input" id="s-eff" value="230" oninput="calcSignal()"></div>
+            <div class="calc-field"><label class="calc-label">Fréquence f (Hz)</label><input type="number" class="calc-input" id="s-freq" value="50" oninput="calcSignal()"></div>
+            <div class="calc-field"><label class="calc-label">Phase initiale φ (°)</label><input type="number" class="calc-input" id="s-phi" value="0" oninput="calcSignal()"></div>
+          </div>
+          <button class="calc-btn" onclick="calcSignal()">Calculer →</button>
+          <div class="calc-result" id="s-result"></div>
+        </div>
+      </div>
+
+      <!-- QCM -->
+      <div class="content-block" id="s-qcm">
+        <div class="section-tag">📋 QCM</div>
+        <h2 class="block-title">QCM — Signaux Sinusoïdaux</h2>
+        <div id="qcm-signaux"></div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<div id="lesson-aop-bases" class="section">
+  <button class="back-btn" onclick="showSection('modules-aop')">← Retour aux modules AOP</button>
+  
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE AOP-01</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active" onclick="scrollTo(0,0)">1. Les 4 Amplificateurs</li>
+        <li class="sidebar-item" onclick="scrollToId('aop-ideal')">2. Modèle AOP Idéal</li>
+        <li class="sidebar-item" onclick="scrollToId('aop-cr')">3. La Contre-Réaction</li>
+        <li class="sidebar-item" onclick="scrollToId('aop-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+
+    <div class="lesson-content">
+      <div class="content-block">
+        <div class="section-tag" style="color: var(--accent3);">1 — Généralités</div>
+        <h2 class="block-title">Les 4 types d'amplification</h2>
+        <p class="block-text">Un amplificateur se modélise par 3 composants : une impédance d'entrée (R<sub>in</sub>), un gain interne, et une impédance de sortie (R<sub>out</sub>).</p>
+        
+        <table class="vtable">
+          <tr><th>Type</th><th>Gain</th><th>Unité</th><th>Formule</th></tr>
+          <tr><td>Tension</td><td class="accent">A<sub>V</sub></td><td>V/V</td><td class="mono">A<sub>V</sub> = V<sub>S</sub> / V<sub>E</sub> (à vide)</td></tr>
+          <tr><td>Courant</td><td class="accent">A<sub>I</sub></td><td>A/A</td><td class="mono">A<sub>I</sub> = I<sub>S</sub> / I<sub>E</sub> (en court-circuit)</td></tr>
+          <tr><td>Transconductance</td><td class="accent">A<sub>G</sub></td><td>A/V</td><td class="mono">A<sub>G</sub> = I<sub>S</sub> / V<sub>E</sub></td></tr>
+          <tr><td>Transrésistance</td><td class="accent">A<sub>R</sub></td><td>V/A</td><td class="mono">A<sub>R</sub> = V<sub>S</sub> / I<sub>E</sub></td></tr>
+        </table>
+      </div>
+
+      <div class="content-block" id="aop-ideal">
+        <div class="section-tag" style="color: var(--accent3);">2 — Composant</div>
+        <h2 class="block-title">L'AOP Idéal vs Réel</h2>
+        <p class="block-text">L'AOP amplifie la différence de tension entre ses deux entrées : <strong>&epsilon; = e<sup>+</sup> - e<sup>-</sup></strong></p>
+        
+        <div class="formula-box" style="border-color: var(--accent3);">
+          <span class="formula-label" style="color: var(--accent3);">Caractéristiques de l'AOP IDÉAL</span>
+          <div class="formula">
+            R<sub>in</sub> &rarr; &infin; &nbsp; (I<sub>&epsilon;</sub> = 0)<br>
+            R<sub>out</sub> = 0 &Omega;<br>
+            A &rarr; &infin;
+          </div>
+          <div class="formula-explain">
+            Conséquence majeure en régime linéaire : Puisque A est infini et que la tension de sortie S est bornée, <strong>&epsilon; = S/A &rarr; 0</strong>. Donc <strong>e<sup>+</sup> = e<sup>-</sup></strong>.
+          </div>
+        </div>
+        
+        <div class="alert">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-text"><strong>AOP Réel :</strong> En réalité, R<sub>in</sub> > 10<sup>5</sup> &Omega;, R<sub>out</sub> < 200 &Omega; et A > 10<sup>4</sup>. Il existe aussi une tension de décalage (Offset) et une vitesse de balayage limitée (Slew Rate de 0.5 à 20 V/µs).</div>
+        </div>
+      </div>
+
+      <div class="content-block" id="aop-cr">
+        <div class="section-tag" style="color: var(--accent3);">3 — Régimes de fonctionnement</div>
+        <h2 class="block-title">La Contre-Réaction (CR)</h2>
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.2rem 0">
+          <div style="background:var(--bg2);border:1px solid var(--accent3);border-radius:8px;padding:1rem">
+            <div style="color:var(--accent3);font-weight:700;margin-bottom:.7rem">CR Négative (Boucle sur e⁻)</div>
+            <p style="font-size: .85rem; color: var(--text2);">Si S augmente, e⁻ augmente, ce qui fait diminuer &epsilon; et ramène S vers 0. C'est un état d'équilibre.</p>
+            <p style="font-family:'Space Mono',monospace;color:var(--text);margin-top:.5rem;">&rarr; Fonctionnement LINÉAIRE (&epsilon; = 0)</p>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--accent2);border-radius:8px;padding:1rem">
+            <div style="color:var(--accent2);font-weight:700;margin-bottom:.7rem">CR Positive (Boucle sur e⁺)</div>
+            <p style="font-size: .85rem; color: var(--text2);">Si S augmente, e⁺ augmente, ce qui fait augmenter &epsilon; et pousse S encore plus haut. Effet cumulatif.</p>
+            <p style="font-family:'Space Mono',monospace;color:var(--text);margin-top:.5rem;">&rarr; SATURATION (Comparateurs)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-block" id="aop-qcm">
+        <div class="section-tag" style="color: var(--accent3);">📋 Test de connaissance</div>
+        <h2 class="block-title">QCM — Bases de l'AOP</h2>
+        <div id="qcm-aop_bases"></div>
+      </div>
+    </div>
+  </div>
+</div>

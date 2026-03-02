@@ -1,0 +1,164 @@
+<div id="lesson-methodologie" class="section">
+  <button class="back-btn" onclick="showSection('modules-elec')">← Retour aux modules</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE 05</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active" onclick="scrollTo(0,0)">5.1 Méthode générale</li>
+        <li class="sidebar-item" onclick="scrollToId('m-etapes')">5.2 Les 5 étapes</li>
+        <li class="sidebar-item" onclick="scrollToId('m-serie')">5.3 Circuits série</li>
+        <li class="sidebar-item" onclick="scrollToId('m-parallele')">5.4 Circuits parallèle</li>
+        <li class="sidebar-item" onclick="scrollToId('m-mixte')">5.5 Circuits mixtes</li>
+        <li class="sidebar-item" onclick="scrollToId('m-erreurs')">5.6 Erreurs classiques</li>
+        <li class="sidebar-item" onclick="scrollToId('m-synthese')">5.7 Fiche synthèse</li>
+        <li class="sidebar-item" onclick="scrollToId('m-qcm')">📋 QCM Final</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+
+      <!-- 5.1 Méthode -->
+      <div class="content-block">
+        <div class="section-tag">5.1 — Approche (p.44)</div>
+        <h2 class="block-title">Méthodologie pour les circuits AC</h2>
+        <p class="block-text">En régime sinusoïdal, toutes les grandeurs sont traitées en <strong>notation complexe</strong>. La méthode est rigoureuse et systématique — une fois acquise, tout circuit se résout de la même façon.</p>
+        <div class="tip"><div class="tip-icon">💡</div><div class="tip-text"><strong>Règle d'or :</strong> On travaille TOUJOURS en complexes. On ne revient au temporel qu'à la fin si nécessaire. Les lois de Kirchhoff s'appliquent exactement comme en continu, mais avec des nombres complexes.</div></div>
+      </div>
+
+      <!-- 5.2 Les 5 étapes -->
+      <div class="content-block" id="m-etapes">
+        <div class="section-tag">5.2 — Procédure</div>
+        <h2 class="block-title">Les 5 étapes universelles</h2>
+        <div style="display:flex;flex-direction:column;gap:.75rem;margin:1rem 0">
+          <div style="background:var(--bg2);border-left:3px solid var(--accent);padding:1rem;border-radius:0 8px 8px 0">
+            <strong style="color:var(--accent)">1. Calculer ω et les impédances</strong>
+            <p style="font-size:.85rem;color:var(--text2);margin-top:.3rem">ω = 2πf. Puis Z<sub>R</sub>=R, Z<sub>L</sub>=jωL, Z<sub>C</sub>=1/(jωC) = −j/(ωC).</p>
+          </div>
+          <div style="background:var(--bg2);border-left:3px solid var(--accent3);padding:1rem;border-radius:0 8px 8px 0">
+            <strong style="color:var(--accent3)">2. Simplifier le circuit</strong>
+            <p style="font-size:.85rem;color:var(--text2);margin-top:.3rem">Associations série/parallèle. Z<sub>série</sub> = ΣZ<sub>i</sub>. 1/Z<sub>para</sub> = Σ(1/Z<sub>i</sub>).</p>
+          </div>
+          <div style="background:var(--bg2);border-left:3px solid var(--accent2);padding:1rem;border-radius:0 8px 8px 0">
+            <strong style="color:var(--accent2)">3. Appliquer les lois de Kirchhoff</strong>
+            <p style="font-size:.85rem;color:var(--text2);margin-top:.3rem">Loi des mailles et des nœuds en complexes. Résoudre le système d'équations.</p>
+          </div>
+          <div style="background:var(--bg2);border-left:3px solid #a78bfa;padding:1rem;border-radius:0 8px 8px 0">
+            <strong style="color:#a78bfa">4. Calculer les grandeurs demandées</strong>
+            <p style="font-size:.85rem;color:var(--text2);margin-top:.3rem">I = V/Z. U<sub>k</sub> = Z<sub>k</sub>·I. |I| = valeur efficace. arg(I) = phase.</p>
+          </div>
+          <div style="background:var(--bg2);border-left:3px solid #34d399;padding:1rem;border-radius:0 8px 8px 0">
+            <strong style="color:#34d399">5. Calculer P, Q, S si demandé</strong>
+            <p style="font-size:.85rem;color:var(--text2);margin-top:.3rem">Ŝ = V·I*. P = Re(Ŝ) = R·|I|². Q = Im(Ŝ) = X·|I|². Boucherot si plusieurs charges.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5.3 Circuits série -->
+      <div class="content-block" id="m-serie">
+        <div class="section-tag">5.3 — Exemple type</div>
+        <h2 class="block-title">Circuit RL série — Exemple complet</h2>
+        <div class="example-box">
+          <span class="example-label">Données</span>
+          <p>V = 100 V, f = 50 Hz, R = 30 Ω, L = 127 mH</p>
+        </div>
+        <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution pas à pas</span><span class="expand-icon">+</span></div>
+        <div class="expand-content">
+          <p><strong>Étape 1 :</strong> ω = 2π×50 = 314 rad/s</p>
+          <p>Z<sub>L</sub> = jωL = j×314×0,127 = <strong>j40 Ω</strong></p>
+          <p><strong>Étape 2 :</strong> Z<sub>total</sub> = R + Z<sub>L</sub> = 30 + j40 Ω</p>
+          <p>|Z| = √(900+1600) = √2500 = <strong>50 Ω</strong> &nbsp;|&nbsp; φ = arctan(40/30) = <strong>53,1°</strong></p>
+          <p><strong>Étape 3 :</strong> V = 100∠0° V (référence)</p>
+          <p><strong>Étape 4 :</strong> I = V/Z = 100/(50∠53,1°) = <strong>2∠−53,1° A</strong></p>
+          <p>i(t) = 2√2·sin(314t − 53,1°) A</p>
+          <p>U<sub>R</sub> = R·I = 30×2∠−53,1° = <strong>60∠−53,1° V</strong></p>
+          <p>U<sub>L</sub> = Z<sub>L</sub>·I = j40×2∠−53,1° = 40∠90°×2∠−53,1° = <strong>80∠36,9° V</strong></p>
+          <p><strong>Vérif maille :</strong> U<sub>R</sub> + U<sub>L</sub> = (36−j48) + (64+j48) = 100 = V ✓</p>
+          <p><strong>Étape 5 :</strong> P = R·I² = 30×4 = <strong>120 W</strong> &nbsp;|&nbsp; Q = X<sub>L</sub>·I² = 40×4 = <strong>160 VAr</strong></p>
+          <p>S = V·I = 100×2 = <strong>200 VA</strong> &nbsp;|&nbsp; cosφ = 120/200 = <strong>0,6</strong> ✓ (= cos53,1°)</p>
+        </div></div>
+      </div>
+
+      <!-- 5.4 Circuits parallèle -->
+      <div class="content-block" id="m-parallele">
+        <div class="section-tag">5.4 — Exemple type</div>
+        <h2 class="block-title">Circuit RC parallèle — Exemple complet</h2>
+        <div class="example-box">
+          <span class="example-label">Données</span>
+          <p>V = 230 V, f = 50 Hz, R = 23 Ω, C = 100 µF</p>
+        </div>
+        <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution pas à pas</span><span class="expand-icon">+</span></div>
+        <div class="expand-content">
+          <p><strong>Étape 1 :</strong> ω = 314 rad/s. Z<sub>C</sub> = 1/(j×314×100×10⁻⁶) = −j31,85 Ω</p>
+          <p><strong>Étape 2 :</strong> Parallèle → courants s'additionnent</p>
+          <p>I<sub>R</sub> = V/R = 230/23 = <strong>10∠0° A</strong></p>
+          <p>I<sub>C</sub> = V/Z<sub>C</sub> = 230/(−j31,85) = j7,22 A = <strong>7,22∠+90° A</strong></p>
+          <p><strong>Étape 3/4 :</strong> I = I<sub>R</sub> + I<sub>C</sub> = 10 + j7,22</p>
+          <p>|I| = √(100+52,1) = √152,1 ≈ <strong>12,33 A</strong></p>
+          <p>φ = arctan(7,22/10) ≈ <strong>+35,8°</strong> (courant en avance → capacitif)</p>
+          <p><strong>Étape 5 :</strong> P = R·I<sub>R</sub>² = 23×100 = <strong>2300 W</strong></p>
+          <p>Q = −X<sub>C</sub>·I<sub>C</sub>² = −31,85×52,1 ≈ <strong>−1660 VAr</strong></p>
+          <p>S = V·I = 230×12,33 ≈ <strong>2836 VA</strong> &nbsp;|&nbsp; cosφ = 2300/2836 ≈ <strong>0,811</strong></p>
+        </div></div>
+      </div>
+
+      <!-- 5.5 Circuit mixte -->
+      <div class="content-block" id="m-mixte">
+        <div class="section-tag">5.5 — Exercice complet</div>
+        <h2 class="block-title">Circuit RLC mixte série-parallèle</h2>
+        <div class="example-box">
+          <span class="example-label">Exercice avancé</span>
+          <p>V = 100∠0° V, f = 50 Hz. R₁ = 10 Ω en série avec (R₂ = 20 Ω // C = 100 µF)</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution détaillée</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>ω = 314 rad/s. Z<sub>C</sub> = −j31,85 Ω</p>
+            <p>Z<sub>parallèle</sub> = R₂·Z<sub>C</sub>/(R₂+Z<sub>C</sub>) = 20×(−j31,85)/(20−j31,85)</p>
+            <p>|20−j31,85| = √(400+1014) = √1414 = 37,6 Ω</p>
+            <p>Numérateur : |20×(−j31,85)| = 637 ; arg = −90°</p>
+            <p>Z<sub>para</sub> = 637∠−90° / 37,6∠−57,8° = 16,94∠−32,2° = 14,33 − j9,06 Ω</p>
+            <p>Z<sub>total</sub> = R₁ + Z<sub>para</sub> = 10 + 14,33 − j9,06 = 24,33 − j9,06 Ω</p>
+            <p>|Z<sub>total</sub>| = √(592+82) = √674 = 25,96 Ω &nbsp;|&nbsp; φ = arctan(−9,06/24,33) = −20,4°</p>
+            <p>I = 100/25,96 ≈ <strong>3,85 A</strong> &nbsp;|&nbsp; φ<sub>I</sub> = +20,4° (capacitif)</p>
+            <p>P = Re(Z<sub>total</sub>)·I² = 24,33×14,82 ≈ <strong>360 W</strong></p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- 5.6 Erreurs classiques -->
+      <div class="content-block" id="m-erreurs">
+        <div class="section-tag">5.6 — Pièges à éviter</div>
+        <h2 class="block-title">Erreurs classiques à ne pas commettre</h2>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="alert"><div class="alert-icon">❌</div><div class="alert-text"><strong>Additionner des valeurs efficaces scalaires :</strong> U<sub>R</sub> + U<sub>L</sub> ≠ V (sauf si en phase). Il faut toujours additionner les phaseurs (complexes).</div></div>
+          <div class="alert"><div class="alert-icon">❌</div><div class="alert-text"><strong>Additionner des puissances apparentes :</strong> S<sub>tot</sub> ≠ S₁ + S₂. Seulement P et Q sont additives. Calculer S<sub>tot</sub> = √(P<sub>tot</sub>²+Q<sub>tot</sub>²).</div></div>
+          <div class="alert"><div class="alert-icon">❌</div><div class="alert-text"><strong>Oublier le facteur √2 :</strong> La valeur efficace V = V<sub>max</sub>/√2. Ne pas confondre valeur crête et valeur efficace dans les formules de puissance (P = V<sub>eff</sub>·I<sub>eff</sub>·cosφ).</div></div>
+          <div class="alert"><div class="alert-icon">❌</div><div class="alert-text"><strong>Mauvais quadrant pour l'argument :</strong> arctan(b/a) donne toujours un angle entre −90° et +90°. Si a &lt; 0, ajouter ±180° selon le signe de b.</div></div>
+        </div>
+      </div>
+
+      <!-- 5.7 Fiche synthèse -->
+      <div class="content-block" id="m-synthese">
+        <div class="section-tag">5.7 — Résumé</div>
+        <h2 class="block-title">Fiche de synthèse — Tout en un tableau</h2>
+        <table class="vtable">
+          <tr><th>Grandeur</th><th>Formule</th><th>Domaine</th></tr>
+          <tr><td class="accent">Impédance R</td><td class="mono">Z = R</td><td>Réel, φ=0°</td></tr>
+          <tr><td class="accent">Impédance L</td><td class="mono">Z = jωL</td><td>Imaginaire pur +, φ=+90°</td></tr>
+          <tr><td class="accent">Impédance C</td><td class="mono">Z = 1/(jωC) = −j/(ωC)</td><td>Imaginaire pur −, φ=−90°</td></tr>
+          <tr><td class="accent">Courant</td><td class="mono">I = V/Z</td><td>Complexe</td></tr>
+          <tr><td class="accent">Puissance active</td><td class="mono">P = Re(Ŝ) = R|I|²</td><td>W</td></tr>
+          <tr><td class="accent">Puissance réactive</td><td class="mono">Q = Im(Ŝ) = X|I|²</td><td>VAr</td></tr>
+          <tr><td class="accent">Puissance apparente</td><td class="mono">S = |Ŝ| = √(P²+Q²)</td><td>VA</td></tr>
+          <tr><td class="accent">Facteur de puissance</td><td class="mono">cosφ = P/S</td><td>0 à 1</td></tr>
+          <tr><td class="accent">Boucherot</td><td class="mono">P<sub>tot</sub>=ΣP, Q<sub>tot</sub>=ΣQ, S<sub>tot</sub>=√(P²+Q²)</td><td>Additif P et Q seulement</td></tr>
+        </table>
+      </div>
+
+      <!-- QCM -->
+      <div class="content-block" id="m-qcm">
+        <div class="section-tag">📋 QCM Final</div>
+        <h2 class="block-title">QCM — Méthodologie & Synthèse</h2>
+        <div id="qcm-methodologie"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
