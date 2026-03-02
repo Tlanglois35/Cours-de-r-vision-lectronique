@@ -39,3 +39,8 @@ Transformer le cours « Réseau électrique (régime monophasé/triphasé) » en
 1. Clone le repo  
    ```bash
    git clone https://github.com/Tlanglois35/Cours-de-r-vision-lectronique.git
+
+## Lancement rapide
+
+- Ouvrir `index.html` (entrée principale) dans un serveur local.
+- `cours_electrique_v4.html` est conservé pour compatibilité locale.
