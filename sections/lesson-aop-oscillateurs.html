@@ -1,0 +1,468 @@
+<div id="lesson-aop-oscillateurs" class="section">
+  <button class="back-btn" onclick="showSection('modules-aop')">← Retour aux modules AOP</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE AOP-03</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active" onclick="scrollTo(0,0)">1. Comparateur simple</li>
+        <li class="sidebar-item" onclick="scrollToId('aop3-schmitt')">2. Trigger de Schmitt</li>
+        <li class="sidebar-item" onclick="scrollToId('aop3-astable')">3. Astable / relaxation</li>
+        <li class="sidebar-item" onclick="scrollToId('aop3-wien')">4. Oscillateur de Wien</li>
+        <li class="sidebar-item" onclick="scrollToId('aop3-barkhausen')">5. Critère de Barkhausen</li>
+        <li class="sidebar-item" onclick="scrollToId('aop3-calc')">🔢 Calculateur</li>
+        <li class="sidebar-item" onclick="scrollToId('aop3-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+
+      <!-- ── 1. COMPARATEUR SIMPLE ── -->
+      <div class="content-block">
+        <div class="section-tag" style="color:var(--accent3)">1 — Régime non-linéaire</div>
+        <h2 class="block-title">Comparateur Simple</h2>
+        <p class="block-text">L'AOP <strong>sans contre-réaction</strong> (ou avec CR positive) fonctionne en régime non-linéaire. Son gain immense A → ∞ fait basculer la sortie immédiatement à +Vsat ou −Vsat selon le signe de ε.</p>
+
+        <div class="formula-box">
+          <span class="formula-label">Loi de fonctionnement du comparateur</span>
+          <div class="formula">
+            Si Ve &gt; V<sub>ref</sub> : S = +V<sub>sat</sub> ≈ +V<sub>cc</sub> − 1 V<br>
+            Si Ve &lt; V<sub>ref</sub> : S = −V<sub>sat</sub> ≈ −V<sub>cc</sub> + 1 V
+          </div>
+          <div class="formula-explain">
+            Vref est la tension de référence sur e⁺ (ou e⁻). Typiquement Vsat ≈ Vcc − 1 à 1,5 V pour un AOP standard (LM741, TL071…). Les comparateurs dédiés (LM339) ont une sortie collecteur ouvert pouvant atteindre 0/Vcc.
+          </div>
+        </div>
+
+        <div class="diagram-container">
+          <span class="diagram-label">Caractéristique de transfert — Comparateur</span>
+          <svg viewBox="0 0 400 220" class="diagram" xmlns="http://www.w3.org/2000/svg">
+            <!-- Axes -->
+            <line x1="200" y1="20" x2="200" y2="200" stroke="#3a3a5a" stroke-width="2"/>
+            <line x1="30" y1="110" x2="380" y2="110" stroke="#3a3a5a" stroke-width="2"/>
+            <text x="370" y="106" fill="#8888aa" font-size="11" font-family="Space Mono">Ve</text>
+            <text x="205" y="18" fill="#8888aa" font-size="11" font-family="Space Mono">S</text>
+            <!-- Vref marker -->
+            <line x1="200" y1="105" x2="200" y2="115" stroke="#e8f428" stroke-width="1.5"/>
+            <text x="196" y="128" fill="#e8f428" font-size="10" font-family="Space Mono" text-anchor="middle">Vref</text>
+            <!-- +Vsat line -->
+            <line x1="30" y1="40" x2="200" y2="40" stroke="#2a2a3a" stroke-width="1" stroke-dasharray="4,4"/>
+            <text x="35" y="35" fill="#8888aa" font-size="10" font-family="Space Mono">+Vsat</text>
+            <!-- -Vsat line -->
+            <line x1="200" y1="180" x2="380" y2="180" stroke="#2a2a3a" stroke-width="1" stroke-dasharray="4,4"/>
+            <text x="305" y="195" fill="#8888aa" font-size="10" font-family="Space Mono">−Vsat</text>
+            <!-- Caractéristique -->
+            <polyline points="30,180 200,180 200,40 380,40" fill="none" stroke="#3af4c8" stroke-width="3"/>
+            <!-- Transition verticale -->
+            <line x1="200" y1="40" x2="200" y2="180" stroke="#3af4c8" stroke-width="3"/>
+            <!-- Label -->
+            <text x="280" y="55" fill="#3af4c8" font-size="11" font-family="Space Mono">S=+Vsat</text>
+            <text x="50" y="170" fill="#3af4c8" font-size="11" font-family="Space Mono">S=−Vsat</text>
+          </svg>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Application — Détecteur de passage par zéro</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.75rem">Vref = 0 V (e⁺ à la masse). Ve = signal sinusoïdal. S bascule entre +Vsat et −Vsat à chaque passage par zéro → signal carré de même fréquence.</p>
+          <p style="color:var(--text2);font-size:.9rem">Utilisé pour : mesure de fréquence, synchronisation de phase, conversion sinus → carré.</p>
+        </div>
+
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text"><strong>Problème du comparateur simple :</strong> Si Ve est bruité autour de Vref, la sortie commute de façon anarchique (claquements multiples). Solution : ajouter une hystérésis → Trigger de Schmitt.</div>
+        </div>
+      </div>
+
+      <!-- ── 2. TRIGGER DE SCHMITT ── -->
+      <div class="content-block" id="aop3-schmitt">
+        <div class="section-tag" style="color:var(--accent3)">2 — Hystérésis & robustesse</div>
+        <h2 class="block-title">Trigger de Schmitt (Comparateur à Hystérésis)</h2>
+        <p class="block-text">CR positive sur e⁺ : la tension de référence change selon l'état de sortie. Cela crée deux seuils distincts V⁺ et V⁻ — la sortie ne commute que si Ve franchit ces seuils, rendant le système <strong>insensible au bruit</strong>.</p>
+
+        <div class="diagram-container">
+          <span class="diagram-label">Caractéristique avec hystérésis — Trigger de Schmitt</span>
+          <svg viewBox="0 0 400 240" class="diagram" xmlns="http://www.w3.org/2000/svg">
+            <!-- Axes -->
+            <line x1="200" y1="20" x2="200" y2="215" stroke="#3a3a5a" stroke-width="1.5"/>
+            <line x1="30" y1="120" x2="380" y2="120" stroke="#3a3a5a" stroke-width="1.5"/>
+            <text x="370" y="116" fill="#8888aa" font-size="11" font-family="Space Mono">Ve</text>
+            <text x="206" y="18" fill="#8888aa" font-size="11" font-family="Space Mono">S</text>
+            <!-- Seuils -->
+            <line x1="260" y1="115" x2="260" y2="125" stroke="#e8f428" stroke-width="1.5"/>
+            <text x="256" y="138" fill="#e8f428" font-size="10" font-family="Space Mono" text-anchor="middle">V⁺</text>
+            <line x1="140" y1="115" x2="140" y2="125" stroke="#ff5e3a" stroke-width="1.5"/>
+            <text x="136" y="138" fill="#ff5e3a" font-size="10" font-family="Space Mono" text-anchor="middle">V⁻</text>
+            <!-- Hystérésis annotation -->
+            <line x1="140" y1="145" x2="260" y2="145" stroke="#3af4c8" stroke-width="1" stroke-dasharray="3,3"/>
+            <text x="200" y="158" fill="#3af4c8" font-size="10" text-anchor="middle" font-family="Space Mono">← ΔVH →</text>
+            <!-- Vsat levels -->
+            <line x1="30" y1="50" x2="380" y2="50" stroke="#2a2a3a" stroke-width="1" stroke-dasharray="4,4"/>
+            <text x="35" y="45" fill="#8888aa" font-size="10" font-family="Space Mono">+Vsat</text>
+            <line x1="30" y1="190" x2="380" y2="190" stroke="#2a2a3a" stroke-width="1" stroke-dasharray="4,4"/>
+            <text x="310" y="205" fill="#8888aa" font-size="10" font-family="Space Mono">−Vsat</text>
+            <!-- Courbe hystérésis (boucle) -->
+            <!-- Chemin montant : de gauche à V+ puis bascule -->
+            <polyline points="30,190 260,190 260,50 380,50" fill="none" stroke="#e8f428" stroke-width="2.5"/>
+            <!-- Chemin descendant : de droite à V- puis bascule -->
+            <polyline points="380,190 140,190 140,50 30,50" fill="none" stroke="#ff5e3a" stroke-width="2.5" stroke-dasharray="6,3"/>
+            <!-- Flèches direction -->
+            <polygon points="310,190 296,184 296,196" fill="#e8f428"/>
+            <polygon points="80,50 94,44 94,56" fill="#ff5e3a"/>
+            <!-- Légende -->
+            <text x="35" y="175" fill="#e8f428" font-size="9" font-family="Space Mono">Ve montant →</text>
+            <text x="35" y="65" fill="#ff5e3a" font-size="9" font-family="Space Mono">← Ve descendant</text>
+          </svg>
+        </div>
+
+        <div class="formula-box">
+          <span class="formula-label">Formules — Trigger de Schmitt non-inverseur (Vref = 0)</span>
+          <div class="formula">
+            V⁺ = +V<sub>sat</sub> × R₁/(R₁ + R₂) &nbsp;(seuil haut)<br>
+            V⁻ = −V<sub>sat</sub> × R₁/(R₁ + R₂) &nbsp;(seuil bas)<br>
+            ΔV<sub>H</sub> = V⁺ − V⁻ = 2V<sub>sat</sub> × R₁/(R₁ + R₂)
+          </div>
+          <div class="formula-explain">
+            Quand S = +Vsat : e⁺ = Vsat × R₁/(R₁+R₂) = V⁺. La sortie bascule à −Vsat uniquement si Ve > V⁺.<br>
+            Quand S = −Vsat : e⁺ = −Vsat × R₁/(R₁+R₂) = V⁻. La sortie bascule à +Vsat uniquement si Ve &lt; V⁻.<br>
+            <strong>La largeur d'hystérésis ΔVH doit être supérieure à l'amplitude du bruit</strong>.
+          </div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Exemple — Détecteur de seuil robuste</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.75rem">Vsat = ±12 V, R₁ = 10 kΩ, R₂ = 100 kΩ. Bruit sur Ve ≈ 500 mV crête.</p>
+          <div class="formula" style="font-size:.85rem">
+            V⁺ = 12 × 10/(10+100) = <span style="color:var(--accent)">1,09 V</span><br>
+            V⁻ = −12 × 10/110 = <span style="color:var(--accent2)">−1,09 V</span><br>
+            ΔVH = 2,18 V &gt; 500 mV bruit → <span style="color:var(--accent3)">Aucune commutation intempestive ✓</span>
+          </div>
+        </div>
+
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">📐 Trigger de Schmitt inverseur — formules et exercice</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p><strong>Montage :</strong> Ve sur e⁻ (inverseur), R₁ entre sortie et e⁺, R₂ entre e⁺ et masse (ou Vref).</p>
+            <p style="margin-top:.5rem"><strong>Formules :</strong> V⁺ = Vref × (1 + R₁/R₂) − S × R₁/R₂</p>
+            <p>Quand S = +Vsat : V⁺ = Vref + (Vref − Vsat) × R₁/R₂</p>
+            <p style="margin-top:.5rem"><strong>Exercice :</strong> Vsat = 13 V, Vref = 0 V, R₁ = 47 kΩ, R₂ = 10 kΩ.</p>
+            <p>V⁺ = 0 − 13 × 47/10 = −61,1 V → limité à −Vsat → V⁻ = 13 × 47/10 … recalcul avec les bonnes bornes :</p>
+            <p>Seuils : ±Vsat × R₂/(R₁+R₂) = ±13 × 10/57 = <strong>±2,28 V</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 3. ASTABLE ── -->
+      <div class="content-block" id="aop3-astable">
+        <div class="section-tag" style="color:var(--accent3)">3 — Génération de signaux</div>
+        <h2 class="block-title">Bascule Astable (Oscillateur à Relaxation)</h2>
+        <p class="block-text">Combinaison d'un trigger de Schmitt et d'un condensateur qui se charge/décharge en CR négative. Sans signal d'entrée, l'AOP <strong>oscille spontanément</strong> — c'est un générateur de signal carré.</p>
+
+        <div class="diagram-container">
+          <span class="diagram-label">Schéma — Astable à AOP</span>
+          <svg viewBox="0 0 500 240" class="diagram" xmlns="http://www.w3.org/2000/svg">
+            <!-- AOP -->
+            <polygon points="200,80 200,180 300,130" fill="none" stroke="#3af4c8" stroke-width="2"/>
+            <text x="208" y="133" fill="#ff5e3a" font-size="13" font-family="Space Mono">−</text>
+            <text x="208" y="105" fill="#3af4c8" font-size="13" font-family="Space Mono">+</text>
+            <!-- Sortie S -->
+            <line x1="300" y1="130" x2="420" y2="130" stroke="#8888aa" stroke-width="1.5"/>
+            <text x="424" y="134" fill="#e8f428" font-size="12" font-family="Space Mono">S</text>
+            <!-- RC en contre-réaction négative (sur e-) -->
+            <line x1="175" y1="145" x2="80" y2="145" stroke="#8888aa" stroke-width="1.5"/>
+            <rect x="80" y="133" width="50" height="24" rx="4" fill="none" stroke="#e8f428" stroke-width="1.5"/>
+            <text x="105" y="127" fill="#e8f428" font-size="11" text-anchor="middle" font-family="Space Mono">R</text>
+            <line x1="130" y1="145" x2="165" y2="145" stroke="#8888aa" stroke-width="1.5"/>
+            <!-- Condensateur vers masse -->
+            <line x1="175" y1="125" x2="175" y2="145" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="163" y1="125" x2="187" y2="125" stroke="#ff5e3a" stroke-width="2.5"/>
+            <line x1="163" y1="118" x2="187" y2="118" stroke="#ff5e3a" stroke-width="2.5"/>
+            <line x1="175" y1="110" x2="175" y2="118" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="175" y1="125" x2="175" y2="155" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="159" y1="155" x2="191" y2="155" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="164" y1="160" x2="186" y2="160" stroke="#8888aa" stroke-width="1"/>
+            <line x1="169" y1="165" x2="181" y2="165" stroke="#8888aa" stroke-width=".7"/>
+            <text x="175" y="108" fill="#ff5e3a" font-size="10" text-anchor="middle" font-family="Space Mono">C</text>
+            <!-- CR positive (R1, R2 sur e+) -->
+            <line x1="340" y1="130" x2="340" y2="60" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="340" y1="60" x2="165" y2="60" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="165" y1="60" x2="165" y2="97" stroke="#8888aa" stroke-width="1.5"/>
+            <rect x="190" y="48" width="50" height="24" rx="4" fill="none" stroke="#ff5e3a" stroke-width="1.5"/>
+            <text x="215" y="44" fill="#ff5e3a" font-size="11" text-anchor="middle" font-family="Space Mono">R₂</text>
+            <rect x="248" y="48" width="50" height="24" rx="4" fill="none" stroke="#ff5e3a" stroke-width="1.5"/>
+            <text x="273" y="44" fill="#ff5e3a" font-size="11" text-anchor="middle" font-family="Space Mono">R₁</text>
+            <line x1="165" y1="97" x2="200" y2="97" stroke="#8888aa" stroke-width="1.5"/>
+            <circle cx="340" cy="130" r="3" fill="#e8f428"/>
+            <!-- Labels -->
+            <text x="52" y="140" fill="#3af4c8" font-size="10" font-family="Space Mono">V_C</text>
+          </svg>
+        </div>
+
+        <div class="formula-box">
+          <span class="formula-label">Formule de la période d'oscillation</span>
+          <div class="formula">
+            β = R₂/(R₁ + R₂) &nbsp;(coefficient de réinjection)<br>
+            T = 2RC × ln((1+β)/(1−β))<br>
+            <span style="font-size:.85rem">Cas particulier R₁ = R₂ (β = 0,5) : T = 2RC × ln(3) ≈ <strong>2,2 RC</strong></span>
+          </div>
+          <div class="formula-explain">
+            Le condensateur se charge vers +Vsat à travers R, jusqu'au seuil V⁺ = β·Vsat. Alors S bascule à −Vsat, et C se décharge vers −Vsat jusqu'au seuil V⁻ = −β·Vsat. Et ainsi de suite.<br>
+            Rapport cyclique : α = 0,5 (signal carré symétrique) si R₁ = R₂.
+          </div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Exercice résolu — Générer 1 kHz</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.75rem">On veut f = 1 kHz avec R₁ = R₂ (β = 0,5). Choisir R = 10 kΩ. Trouver C.</p>
+          <div class="formula" style="font-size:.85rem">
+            T = 1/f = 1 ms<br>
+            T = 2RC × ln(3) = 2 × 10k × C × 1,099<br>
+            C = T / (2 × R × ln3) = 1×10⁻³ / (2 × 10⁴ × 1,099) = <span style="color:var(--accent3)">45,5 nF ≈ 47 nF</span> (valeur normalisée)
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 4. OSCILLATEUR DE WIEN ── -->
+      <div class="content-block" id="aop3-wien">
+        <div class="section-tag" style="color:var(--accent3)">4 — Oscillateur sinusoïdal</div>
+        <h2 class="block-title">Oscillateur de Wien</h2>
+        <p class="block-text">Génère un signal <strong>sinusoïdal</strong> de faible distorsion. Utilise un réseau RC sélectif (pont de Wien) en CR positive et un amplificateur non-inverseur en CR négative pour maintenir les oscillations.</p>
+
+        <div class="formula-box">
+          <span class="formula-label">Fréquence d'oscillation et condition de gain</span>
+          <div class="formula">
+            f₀ = 1/(2πRC)<br>
+            Gain requis : A<sub>v</sub> = 1 + R<sub>f</sub>/R₁ = 3
+          </div>
+          <div class="formula-explain">
+            À f = f₀, le pont de Wien a un déphasage nul et une atténuation de 1/3.<br>
+            Pour que la boucle ait un gain de boucle = 1 (condition d'oscillation stable), il faut Av = 3.<br>
+            Donc : Rf/R₁ = 2 → Rf = 2R₁ (typiquement R₁ = 10 kΩ, Rf = 22 kΩ avec NTC pour stabilisation).<br>
+            En pratique, Av légèrement > 3 pour démarrer, puis régulé par une résistance NTC.
+          </div>
+        </div>
+
+        <div class="diagram-container">
+          <span class="diagram-label">Pont de Wien — sélecteur de fréquence</span>
+          <svg viewBox="0 0 400 180" class="diagram" xmlns="http://www.w3.org/2000/svg">
+            <!-- Représentation pont de Wien simplifié -->
+            <!-- Branche série RC (haut) -->
+            <line x1="30" y1="90" x2="80" y2="90" stroke="#8888aa" stroke-width="1.5"/>
+            <rect x="80" y="78" width="50" height="24" rx="4" fill="none" stroke="#e8f428" stroke-width="1.5"/>
+            <text x="105" y="73" fill="#e8f428" font-size="11" text-anchor="middle" font-family="Space Mono">R</text>
+            <line x1="130" y1="90" x2="155" y2="90" stroke="#8888aa" stroke-width="1.5"/>
+            <!-- Condo série -->
+            <line x1="155" y1="82" x2="155" y2="98" stroke="#ff5e3a" stroke-width="2.5"/>
+            <line x1="165" y1="82" x2="165" y2="98" stroke="#ff5e3a" stroke-width="2.5"/>
+            <line x1="165" y1="90" x2="200" y2="90" stroke="#8888aa" stroke-width="1.5"/>
+            <text x="160" y="73" fill="#ff5e3a" font-size="11" text-anchor="middle" font-family="Space Mono">C</text>
+            <!-- Nœud sortie -->
+            <circle cx="200" cy="90" r="3" fill="#e8f428"/>
+            <text x="210" y="94" fill="#e8f428" font-size="10" font-family="Space Mono">vers e⁺</text>
+            <!-- Branche parallèle RC (bas) -->
+            <line x1="200" y1="90" x2="200" y2="140" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="200" y1="140" x2="165" y2="140" stroke="#8888aa" stroke-width="1.5"/>
+            <!-- R parallèle -->
+            <rect x="105" y="128" width="60" height="24" rx="4" fill="none" stroke="#e8f428" stroke-width="1.5"/>
+            <text x="135" y="123" fill="#e8f428" font-size="11" text-anchor="middle" font-family="Space Mono">R</text>
+            <line x1="105" y1="140" x2="80" y2="140" stroke="#8888aa" stroke-width="1.5"/>
+            <!-- C parallèle -->
+            <line x1="80" y1="128" x2="80" y2="152" stroke="#ff5e3a" stroke-width="2.5"/>
+            <line x1="70" y1="128" x2="70" y2="152" stroke="#ff5e3a" stroke-width="2.5"/>
+            <text x="75" y="123" fill="#ff5e3a" font-size="11" text-anchor="middle" font-family="Space Mono">C</text>
+            <line x1="70" y1="140" x2="30" y2="140" stroke="#8888aa" stroke-width="1.5"/>
+            <!-- Entrée/sortie labels -->
+            <text x="10" y="94" fill="#3af4c8" font-size="10" font-family="Space Mono">Ve</text>
+            <line x1="30" y1="90" x2="30" y2="140" stroke="#8888aa" stroke-width="1.5"/>
+            <!-- masse -->
+            <line x1="30" y1="155" x2="200" y2="155" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="82" y1="160" x2="148" y2="160" stroke="#8888aa" stroke-width="1"/>
+            <line x1="95" y1="165" x2="135" y2="165" stroke="#8888aa" stroke-width=".7"/>
+            <!-- Annotation à f0 -->
+            <text x="220" y="145" fill="#3af4c8" font-size="10" font-family="Space Mono">À f₀ : φ=0°</text>
+            <text x="220" y="160" fill="#3af4c8" font-size="10" font-family="Space Mono">|H|=1/3</text>
+          </svg>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Exercice résolu — Oscillateur 440 Hz (La musical)</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.75rem">Concevoir un oscillateur de Wien à 440 Hz. Choisir C = 10 nF.</p>
+          <div class="formula" style="font-size:.85rem">
+            f₀ = 1/(2πRC) → R = 1/(2π × f₀ × C)<br>
+            R = 1/(2π × 440 × 10×10⁻⁹) = 1/(2,765×10⁻⁵) = <span style="color:var(--accent3)">36,2 kΩ → 36 kΩ</span><br>
+            Gain : Rf = 2R₁. Choisir R₁ = 10 kΩ, Rf = 22 kΩ (E24)<br>
+            Av réel = 1 + 22/10 = 3,2 → oscillations démarrent mais amplitude peut saturer.<br>
+            → Ajouter NTC (CTP100Ω) en // avec R₁ pour autoréguler le gain.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 5. CRITÈRE DE BARKHAUSEN ── -->
+      <div class="content-block" id="aop3-barkhausen">
+        <div class="section-tag" style="color:var(--accent3)">5 — Théorie des oscillateurs</div>
+        <h2 class="block-title">Critère de Barkhausen</h2>
+        <p class="block-text">Condition nécessaire et suffisante pour qu'un système bouclé oscille de façon stable à une fréquence f₀ unique. S'applique à tout oscillateur linéaire (Wien, LC, quartz…).</p>
+
+        <div class="formula-box">
+          <span class="formula-label">Critère de Barkhausen (boucle ouverte)</span>
+          <div class="formula">
+            |A(jω₀) × β(jω₀)| = 1<br>
+            arg[A(jω₀) × β(jω₀)] = 0° [2π]
+          </div>
+          <div class="formula-explain">
+            A(jω) = gain de l'amplificateur en boucle ouverte.<br>
+            β(jω) = fonction de transfert du réseau de contre-réaction.<br>
+            <strong>Condition 1 :</strong> Le module du gain de boucle doit être exactement 1 à f₀.<br>
+            <strong>Condition 2 :</strong> Le déphasage total de la boucle doit être 0° (ou multiple de 360°).<br>
+            Si |Aβ| > 1 → oscillations croissantes (saturation). Si |Aβ| &lt; 1 → oscillations amorties.
+          </div>
+        </div>
+
+        <table class="vtable">
+          <tr><th>Oscillateur</th><th>Réseau β</th><th>f₀</th><th>Condition gain</th></tr>
+          <tr>
+            <td class="accent">Wien</td>
+            <td class="mono">Pont RC</td>
+            <td class="mono">1/(2πRC)</td>
+            <td>Av = 3 (Rf = 2R₁)</td>
+          </tr>
+          <tr>
+            <td class="accent">LC (Colpitts)</td>
+            <td class="mono">Diviseur LC</td>
+            <td class="mono">1/(2π√LC)</td>
+            <td>Av = C₂/C₁</td>
+          </tr>
+          <tr>
+            <td class="accent">Quartz</td>
+            <td class="mono">Résonateur quartz</td>
+            <td class="mono">f_série quartz</td>
+            <td>Très stable (Q > 10⁵)</td>
+          </tr>
+          <tr>
+            <td class="accent">Astable</td>
+            <td class="mono">RC + seuils</td>
+            <td class="mono">1/(2,2RC) si β=0,5</td>
+            <td>Non-linéaire (Vsat)</td>
+          </tr>
+        </table>
+
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text"><strong>Démarrage des oscillations :</strong> En pratique, on conçoit |Aβ| légèrement supérieur à 1 au démarrage pour que les oscillations croissent. Un élément non-linéaire (NTC, diode, limiteur) stabilise ensuite l'amplitude en réduisant le gain quand le signal est trop grand.</div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Exercice résolu — Vérifier le critère pour Wien à 1 kHz</span>
+          <div class="formula" style="font-size:.85rem">
+            R = 15,9 kΩ, C = 10 nF : f₀ = 1/(2π×15,9k×10n) = <span style="color:var(--accent3)">1 kHz ✓</span><br>
+            À f₀ : β(jω₀) = 1/3 ∠0°<br>
+            Av = 3 → A(jω₀)×β(jω₀) = 3 × 1/3 = <span style="color:var(--accent3)">1 ∠0° ✓</span><br>
+            Les deux critères sont satisfaits → oscillations stables à 1 kHz.
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CALCULATEUR AOP-03 ── -->
+      <div class="content-block" id="aop3-calc">
+        <div class="section-tag" style="color:var(--accent3)">🔢 Outil interactif</div>
+        <h2 class="block-title">Calculateur — Oscillateurs & Comparateurs</h2>
+
+        <div class="calc-box">
+          <div class="calc-title">⚡ Calculateur <span>AOP-03</span></div>
+
+          <div style="margin-bottom:1.2rem">
+            <label style="font-size:.8rem;color:var(--text2);font-family:'Space Mono',monospace;display:block;margin-bottom:.5rem">TYPE DE CALCUL</label>
+            <select id="aop3-type" onchange="calcAOP3()" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.6rem .8rem;border-radius:6px;font-family:'Space Mono',monospace;font-size:.85rem;width:100%;outline:none">
+              <option value="schmitt">Trigger de Schmitt — Seuils</option>
+              <option value="astable">Astable — Période & Fréquence</option>
+              <option value="wien">Oscillateur de Wien — Fréquence</option>
+            </select>
+          </div>
+
+          <div class="calc-grid" id="aop3-inputs">
+            <div class="calc-field">
+              <label class="calc-label">R₁ (kΩ)</label>
+              <input type="number" class="calc-input" id="aop3-r1" value="10" oninput="calcAOP3()">
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">R₂ (kΩ)</label>
+              <input type="number" class="calc-input" id="aop3-r2" value="100" oninput="calcAOP3()">
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">R (kΩ) — si astable/Wien</label>
+              <input type="number" class="calc-input" id="aop3-r" value="10" oninput="calcAOP3()">
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">C (nF)</label>
+              <input type="number" class="calc-input" id="aop3-c" value="100" oninput="calcAOP3()">
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">Vsat (V)</label>
+              <input type="number" class="calc-input" id="aop3-vsat" value="12" oninput="calcAOP3()">
+            </div>
+          </div>
+          <button class="calc-btn" onclick="calcAOP3()">Calculer →</button>
+          <div class="calc-result" id="aop3-result"></div>
+        </div>
+      </div>
+
+      <!-- 3.8bis Barkhausen (extrait cours AOP) -->
+      <div class="content-block" id="aop3-barkhausen-pdf">
+        <div class="section-tag" style="color:var(--accent3)">3.8bis — Barkhausen (version cours)</div>
+        <h2 class="block-title">Condition d’oscillation harmonique — lecture corrigée</h2>
+        <div class="formula-box">
+          <span class="formula-label">Condition d’oscillation</span>
+          <div class="formula">T(jω₀)=A(jω₀)·F(jω₀)=1 &nbsp;→&nbsp; |A·F|=1 et arg(A·F)=0 [2π]</div>
+          <div class="formula-explain">
+            Valable pour une pulsation unique ω₀. En pratique on amorce souvent avec <strong>|A·F| = 1 + δ</strong> (δ &gt; 0 petit),
+            puis la non-linéarité ramène le gain de boucle vers <strong>|A·F| = 1</strong> pour stabiliser l’amplitude.
+          </div>
+        </div>
+        <div class="tip"><div class="tip-icon">🧠</div><div class="tip-text"><strong>Interprétation physique :</strong> si |A·F|&lt;1 l’oscillation meurt, si |A·F|&gt;1 elle croit jusqu’à saturation, et l’état stationnaire réel est proche de |A·F|=1.</div></div>
+      </div>
+
+      <!-- 3.8ter Exercice issu du support -->
+      <div class="content-block" id="aop3-barkhausen-exo">
+        <div class="section-tag" style="color:var(--accent3)">3.8ter — Exercice</div>
+        <h2 class="block-title">Démarrage et stabilisation d’un oscillateur</h2>
+        <div class="example-box">
+          <span class="example-label">Énoncé</span>
+          <p>À la fréquence ω₀ d’un oscillateur, on mesure initialement |A·F|=1,08 puis après 50 ms |A·F|=1,00. Expliquer qualitativement l’évolution de l’amplitude et l’état final.</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Correction guidée</span><span class="expand-icon">+</span></div>
+            <div class="expand-content">
+              <p>Au démarrage, |A·F|=1,08 &gt; 1 : l’oscillation est <strong>amorcée</strong> et l’amplitude augmente.</p>
+              <p>Quand l’amplitude augmente, l’étage actif quitte l’idéal (compression de gain / non-linéarités), ce qui réduit le gain de boucle effectif.</p>
+              <p>L’équilibre est atteint lorsque |A·F| revient à 1,00 : amplitude <strong>stable</strong>, fréquence fixée par le réseau sélectif.</p>
+              <p><strong>Conclusion :</strong> démarrage avec gain légèrement supérieur à 1, puis maintien autour de 1 (principe rappelé dans le support).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.8 Approfondissement -->
+      <div class="content-block" id="aop3-approfondissement">
+        <div class="section-tag" style="color:var(--accent3)">3.8 — Approfondissement</div>
+        <h2 class="block-title">Exercice approfondi — Trigger de Schmitt et marges de bruit</h2>
+        <div class="example-box">
+          <span class="example-label">Données</span>
+          <p>Comparateur à hystérésis non-inverseur, Vsat=±10 V, R1=8,2 kΩ, R2=33 kΩ. Calculer V<sub>TH+</sub>, V<sub>TH−</sub> et la marge anti-bruit.</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Correction</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>β = R1/(R1+R2) = 8,2/(8,2+33) ≈ 0,199</p>
+            <p>Seuils : V<sub>TH+</sub>=+βVsat≈<strong>+1,99 V</strong>, V<sub>TH−</sub>=−1,99 V</p>
+            <p>Largeur d'hystérésis : ΔV = V<sub>TH+</sub>−V<sub>TH−</sub> = <strong>3,98 V</strong></p>
+            <p>La marge de bruit admissible autour du zéro est ±1,99 V avant basculement intempestif.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- ── QCM AOP-03 ── -->
+      <div class="content-block" id="aop3-qcm">
+        <div class="section-tag" style="color:var(--accent3)">📋 Test de connaissance</div>
+        <h2 class="block-title">QCM — Oscillateurs & Comparateurs</h2>
+        <div id="qcm-aop_oscillateurs"></div>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,308 @@
+<div id="lesson-impedances" class="section">
+  <button class="back-btn" onclick="showSection('modules-elec')">← Retour aux modules</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE 03</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active" onclick="scrollTo(0,0)">3.1 Loi des mailles</li>
+        <li class="sidebar-item" onclick="scrollToId('i-noeuds')">3.2 Loi des nœuds</li>
+        <li class="sidebar-item" onclick="scrollToId('i-rlc')">3.3 Impédances R, L, C</li>
+        <li class="sidebar-item" onclick="scrollToId('i-associations')">3.4 Associations</li>
+        <li class="sidebar-item" onclick="scrollToId('i-dipoles')">3.5 Dipôles inductifs/capacitifs</li>
+        <li class="sidebar-item" onclick="scrollToId('i-resonance')">3.6 Résonance</li>
+        <li class="sidebar-item" onclick="scrollToId('i-calc')">🧮 Calculatrice</li>
+        <li class="sidebar-item" onclick="scrollToId('i-exercices')">📐 Exercices</li>
+        <li class="sidebar-item" onclick="scrollToId('i-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+
+      <!-- 3.1 Loi des mailles -->
+      <div class="content-block">
+        <div class="section-tag">3.1 — Kirchhoff (p.22)</div>
+        <h2 class="block-title">Loi des mailles (KVL)</h2>
+        <div class="formula-box">
+          <span class="formula-label">Loi des mailles — Kirchhoff Voltage Law</span>
+          <div class="formula">∑ U<sub>k</sub> = 0 (le long d'une maille fermée)</div>
+          <div class="formula-explain">
+            "La somme des tensions orientées le long d'une maille de circuit électrique est nulle."<br>
+            <strong>Valable :</strong> en valeurs instantanées u(t) ou en complexes U — mais <strong>PAS en valeurs efficaces scalaires</strong> (les phases s'additionnent vectoriellement).<br>
+            Exemple pour un circuit série : U<sub>source</sub> = U<sub>R</sub> + U<sub>L</sub> + U<sub>C</sub>
+          </div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Application — Circuit RLC série</span>
+          <p>V = 100 V (réf.), Z = R + jωL + 1/(jωC)</p>
+          <p>Maille : <strong>V = Z<sub>R</sub>·I + Z<sub>L</sub>·I + Z<sub>C</sub>·I = Z·I</strong></p>
+          <p>→ I = V/Z (simple division complexe !)</p>
+        </div>
+        <div class="alert"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>Erreur classique :</strong> On ne peut PAS écrire V = U<sub>R</sub> + U<sub>L</sub> avec des valeurs efficaces scalaires, car U<sub>R</sub> et U<sub>L</sub> sont déphasées. Il faut travailler en complexes : <strong>V = U<sub>R</sub> + U<sub>L</sub></strong> (addition vectorielle).</div></div>
+      </div>
+
+      <!-- 3.2 Loi des nœuds -->
+      <div class="content-block" id="i-noeuds">
+        <div class="section-tag">3.2 — Kirchhoff (p.23)</div>
+        <h2 class="block-title">Loi des nœuds (KCL)</h2>
+        <div class="formula-box">
+          <span class="formula-label">Loi des nœuds — Kirchhoff Current Law</span>
+          <div class="formula">∑ I<sub>k</sub> = 0 (en un nœud)</div>
+          <div class="formula-explain">
+            "La somme des courants orientés entrant/sortant en un nœud est nulle."<br>
+            Valable en valeurs instantanées ou en complexes — PAS en valeurs efficaces scalaires.<br>
+            Pour deux branches parallèles : I = I₁ + I₂ (en complexes)
+          </div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Application — Circuit parallèle</span>
+          <p>R = 10 Ω en parallèle avec L (X<sub>L</sub> = 10 Ω), V = 100 V</p>
+          <p>I<sub>R</sub> = 100/10 = 10 A∠0° &nbsp;|&nbsp; I<sub>L</sub> = 100/(j10) = −j10 A = 10∠−90° A</p>
+          <p>I = I<sub>R</sub> + I<sub>L</sub> = 10 − j10 = <strong>10√2 ∠−45° ≈ 14,1 A</strong></p>
+          <p>Si on avait additionné les modules : 10+10 = 20 A → <span style="color:var(--accent2)">FAUX !</span></p>
+        </div>
+      </div>
+
+      <!-- 3.3 Impédances -->
+      <div class="content-block" id="i-rlc">
+        <div class="section-tag">3.3 — Composants (p.26, 35)</div>
+        <h2 class="block-title">Impédances R, L, C</h2>
+        <p class="block-text">L'impédance Z est la généralisation de la résistance au régime sinusoïdal. C'est un nombre complexe : <strong>Z = R + jX</strong> où R est la résistance et X la réactance.</p>
+        <table class="vtable">
+          <tr><th>Composant</th><th>Loi u/i</th><th>Impédance Z</th><th>|Z|</th><th>φ<sub>Z</sub></th></tr>
+          <tr>
+            <td class="accent">Résistance R</td>
+            <td class="mono">u = R·i</td>
+            <td class="mono">R (réel)</td>
+            <td class="mono">R</td>
+            <td>0° (en phase)</td>
+          </tr>
+          <tr>
+            <td class="accent">Inductance L</td>
+            <td class="mono">u = L·di/dt</td>
+            <td class="mono">jωL = jX<sub>L</sub></td>
+            <td class="mono">ωL</td>
+            <td>+90° (u en avance)</td>
+          </tr>
+          <tr>
+            <td class="accent">Condensateur C</td>
+            <td class="mono">i = C·du/dt</td>
+            <td class="mono">1/(jωC) = −jX<sub>C</sub></td>
+            <td class="mono">1/(ωC)</td>
+            <td>−90° (i en avance)</td>
+          </tr>
+          <tr>
+            <td class="accent">RL série</td>
+            <td class="mono">Z = R+jωL</td>
+            <td class="mono">R + jX<sub>L</sub></td>
+            <td class="mono">√(R²+X<sub>L</sub>²)</td>
+            <td>+arctan(X<sub>L</sub>/R)</td>
+          </tr>
+          <tr>
+            <td class="accent">RC série</td>
+            <td class="mono">Z = R−j/(ωC)</td>
+            <td class="mono">R − jX<sub>C</sub></td>
+            <td class="mono">√(R²+X<sub>C</sub>²)</td>
+            <td>−arctan(X<sub>C</sub>/R)</td>
+          </tr>
+        </table>
+        <div class="formula-box">
+          <span class="formula-label">Notation importante (p.40)</span>
+          <div class="formula">Z = R + jX &nbsp;|&nbsp; |Z| = √(R²+X²) &nbsp;|&nbsp; φ = arctan(X/R)</div>
+          <div class="formula-explain">R = résistance équivalente (Re(Z)) | X = réactance équivalente (Im(Z))<br>
+          X > 0 → circuit inductif (courant en retard) | X &lt; 0 → circuit capacitif (courant en avance)</div>
+        </div>
+      </div>
+
+      <!-- 3.4 Associations -->
+      <div class="content-block" id="i-associations">
+        <div class="section-tag">3.4 — Associations (p.41)</div>
+        <h2 class="block-title">Associations d'impédances</h2>
+        <p class="block-text">Les impédances s'associent comme des résistances, mais en arithmétique complexe.</p>
+        <div class="formula-box">
+          <span class="formula-label">Série et parallèle</span>
+          <div class="formula">
+            Série : Z<sub>éq</sub> = Z₁ + Z₂ + Z₃ + …<br>
+            Parallèle : 1/Z<sub>éq</sub> = 1/Z₁ + 1/Z₂ + … &nbsp;→&nbsp; Z<sub>éq</sub> = Z₁·Z₂/(Z₁+Z₂)
+          </div>
+          <div class="formula-explain">
+            Admittance Y = 1/Z : en parallèle, Y<sub>éq</sub> = Y₁ + Y₂ + … (plus simple !)<br>
+            Diviseur de tension : U<sub>k</sub> = V × Z<sub>k</sub>/Z<sub>total</sub><br>
+            Diviseur de courant : I<sub>k</sub> = I × Z<sub>autre</sub>/(Z₁+Z₂)
+          </div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Exercice 2 du cours (p.55) — Circuit RLC mixte</span>
+          <p>V = 100 V, f = 50 Hz. Impédances : Z₁ = j10 Ω, Z₂ = −j5 Ω, Z₃ = 20 Ω en série</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution détaillée</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>Z<sub>total</sub> = j10 + (−j5) + 20 = 20 + j5 Ω</p>
+            <p>|Z| = √(400+25) = √425 ≈ 20,6 Ω</p>
+            <p>φ = arctan(5/20) ≈ 14° (inductif)</p>
+            <p>I = V/|Z| = 100/20,6 ≈ <strong>4,85 A</strong></p>
+            <p>Expression temporelle : i(t) = 4,85√2·sin(314t − 14°) A</p>
+            <p>Vérif loi de maille : U<sub>total</sub> = Z·I = (20+j5)×(4,85∠−14°) = 100∠0° V ✓</p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- 3.5 Dipôles inductifs/capacitifs -->
+      <div class="content-block" id="i-dipoles">
+        <div class="section-tag">3.5 — Comportement (p.42-43)</div>
+        <h2 class="block-title">Dipôles inductifs et capacitifs</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0">
+          <div style="background:var(--bg2);border:1px solid var(--accent);border-radius:8px;padding:1.2rem">
+            <div style="color:var(--accent);font-weight:700;margin-bottom:.8rem">⬆ Dipôle INDUCTIF</div>
+            <p style="font-size:.85rem;color:var(--text2);margin-bottom:.5rem">X > 0 (Im(Z) > 0). Le courant est en <strong>retard</strong> sur la tension.</p>
+            <div style="font-family:'Space Mono',monospace;font-size:.8rem;color:var(--accent);line-height:2">
+              Z = R + jX (X>0)<br>
+              φ > 0 (φ = φ_u − φ_i)<br>
+              Exemples : moteurs, bobines, transfo
+            </div>
+          </div>
+          <div style="background:var(--bg2);border:1px solid var(--accent3);border-radius:8px;padding:1.2rem">
+            <div style="color:var(--accent3);font-weight:700;margin-bottom:.8rem">⬇ Dipôle CAPACITIF</div>
+            <p style="font-size:.85rem;color:var(--text2);margin-bottom:.5rem">X &lt; 0 (Im(Z) &lt; 0). Le courant est en <strong>avance</strong> sur la tension.</p>
+            <div style="font-family:'Space Mono',monospace;font-size:.8rem;color:var(--accent3);line-height:2">
+              Z = R − jX (X>0)<br>
+              φ &lt; 0<br>
+              Exemples : condensateurs, bancs de compensation
+            </div>
+          </div>
+        </div>
+        <div class="tip"><div class="tip-icon">💡</div><div class="tip-text"><strong>Moyen mnémotechnique CIVIL :</strong> <strong>C</strong>ondensateur : <strong>I</strong> avant <strong>V</strong> (courant en avance). Pour l'inductance : <strong>V</strong> avant <strong>I</strong> (tension en avance = courant en retard).</div></div>
+
+        <!-- SVG diagramme de Fresnel RL -->
+        <div class="diagram-container">
+          <span class="diagram-label">Diagrammes de Fresnel — RL série (inductif) et RC série (capacitif)</span>
+          <svg viewBox="0 0 500 200" class="diagram">
+            <!-- Circuit RL -->
+            <text x="100" y="18" fill="#3af4c8" font-size="11" text-anchor="middle" font-family="Space Mono">Circuit RL (inductif)</text>
+            <!-- Axes RL -->
+            <line x1="30" y1="120" x2="200" y2="120" stroke="#3a3a5a" stroke-width="1"/>
+            <line x1="80" y1="170" x2="80" y2="50" stroke="#3a3a5a" stroke-width="1"/>
+            <!-- I horizontal -->
+            <line x1="80" y1="120" x2="160" y2="120" stroke="#3af4c8" stroke-width="2.5"/>
+            <polygon points="160,120 150,116 150,124" fill="#3af4c8"/>
+            <text x="120" y="135" fill="#3af4c8" font-size="10" text-anchor="middle" font-family="Space Mono">I (ref)</text>
+            <!-- V incliné -->
+            <line x1="80" y1="120" x2="170" y2="70" stroke="#e8f428" stroke-width="2.5"/>
+            <polygon points="170,70 162,78 174,80" fill="#e8f428"/>
+            <text x="175" y="90" fill="#e8f428" font-size="10" font-family="Space Mono">V</text>
+            <!-- U_R -->
+            <line x1="80" y1="120" x2="140" y2="120" stroke="#8888aa" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="108" y="113" fill="#8888aa" font-size="9" font-family="Space Mono">U_R</text>
+            <!-- U_L vertical -->
+            <line x1="140" y1="120" x2="170" y2="70" stroke="#ff5e3a" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="158" y="100" fill="#ff5e3a" font-size="9" font-family="Space Mono">U_L</text>
+            <!-- phi arc -->
+            <path d="M 110,120 A 30,30 0 0,1 104,103" fill="none" stroke="#e8f428" stroke-width="1"/>
+            <text x="116" y="107" fill="#e8f428" font-size="9" font-family="Space Mono">φ>0</text>
+
+            <!-- Circuit RC -->
+            <text x="380" y="18" fill="#3af4c8" font-size="11" text-anchor="middle" font-family="Space Mono">Circuit RC (capacitif)</text>
+            <!-- Axes RC -->
+            <line x1="300" y1="100" x2="480" y2="100" stroke="#3a3a5a" stroke-width="1"/>
+            <line x1="350" y1="50" x2="350" y2="180" stroke="#3a3a5a" stroke-width="1"/>
+            <!-- I horizontal -->
+            <line x1="350" y1="100" x2="440" y2="100" stroke="#3af4c8" stroke-width="2.5"/>
+            <polygon points="440,100 430,96 430,104" fill="#3af4c8"/>
+            <text x="395" y="92" fill="#3af4c8" font-size="10" text-anchor="middle" font-family="Space Mono">I (ref)</text>
+            <!-- V incliné vers le bas -->
+            <line x1="350" y1="100" x2="440" y2="150" stroke="#e8f428" stroke-width="2.5"/>
+            <polygon points="440,150 432,142 443,142" fill="#e8f428"/>
+            <text x="448" y="155" fill="#e8f428" font-size="10" font-family="Space Mono">V</text>
+            <!-- phi arc -->
+            <path d="M 380,100 A 30,30 0 0,0 374,117" fill="none" stroke="#e8f428" stroke-width="1"/>
+            <text x="388" y="118" fill="#e8f428" font-size="9" font-family="Space Mono">φ&lt;0</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 3.6 Résonance -->
+      <div class="content-block" id="i-resonance">
+        <div class="section-tag">3.6 — Cas particulier important</div>
+        <h2 class="block-title">Résonance série et parallèle</h2>
+        <div class="formula-box">
+          <span class="formula-label">Résonance série RLC — Condition</span>
+          <div class="formula">X<sub>L</sub> = X<sub>C</sub> &nbsp;→&nbsp; ωL = 1/(ωC) &nbsp;→&nbsp; ω₀ = 1/√(LC) &nbsp;→&nbsp; f₀ = 1/(2π√LC)</div>
+          <div class="formula-explain">
+            À la résonance : Z = R (purement résistif, minimum !), φ = 0, courant maximum.<br>
+            Facteur de qualité Q = ω₀L/R = 1/(ω₀RC) = (1/R)·√(L/C)<br>
+            Surtension aux bornes de L et C : U<sub>L</sub> = U<sub>C</sub> = Q·V &nbsp;→&nbsp; peut être >> V !
+          </div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Exercice de la méthodologie</span>
+          <p>R = 5 Ω, L = 0,1 H, C = 100 µF, f = 50 Hz</p>
+          <p>X<sub>L</sub> = 314×0,1 = 31,4 Ω &nbsp;|&nbsp; X<sub>C</sub> = 1/(314×100×10⁻⁶) = 31,8 Ω</p>
+          <p>X<sub>C</sub> > X<sub>L</sub> → <strong>circuit légèrement capacitif</strong> à 50 Hz</p>
+          <p>f₀ = 1/(2π√(0,1×100×10⁻⁶)) = 1/(2π×0,00316) ≈ <strong>50,3 Hz</strong> (très proche de 50 Hz !)</p>
+        </div>
+      </div>
+
+      <!-- Calculateur impédance -->
+      <div class="content-block" id="i-calc">
+        <div class="section-tag">🧮 Outil interactif</div>
+        <h2 class="block-title">Calculateur d'impédance</h2>
+        <div class="calc-box">
+          <div class="calc-title">⚡ Calcul <span>Impédance RLC</span></div>
+          <div class="calc-grid">
+            <div class="calc-field"><label class="calc-label">Résistance R (Ω)</label><input type="number" class="calc-input" id="i-r" value="20" oninput="calcImpedance()"></div>
+            <div class="calc-field"><label class="calc-label">Inductance L (mH)</label><input type="number" class="calc-input" id="i-l" value="50" oninput="calcImpedance()"></div>
+            <div class="calc-field"><label class="calc-label">Condensateur C (µF)</label><input type="number" class="calc-input" id="i-c" value="0" oninput="calcImpedance()"></div>
+            <div class="calc-field"><label class="calc-label">Fréquence f (Hz)</label><input type="number" class="calc-input" id="i-f" value="50" oninput="calcImpedance()"></div>
+            <div class="calc-field"><label class="calc-label">Tension V (V)</label><input type="number" class="calc-input" id="i-v" value="230" oninput="calcImpedance()"></div>
+          </div>
+          <button class="calc-btn" onclick="calcImpedance()">Calculer →</button>
+          <div class="calc-result" id="i-result"></div>
+        </div>
+      </div>
+
+      <!-- Exercices -->
+      <div class="content-block" id="i-exercices">
+        <div class="section-tag">📐 Exercices</div>
+        <h2 class="block-title">Exercice 3 — Diviseur de courant (p.56)</h2>
+        <div class="example-box">
+          <p>I = 2,5 A. Branche 1 : Z₁ = 4 − j0,002 Ω. Branche 2 : Z₂ = 10 + j40 Ω.</p>
+          <p>Calculer V, I₁, I₂, P, Q.</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution complète</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>|Z₁| ≈ 4 Ω (partie imaginaire négligeable), |Z₂| = √(100+1600) = √1700 ≈ 41,2 Ω</p>
+            <p>Z<sub>éq</sub> = Z₁·Z₂/(Z₁+Z₂). Z₁+Z₂ = 14+j40 → |Z₁+Z₂| ≈ 42,4 Ω</p>
+            <p>|Z<sub>éq</sub>| ≈ (4×41,2)/42,4 ≈ 3,89 Ω</p>
+            <p>V = I × |Z<sub>éq</sub>| = 2,5 × 3,89 ≈ <strong>9,72 V</strong></p>
+            <p>I₁ = V/|Z₁| = 9,72/4 ≈ <strong>2,43 A</strong> | I₂ = 9,72/41,2 ≈ <strong>0,236 A</strong></p>
+            <p>P = R₁·I₁² + R₂·I₂² = 4×2,43² + 10×0,236² ≈ 23,6 + 0,56 ≈ <strong>24,2 W</strong></p>
+            <p>Q ≈ X<sub>L2</sub>·I₂² = 40×0,236² ≈ <strong>+2,23 VAr</strong></p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- 3.8 Approfondissement -->
+      <div class="content-block" id="i-approfondissement">
+        <div class="section-tag">3.8 — Approfondissement</div>
+        <h2 class="block-title">Exercice approfondi — RLC série et tension de chaque dipôle</h2>
+        <div class="example-box">
+          <span class="example-label">Données</span>
+          <p>R=15 Ω, L=120 mH, C=68 µF, f=50 Hz, V=230∠0° V. Calculer Z, I, puis U<sub>R</sub>, U<sub>L</sub>, U<sub>C</sub>.</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Correction complète</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>ω=314 rad/s ; X<sub>L</sub>=ωL=37,7 Ω ; X<sub>C</sub>=1/(ωC)=46,8 Ω</p>
+            <p>Z = R + j(X<sub>L</sub>−X<sub>C</sub>) = 15 − j9,1 Ω ; |Z|≈17,55 Ω ; φ≈−31,2°</p>
+            <p>I = V/Z = 230/17,55 ≈ <strong>13,1 A</strong> avec phase +31,2°.</p>
+            <p>U<sub>R</sub>=RI ≈ <strong>196,5 V</strong> (en phase avec I)</p>
+            <p>U<sub>L</sub>=jX<sub>L</sub>I ≈ <strong>494 V</strong> (+90° sur I), U<sub>C</sub>=−jX<sub>C</sub>I ≈ <strong>613 V</strong> (−90° sur I)</p>
+            <p>Vérification en phaseurs : U = U<sub>R</sub> + U<sub>L</sub> + U<sub>C</sub> = 230 V (les modules ne s'additionnent pas directement).</p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- QCM -->
+      <div class="content-block" id="i-qcm">
+        <div class="section-tag">📋 QCM</div>
+        <h2 class="block-title">QCM — Lois & Impédances</h2>
+        <div id="qcm-impedances"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
