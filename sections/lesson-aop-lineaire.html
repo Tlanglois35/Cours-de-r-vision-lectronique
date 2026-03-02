@@ -1,0 +1,489 @@
+<div id="lesson-aop-lineaire" class="section">
+  <button class="back-btn" onclick="showSection('modules-aop')">← Retour aux modules AOP</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE AOP-02</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active" onclick="scrollTo(0,0)">1. Inverseur</li>
+        <li class="sidebar-item" onclick="scrollToId('aop2-noninv')">2. Non-inverseur</li>
+        <li class="sidebar-item" onclick="scrollToId('aop2-suiveur')">3. Suiveur</li>
+        <li class="sidebar-item" onclick="scrollToId('aop2-sommateur')">4. Sommateur</li>
+        <li class="sidebar-item" onclick="scrollToId('aop2-soustracteur')">5. Soustracteur</li>
+        <li class="sidebar-item" onclick="scrollToId('aop2-integrateur')">6. Intégrateur</li>
+        <li class="sidebar-item" onclick="scrollToId('aop2-derivateur')">7. Dérivateur</li>
+        <li class="sidebar-item" onclick="scrollToId('aop2-filtres')">8. Filtres actifs</li>
+        <li class="sidebar-item" onclick="scrollToId('aop2-calc')">🔢 Calculateur</li>
+        <li class="sidebar-item" onclick="scrollToId('aop2-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+
+      <!-- ── 1. INVERSEUR ── -->
+      <div class="content-block">
+        <div class="section-tag" style="color:var(--accent3)">1 — Montage de base</div>
+        <h2 class="block-title">Montage Inverseur</h2>
+        <p class="block-text">L'inverseur est le montage AOP le plus fondamental. Le signal d'entrée est appliqué sur l'entrée inverseuse (e⁻) via R₁, et la contre-réaction se fait via R₂. Le résultat est une amplification avec <strong>inversion de signe</strong>.</p>
+
+        <!-- Schéma SVG inverseur -->
+        <div class="diagram-container">
+          <span class="diagram-label">Schéma — Montage Inverseur</span>
+          <svg viewBox="0 0 500 220" class="diagram" xmlns="http://www.w3.org/2000/svg">
+            <!-- Fils horizontaux entrée -->
+            <line x1="30" y1="110" x2="110" y2="110" stroke="#8888aa" stroke-width="1.5"/>
+            <!-- R1 -->
+            <rect x="110" y="98" width="60" height="24" rx="4" fill="none" stroke="#e8f428" stroke-width="1.5"/>
+            <text x="140" y="92" fill="#e8f428" font-size="11" text-anchor="middle" font-family="Space Mono">R₁</text>
+            <!-- Fil vers e- -->
+            <line x1="170" y1="110" x2="230" y2="110" stroke="#8888aa" stroke-width="1.5"/>
+            <!-- AOP triangle -->
+            <polygon points="230,70 230,160 330,115" fill="none" stroke="#3af4c8" stroke-width="2"/>
+            <!-- e- label -->
+            <text x="238" y="118" fill="#ff5e3a" font-size="13" font-family="Space Mono">−</text>
+            <!-- e+ label -->
+            <text x="238" y="90" fill="#3af4c8" font-size="13" font-family="Space Mono">+</text>
+            <!-- e+ vers masse -->
+            <line x1="240" y1="82" x2="240" y2="66" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="224" y1="66" x2="256" y2="66" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="229" y1="61" x2="251" y2="61" stroke="#8888aa" stroke-width="1"/>
+            <line x1="234" y1="56" x2="246" y2="56" stroke="#8888aa" stroke-width="0.7"/>
+            <!-- Sortie S -->
+            <line x1="330" y1="115" x2="420" y2="115" stroke="#8888aa" stroke-width="1.5"/>
+            <text x="428" y="119" fill="#e8f428" font-size="12" font-family="Space Mono">S</text>
+            <!-- R2 contre-réaction -->
+            <line x1="200" y1="110" x2="200" y2="55" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="200" y1="55" x2="370" y2="55" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="370" y1="55" x2="370" y2="115" stroke="#8888aa" stroke-width="1.5"/>
+            <rect x="262" y="43" width="60" height="24" rx="4" fill="none" stroke="#ff5e3a" stroke-width="1.5"/>
+            <text x="292" y="37" fill="#ff5e3a" font-size="11" text-anchor="middle" font-family="Space Mono">R₂</text>
+            <!-- Labels -->
+            <text x="30" y="104" fill="#3af4c8" font-size="11" font-family="Space Mono">Ve</text>
+            <text x="128" y="140" fill="#8888aa" font-size="10" font-family="Space Mono">CR négative</text>
+            <!-- Nœud point -->
+            <circle cx="200" cy="110" r="3" fill="#e8f428"/>
+          </svg>
+        </div>
+
+        <div class="formula-box">
+          <span class="formula-label">Formule du gain en tension</span>
+          <div class="formula">A<sub>v</sub> = S / Ve = − R₂ / R₁</div>
+          <div class="formula-explain">
+            <strong>Démonstration (règle du nœud virtuel) :</strong><br>
+            En régime linéaire : ε = 0 → e⁻ = e⁺ = 0 V (masse virtuelle)<br>
+            Courant dans R₁ : i₁ = Ve / R₁<br>
+            Courant dans R₂ : i₂ = −S / R₂ (car e⁻ = 0)<br>
+            Loi des nœuds en e⁻ (I_entrée AOP = 0) : i₁ = i₂ → Ve/R₁ = −S/R₂<br>
+            Donc : <strong>S = −(R₂/R₁) × Ve</strong>
+          </div>
+        </div>
+
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text"><strong>Masse virtuelle :</strong> Le point e⁻ est à 0 V (masse virtuelle) car e⁺ = 0 et ε = 0. Aucun courant ne rentre dans l'AOP, donc tout le courant de R₁ passe dans R₂. C'est la clé de tous les calculs d'inverseur.</div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Exemple chiffré</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.8rem">R₁ = 10 kΩ, R₂ = 47 kΩ, Ve = 0,5 V</p>
+          <div class="formula" style="font-size:.95rem">
+            Av = −47/10 = <span style="color:#ff5e3a">−4,7</span><br>
+            S = −4,7 × 0,5 = <span style="color:#ff5e3a">−2,35 V</span><br>
+            |Av|<sub>dB</sub> = 20 log(4,7) ≈ <span style="color:#3af4c8">13,4 dB</span>
+          </div>
+        </div>
+
+        <div class="expand-card">
+          <div class="expand-header" onclick="toggleExpand(this)">
+            <span class="expand-header-text">📐 Exercice résolu — Trouver R₂ pour un gain de −20</span>
+            <span class="expand-icon">+</span>
+          </div>
+          <div class="expand-content">
+            <p><strong>Énoncé :</strong> On veut Av = −20. R₁ = 2,2 kΩ. Trouver R₂. Vérifier que Ve = 1 V donne S = −20 V avec Vcc = ±15 V.</p>
+            <p style="margin-top:.8rem"><strong>Solution :</strong></p>
+            <p>|Av| = R₂/R₁ → R₂ = 20 × 2200 = <strong>44 000 Ω → on choisit 47 kΩ</strong> (valeur normalisée E24)</p>
+            <p>Gain réel = −47/2,2 = −21,4 (légèrement différent, acceptable en pratique)</p>
+            <p>S = −21,4 × 1 = −21,4 V → <span style="color:var(--accent2)">SATURATION !</span> Car |S| > Vcc−2V = 13 V</p>
+            <p>→ Il faut réduire Ve ou Vcc. Avec Ve = 0,5 V : S = −10,7 V ✓ (dans la plage de sortie)</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 2. NON-INVERSEUR ── -->
+      <div class="content-block" id="aop2-noninv">
+        <div class="section-tag" style="color:var(--accent3)">2 — Amplification sans inversion</div>
+        <h2 class="block-title">Montage Non-Inverseur</h2>
+        <p class="block-text">L'entrée est appliquée sur e⁺ (entrée non-inverseuse). Le signal de sortie est <strong>en phase</strong> avec l'entrée. Gain toujours ≥ 1.</p>
+
+        <div class="diagram-container">
+          <span class="diagram-label">Schéma — Montage Non-Inverseur</span>
+          <svg viewBox="0 0 500 220" class="diagram" xmlns="http://www.w3.org/2000/svg">
+            <!-- Entrée sur e+ -->
+            <line x1="30" y1="85" x2="230" y2="85" stroke="#8888aa" stroke-width="1.5"/>
+            <text x="30" y="78" fill="#3af4c8" font-size="11" font-family="Space Mono">Ve</text>
+            <!-- AOP -->
+            <polygon points="230,70 230,160 330,115" fill="none" stroke="#3af4c8" stroke-width="2"/>
+            <text x="238" y="118" fill="#ff5e3a" font-size="13" font-family="Space Mono">−</text>
+            <text x="238" y="93" fill="#3af4c8" font-size="13" font-family="Space Mono">+</text>
+            <!-- Sortie -->
+            <line x1="330" y1="115" x2="430" y2="115" stroke="#8888aa" stroke-width="1.5"/>
+            <text x="434" y="119" fill="#e8f428" font-size="12" font-family="Space Mono">S</text>
+            <!-- Pont R1/R2 entre sortie et e- -->
+            <line x1="380" y1="115" x2="380" y2="175" stroke="#8888aa" stroke-width="1.5"/>
+            <rect x="350" y="175" width="60" height="22" rx="4" fill="none" stroke="#ff5e3a" stroke-width="1.5"/>
+            <text x="380" y="172" fill="#ff5e3a" font-size="11" text-anchor="middle" font-family="Space Mono">R₂</text>
+            <line x1="380" y1="197" x2="380" y2="215" stroke="#8888aa" stroke-width="1.5"/>
+            <rect x="350" y="215" width="60" height="22" rx="4" fill="none" stroke="#e8f428" stroke-width="1.5"/>
+            <text x="380" y="213" fill="#e8f428" font-size="11" text-anchor="middle" font-family="Space Mono">R₁</text>
+            <!-- Masse -->
+            <line x1="380" y1="237" x2="380" y2="248" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="364" y1="248" x2="396" y2="248" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="369" y1="253" x2="391" y2="253" stroke="#8888aa" stroke-width="1"/>
+            <line x1="374" y1="258" x2="386" y2="258" stroke="#8888aa" stroke-width=".7"/>
+            <!-- Liaison nœud → e- -->
+            <line x1="380" y1="197" x2="200" y2="197" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="200" y1="197" x2="200" y2="130" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="200" y1="130" x2="230" y2="130" stroke="#8888aa" stroke-width="1.5"/>
+            <circle cx="380" cy="197" r="3" fill="#e8f428"/>
+          </svg>
+        </div>
+
+        <div class="formula-box">
+          <span class="formula-label">Formule du gain en tension</span>
+          <div class="formula">A<sub>v</sub> = 1 + R₂ / R₁</div>
+          <div class="formula-explain">
+            Démonstration : ε = 0 → e⁻ = Ve<br>
+            Diviseur de tension en e⁻ : e⁻ = S × R₁/(R₁+R₂)<br>
+            Donc Ve = S × R₁/(R₁+R₂) → <strong>S = Ve × (1 + R₂/R₁)</strong><br>
+            <span style="color:var(--accent3)">Le gain est toujours ≥ 1, jamais négatif.</span>
+          </div>
+        </div>
+
+        <div class="alert">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-text"><strong>Différence clé inverseur vs non-inverseur :</strong> L'inverseur présente une impédance d'entrée = R₁ (peut charger la source). Le non-inverseur présente Rin → ∞ (n'affecte jamais la source). Pour mesurer un signal sans le perturber, préférer le non-inverseur ou le suiveur.</div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Exemple chiffré</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.8rem">R₁ = 10 kΩ, R₂ = 90 kΩ → Av = 1 + 90/10 = <strong style="color:var(--accent3)">10</strong> (gain ×10, en phase)</p>
+          <p style="color:var(--text2);font-size:.9rem">R₁ = ∞ (circuit ouvert), R₂ = 0 → Av = <strong style="color:var(--accent3)">1</strong> (suiveur)</p>
+        </div>
+      </div>
+
+      <!-- ── 3. SUIVEUR ── -->
+      <div class="content-block" id="aop2-suiveur">
+        <div class="section-tag" style="color:var(--accent3)">3 — Adaptateur d'impédance</div>
+        <h2 class="block-title">Montage Suiveur (Buffer)</h2>
+        <p class="block-text">Cas particulier du non-inverseur avec R₁ = ∞ et R₂ = 0 : la sortie est directement rebouclée sur l'entrée inverseuse. Gain = 1 exactement, mais rôle crucial d'<strong>adaptation d'impédance</strong>.</p>
+
+        <div class="formula-box">
+          <span class="formula-label">Caractéristiques du suiveur</span>
+          <div class="formula">
+            A<sub>v</sub> = 1 &nbsp;→&nbsp; S = Ve<br>
+            R<sub>in</sub> → ∞ &nbsp;|&nbsp; R<sub>out</sub> ≈ 0
+          </div>
+          <div class="formula-explain">
+            Le suiveur ne fait pas de gain en tension, mais il isole la source de la charge. Un capteur à haute impédance (R_source élevée) peut piloter une charge à faible impédance sans perte de signal. C'est un <strong>convertisseur d'impédance parfait</strong>.
+          </div>
+        </div>
+
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text"><strong>Cas d'usage typique :</strong> Un microphone piézoélectrique a R_source = 1 MΩ. Si branché directement sur une charge de 1 kΩ, il perd 99,9% du signal (diviseur de tension). Avec un suiveur AOP entre les deux → signal intégral transmis, quelle que soit la charge.</div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Exercice résolu — Gain en charge</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.75rem">Source : Ve = 5 V, R_source = 100 kΩ. Charge : R_L = 1 kΩ.</p>
+          <div class="formula" style="font-size:.85rem">
+            Sans suiveur : V_charge = 5 × 1k/(100k+1k) = <span style="color:var(--accent2)">0,049 V</span> (perte 99%)<br>
+            Avec suiveur : V_charge = S = Ve = <span style="color:var(--accent3)">5 V</span> ✓ (aucune perte)
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 4. SOMMATEUR ── -->
+      <div class="content-block" id="aop2-sommateur">
+        <div class="section-tag" style="color:var(--accent3)">4 — Combinaison de signaux</div>
+        <h2 class="block-title">Montage Sommateur Inverseur</h2>
+        <p class="block-text">Extension de l'inverseur à plusieurs entrées. Chaque entrée est pondérée par son propre gain, et les contributions s'additionnent grâce à la masse virtuelle en e⁻.</p>
+
+        <div class="formula-box">
+          <span class="formula-label">Formule générale (n entrées)</span>
+          <div class="formula">S = − R<sub>f</sub> × (Ve₁/R₁ + Ve₂/R₂ + Ve₃/R₃ + …)</div>
+          <div class="formula-explain">
+            Grâce à la masse virtuelle (e⁻ = 0 V), les courants i₁ = Ve₁/R₁, i₂ = Ve₂/R₂… ne s'influencent pas mutuellement.<br>
+            Loi des nœuds : i_f = i₁ + i₂ + … → S = −Rf × (i₁ + i₂ + …)<br>
+            <strong>Cas particulier Rf = R₁ = R₂ = … = R :</strong> S = −(Ve₁ + Ve₂ + …)
+          </div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Application — Convertisseur numérique-analogique (CNA)</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.75rem">3 bits : Ve₁ (bit 2²), Ve₂ (bit 2¹), Ve₃ (bit 2⁰). R₁ = 20kΩ, R₂ = 40kΩ, R₃ = 80kΩ, Rf = 80kΩ</p>
+          <div class="formula" style="font-size:.85rem">
+            S = −80k × (Ve₁/20k + Ve₂/40k + Ve₃/80k)<br>
+            S = −(4·Ve₁ + 2·Ve₂ + Ve₃)<br>
+            Si (Ve₁,Ve₂,Ve₃) = (1V,0,1V) → mot binaire 101 = 5<br>
+            S = −(4 + 0 + 1) = <span style="color:var(--accent3)">−5 V</span> ✓
+          </div>
+        </div>
+
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text"><strong>Sommateur non-inverseur :</strong> En plaçant les résistances sur e⁺ avec un pont de contre-réaction sur e⁻, on obtient un sommateur non-inverseur. Plus complexe, moins courant en pratique.</div>
+        </div>
+      </div>
+
+      <!-- ── 5. SOUSTRACTEUR ── -->
+      <div class="content-block" id="aop2-soustracteur">
+        <div class="section-tag" style="color:var(--accent3)">5 — Amplificateur différentiel</div>
+        <h2 class="block-title">Montage Soustracteur</h2>
+        <p class="block-text">Combine les deux entrées de l'AOP pour réaliser <strong>S = k·(Ve₂ − Ve₁)</strong>. Indispensable pour mesurer des différences (capteurs en pont de Wheatstone, lignes balancées…).</p>
+
+        <div class="formula-box">
+          <span class="formula-label">Formule — Soustracteur symétrique (R₁ = R₂ = R₃ = R₄ = R)</span>
+          <div class="formula">S = Ve₂ − Ve₁</div>
+          <div class="formula-explain">
+            Cas général avec R₃/R₁ = R₄/R₂ :<br>
+            S = (R₄/R₃) × (1 + R₂/R₁) / (1 + R₄/R₃) × Ve₂ − (R₂/R₁) × Ve₁<br>
+            Si R₁=R₂=R₃=R₄ : <strong>S = Ve₂ − Ve₁</strong><br>
+            Si R₃=R₁ et R₄=R₂ : <strong>S = (R₂/R₁) × (Ve₂ − Ve₁)</strong>
+          </div>
+        </div>
+
+        <div class="alert">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-text"><strong>Résistances bien appairées :</strong> La qualité du soustracteur (taux de réjection du mode commun, CMRR) dépend de la précision des résistances. Des résistances à 1% ou 0,1% sont nécessaires pour un bon CMRR en pratique.</div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Application — Capteur en pont</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.75rem">Un thermocouple produit Ve₂ = 5,023 V et Ve₁ = 5,000 V (référence). La différence utile est 23 mV.</p>
+          <div class="formula" style="font-size:.85rem">
+            Avec R₁=R₃=10kΩ, R₂=R₄=470kΩ :<br>
+            Av = R₂/R₁ = 47<br>
+            S = 47 × (5,023 − 5,000) = 47 × 0,023 = <span style="color:var(--accent3)">1,08 V</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 6. INTÉGRATEUR ── -->
+      <div class="content-block" id="aop2-integrateur">
+        <div class="section-tag" style="color:var(--accent3)">6 — Traitement temporel</div>
+        <h2 class="block-title">Montage Intégrateur</h2>
+        <p class="block-text">Remplace R₂ par un condensateur C. Réalise l'<strong>intégration temporelle</strong> du signal d'entrée. En fréquentiel : fonction de transfert en 1/jω (filtre passe-bas du 1er ordre).</p>
+
+        <div class="diagram-container">
+          <span class="diagram-label">Schéma — Montage Intégrateur</span>
+          <svg viewBox="0 0 500 200" class="diagram" xmlns="http://www.w3.org/2000/svg">
+            <line x1="30" y1="110" x2="110" y2="110" stroke="#8888aa" stroke-width="1.5"/>
+            <rect x="110" y="98" width="60" height="24" rx="4" fill="none" stroke="#e8f428" stroke-width="1.5"/>
+            <text x="140" y="92" fill="#e8f428" font-size="11" text-anchor="middle" font-family="Space Mono">R₁</text>
+            <line x1="170" y1="110" x2="230" y2="110" stroke="#8888aa" stroke-width="1.5"/>
+            <polygon points="230,70 230,160 330,115" fill="none" stroke="#3af4c8" stroke-width="2"/>
+            <text x="238" y="118" fill="#ff5e3a" font-size="13" font-family="Space Mono">−</text>
+            <text x="238" y="90" fill="#3af4c8" font-size="13" font-family="Space Mono">+</text>
+            <line x1="240" y1="82" x2="240" y2="66" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="224" y1="66" x2="256" y2="66" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="229" y1="61" x2="251" y2="61" stroke="#8888aa" stroke-width="1"/>
+            <line x1="234" y1="56" x2="246" y2="56" stroke="#8888aa" stroke-width=".7"/>
+            <line x1="330" y1="115" x2="420" y2="115" stroke="#8888aa" stroke-width="1.5"/>
+            <text x="428" y="119" fill="#e8f428" font-size="12" font-family="Space Mono">S</text>
+            <!-- Condensateur C en contre-réaction -->
+            <line x1="200" y1="110" x2="200" y2="45" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="200" y1="45" x2="285" y2="45" stroke="#8888aa" stroke-width="1.5"/>
+            <!-- Condo symbol -->
+            <line x1="285" y1="38" x2="285" y2="52" stroke="#ff5e3a" stroke-width="2.5"/>
+            <line x1="295" y1="38" x2="295" y2="52" stroke="#ff5e3a" stroke-width="2.5"/>
+            <line x1="295" y1="45" x2="370" y2="45" stroke="#8888aa" stroke-width="1.5"/>
+            <line x1="370" y1="45" x2="370" y2="115" stroke="#8888aa" stroke-width="1.5"/>
+            <text x="282" y="32" fill="#ff5e3a" font-size="11" font-family="Space Mono">C</text>
+            <text x="30" y="104" fill="#3af4c8" font-size="11" font-family="Space Mono">Ve</text>
+            <circle cx="200" cy="110" r="3" fill="#e8f428"/>
+          </svg>
+        </div>
+
+        <div class="formula-box">
+          <span class="formula-label">Formules — Intégrateur idéal</span>
+          <div class="formula">
+            Domaine temporel : S(t) = −1/(R₁C) × ∫Ve(t) dt<br>
+            Domaine fréquentiel : H(jω) = −1/(jωR₁C)<br>
+            Fréquence de coupure : f<sub>c</sub> = 1/(2πR₁C)
+          </div>
+          <div class="formula-explain">
+            Le gain |H| = 1/(ωR₁C) → décroît de <strong>−20 dB/décade</strong> (filtre passe-bas du 1er ordre).<br>
+            À f = fc : |H| = 1 (gain unitaire). Pour f &lt; fc, le gain est supérieur à 1.
+          </div>
+        </div>
+
+        <div class="alert">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-text"><strong>Problème de dérive en continu :</strong> En pratique, une légère tension de décalage (offset) ou un courant de polarisation est intégré sans fin → saturation lente. Solution : ajouter une résistance R_f en parallèle avec C (filtre passe-bas réel) pour limiter le gain en DC.</div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Exemple — Intégrateur d'un créneau</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.75rem">R₁ = 10 kΩ, C = 100 nF. Ve = signal carré ±1 V, f = 1 kHz.</p>
+          <div class="formula" style="font-size:.85rem">
+            τ = R₁C = 10k × 100n = <span style="color:var(--accent3)">1 ms</span><br>
+            f_c = 1/(2π × 1ms) ≈ <span style="color:var(--accent3)">159 Hz</span><br>
+            À 1 kHz : |H| = fc/f = 159/1000 = <span style="color:var(--accent3)">0,159</span><br>
+            → Le créneau est intégré en signal triangulaire d'amplitude 0,159 V
+          </div>
+        </div>
+      </div>
+
+      <!-- ── 7. DÉRIVATEUR ── -->
+      <div class="content-block" id="aop2-derivateur">
+        <div class="section-tag" style="color:var(--accent3)">7 — Traitement temporel</div>
+        <h2 class="block-title">Montage Dérivateur</h2>
+        <p class="block-text">L'intégrateur inversé : condensateur sur l'entrée, résistance en contre-réaction. Réalise la <strong>dérivation temporelle</strong>. Gain proportionnel à la fréquence (filtre passe-haut).</p>
+
+        <div class="formula-box">
+          <span class="formula-label">Formules — Dérivateur idéal</span>
+          <div class="formula">
+            Domaine temporel : S(t) = −R<sub>f</sub>C × dVe/dt<br>
+            Domaine fréquentiel : H(jω) = −jωR<sub>f</sub>C<br>
+            Fréquence de coupure : f<sub>c</sub> = 1/(2πR<sub>f</sub>C)
+          </div>
+          <div class="formula-explain">
+            Le gain |H| = ωRfC → croît de <strong>+20 dB/décade</strong> (filtre passe-haut du 1er ordre).<br>
+            À haute fréquence, le bruit est amplifié : le dérivateur est très sensible au bruit. On ajoute toujours R₁ en série avec C pour limiter le gain en HF.
+          </div>
+        </div>
+
+        <div class="alert">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-text"><strong>Instabilité en pratique :</strong> Le dérivateur pur est instable (oscillations) car son gain croît indéfiniment avec f. Solution : ajouter R₁ en série avec C → gain limité à Rf/R₁ en haute fréquence. Le dérivateur devient un filtre passe-bande.</div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Exemple — Dérivateur d'un signal triangulaire</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.75rem">Rf = 10 kΩ, C = 10 nF. Ve = triangulaire ±1 V, f = 1 kHz (pente = ΔV/Δt = 4×1V×1kHz = 4000 V/s)</p>
+          <div class="formula" style="font-size:.85rem">
+            τ = RfC = 10k × 10n = <span style="color:var(--accent3)">100 µs</span><br>
+            S(t) = −τ × dVe/dt = −100µs × 4000 = <span style="color:var(--accent3)">−0,4 V</span> (pendant la montée)<br>
+            → Signal triangulaire → créneau de ±0,4 V à la sortie
+          </div>
+        </div>
+
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div class="tip-text"><strong>Intégrateur vs Dérivateur en fréquentiel :</strong> Intégrateur : H ∝ 1/jω → passe-bas, pente −20 dB/dec. Dérivateur : H ∝ jω → passe-haut, pente +20 dB/dec. Ce sont des opérations mathématiques duales.</div>
+        </div>
+      </div>
+
+      <!-- ── 8. FILTRES ACTIFS ── -->
+      <div class="content-block" id="aop2-filtres">
+        <div class="section-tag" style="color:var(--accent3)">8 — Filtrage actif</div>
+        <h2 class="block-title">Filtres Actifs du 1er et 2nd Ordre</h2>
+        <p class="block-text">Les filtres actifs combinent AOP et réseaux RC pour sélectionner des plages de fréquence avec gain contrôlable. Ils évitent les atténuations des filtres passifs et peuvent amplifier le signal filtré.</p>
+
+        <table class="vtable">
+          <tr><th>Type</th><th>Montage</th><th>H(jω)</th><th>Pente</th><th>Usage</th></tr>
+          <tr>
+            <td class="accent">Passe-bas 1er</td>
+            <td class="mono">Inverseur + C // Rf</td>
+            <td class="mono">−Rf/R₁ × 1/(1+jωRfC)</td>
+            <td>−20 dB/dec</td>
+            <td>Anti-repliement, lissage</td>
+          </tr>
+          <tr>
+            <td class="accent">Passe-haut 1er</td>
+            <td class="mono">Inverseur + C série R₁</td>
+            <td class="mono">−Rf/R₁ × jωR₁C/(1+jωR₁C)</td>
+            <td>+20 dB/dec</td>
+            <td>Élimination DC, AC coupling</td>
+          </tr>
+          <tr>
+            <td class="accent">Passe-bande</td>
+            <td class="mono">PH + PB en cascade</td>
+            <td class="mono">Gain × jωτ/(1+jωτ)²</td>
+            <td>±20 dB/dec</td>
+            <td>Égaliseurs, détection fréquence</td>
+          </tr>
+          <tr>
+            <td class="accent">Passe-bas 2nd (Sallen-Key)</td>
+            <td class="mono">Non-inv + 2 RC</td>
+            <td class="mono">1/(1+jωτ)² avec Q</td>
+            <td>−40 dB/dec</td>
+            <td>Coupure nette, audio</td>
+          </tr>
+        </table>
+
+        <div class="formula-box">
+          <span class="formula-label">Filtre passe-bas actif du 1er ordre (le plus courant)</span>
+          <div class="formula">
+            H(jω) = −G<sub>0</sub> / (1 + jω/ω<sub>c</sub>)<br>
+            G₀ = Rf/R₁ &nbsp;|&nbsp; f<sub>c</sub> = 1/(2πR<sub>f</sub>C)
+          </div>
+          <div class="formula-explain">
+            Gain en DC (ω=0) : |H(0)| = G₀ = Rf/R₁<br>
+            À f = fc : |H| = G₀/√2 (−3 dB)<br>
+            Pour f >> fc : |H| décroît à −20 dB/décade
+          </div>
+        </div>
+
+        <div class="example-box">
+          <span class="example-label">Exercice résolu — Filtre anti-bruit audio</span>
+          <p style="color:var(--text2);font-size:.9rem;margin-bottom:.75rem">Spéc : gain G₀ = 10, fréquence de coupure fc = 20 kHz (limite audible)</p>
+          <div class="formula" style="font-size:.85rem">
+            Gain : Rf/R₁ = 10 → choisir R₁ = 10 kΩ, Rf = 100 kΩ<br>
+            Coupure : fc = 1/(2πRfC) → C = 1/(2π × 100k × 20k) = <span style="color:var(--accent3)">79,6 pF ≈ 82 pF</span><br>
+            Vérif : fc = 1/(2π × 100k × 82p) = <span style="color:var(--accent3)">19,4 kHz</span> ✓
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CALCULATEUR INTERACTIF ── -->
+      <div class="content-block" id="aop2-calc">
+        <div class="section-tag" style="color:var(--accent3)">🔢 Outil interactif</div>
+        <h2 class="block-title">Calculateur de Montages AOP Linéaires</h2>
+
+        <div class="calc-box">
+          <div class="calc-title">⚡ Calculateur <span>AOP-02</span></div>
+
+          <div style="margin-bottom:1.2rem">
+            <label style="font-size:.8rem;color:var(--text2);font-family:'Space Mono',monospace;display:block;margin-bottom:.5rem">TYPE DE MONTAGE</label>
+            <select id="aop2-type" onchange="calcAOP2()" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.6rem .8rem;border-radius:6px;font-family:'Space Mono',monospace;font-size:.85rem;width:100%;outline:none">
+              <option value="inv">Inverseur</option>
+              <option value="noninv">Non-inverseur</option>
+              <option value="suiveur">Suiveur (buffer)</option>
+              <option value="integ">Intégrateur (fréquenciel)</option>
+              <option value="filtre">Filtre passe-bas actif</option>
+            </select>
+          </div>
+
+          <div class="calc-grid" id="aop2-inputs">
+            <div class="calc-field">
+              <label class="calc-label">R₁ (kΩ)</label>
+              <input type="number" class="calc-input" id="aop2-r1" value="10" oninput="calcAOP2()">
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">R₂ ou Rf (kΩ)</label>
+              <input type="number" class="calc-input" id="aop2-r2" value="47" oninput="calcAOP2()">
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">Ve (V)</label>
+              <input type="number" class="calc-input" id="aop2-ve" value="1" step="0.1" oninput="calcAOP2()">
+            </div>
+            <div class="calc-field">
+              <label class="calc-label">C (nF) — si filtre</label>
+              <input type="number" class="calc-input" id="aop2-c" value="100" oninput="calcAOP2()">
+            </div>
+          </div>
+          <button class="calc-btn" onclick="calcAOP2()">Calculer →</button>
+          <div class="calc-result" id="aop2-result"></div>
+        </div>
+      </div>
+
+      <!-- ── QCM AOP-02 ── -->
+      <div class="content-block" id="aop2-qcm">
+        <div class="section-tag" style="color:var(--accent3)">📋 Test de connaissance</div>
+        <h2 class="block-title">QCM — Montages Linéaires</h2>
+        <div id="qcm-aop_lineaire"></div>
+      </div>
+
+    </div>
+  </div>
+</div>

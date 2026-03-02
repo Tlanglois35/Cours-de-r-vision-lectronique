@@ -1,0 +1,245 @@
+<div id="lesson-puissances" class="section">
+  <button class="back-btn" onclick="showSection('modules-elec')">← Retour aux modules</button>
+  <div class="lesson-layout">
+    <aside class="lesson-sidebar">
+      <div class="sidebar-title">MODULE 04</div>
+      <ul class="sidebar-items">
+        <li class="sidebar-item active" onclick="scrollTo(0,0)">4.1 Puissance instantanée</li>
+        <li class="sidebar-item" onclick="scrollToId('p-types')">4.2 P, Q, S — Triangle</li>
+        <li class="sidebar-item" onclick="scrollToId('p-complexe')">4.3 Puissance complexe</li>
+        <li class="sidebar-item" onclick="scrollToId('p-boucherot')">4.4 Théorème de Boucherot</li>
+        <li class="sidebar-item" onclick="scrollToId('p-compensation')">4.5 Compensation de Q</li>
+        <li class="sidebar-item" onclick="scrollToId('p-calc')">🧮 Calculatrice</li>
+        <li class="sidebar-item" onclick="scrollToId('p-exercices')">📐 Exercices</li>
+        <li class="sidebar-item" onclick="scrollToId('p-qcm')">📋 QCM</li>
+      </ul>
+    </aside>
+    <div class="lesson-content">
+
+      <!-- 4.1 Puissance instantanée -->
+      <div class="content-block">
+        <div class="section-tag">4.1 — Puissance instantanée (p.41-42)</div>
+        <h2 class="block-title">Puissance instantanée</h2>
+        <div class="formula-box">
+          <span class="formula-label">Puissance instantanée — Décomposition</span>
+          <div class="formula">
+            p(t) = v(t)·i(t) = V·I·cos(φ) − V·I·cos(2ωt−φ)
+          </div>
+          <div class="formula-explain">
+            Avec v(t) = V√2·sin(ωt) et i(t) = I√2·sin(ωt−φ) :<br>
+            p(t) = 2VI·sin(ωt)·sin(ωt−φ) = VI·[cos(φ) − cos(2ωt−φ)]<br>
+            • Partie constante = puissance active P = V·I·cosφ<br>
+            • Partie fluctuante à 2ω = composante pulsatoire (s'annule en moyenne)<br>
+            <strong>Remarque :</strong> la puissance fluctue à deux fois la fréquence du signal !
+          </div>
+        </div>
+        <div class="alert"><div class="alert-icon">⚠️</div><div class="alert-text"><strong>En monophasé :</strong> la puissance instantanée est pulsatoire à 2ω (fluctue entre 0 et 2P). En <strong>triphasé équilibré</strong> : les 3 composantes s'annulent → puissance instantanée <em>constante</em> = 3VI·cosφ. C'est l'avantage majeur du triphasé pour les moteurs !</div></div>
+      </div>
+
+      <!-- 4.2 P, Q, S -->
+      <div class="content-block" id="p-types">
+        <div class="section-tag">4.2 — Triangle des puissances (p.43-45)</div>
+        <h2 class="block-title">Puissances P, Q, S</h2>
+        <table class="vtable">
+          <tr><th>Grandeur</th><th>Nom</th><th>Formule</th><th>Unité</th><th>Signification physique</th></tr>
+          <tr>
+            <td class="accent">P</td><td>Puissance active</td>
+            <td class="mono">P = V·I·cosφ</td><td>W (watts)</td>
+            <td>Travail réel, chaleur, mouvement. Énergie effectivement consommée.</td>
+          </tr>
+          <tr>
+            <td class="accent">Q</td><td>Puissance réactive</td>
+            <td class="mono">Q = V·I·sinφ</td><td>VAr</td>
+            <td>Énergie oscillant entre source et champ magnétique/électrique. Aucun travail utile.</td>
+          </tr>
+          <tr>
+            <td class="accent">S</td><td>Puissance apparente</td>
+            <td class="mono">S = V·I = √(P²+Q²)</td><td>VA</td>
+            <td>Dimensionnement des câbles, disjoncteurs, génératrices. S = |Ŝ|.</td>
+          </tr>
+          <tr>
+            <td class="accent">cosφ</td><td>Facteur de puissance</td>
+            <td class="mono">cosφ = P/S</td><td>sans unité</td>
+            <td>Rapport P/S. Plus cosφ proche de 1, meilleur est le rendement du réseau.</td>
+          </tr>
+        </table>
+        <div class="formula-box">
+          <span class="formula-label">Triangle des puissances (Pythagore)</span>
+          <div class="formula">S² = P² + Q² &nbsp;→&nbsp; S = √(P²+Q²)</div>
+          <div class="formula-explain">
+            S est l'hypoténuse, P la base (côté réel), Q le côté vertical (réactif).<br>
+            Charge inductive : Q > 0 (angle φ > 0). Charge capacitive : Q &lt; 0 (angle φ &lt; 0).<br>
+            Charge purement résistive : Q = 0, cosφ = 1, S = P (idéal !).
+          </div>
+        </div>
+
+        <!-- SVG triangle des puissances -->
+        <div class="diagram-container">
+          <span class="diagram-label">Triangle des puissances</span>
+          <svg viewBox="0 0 400 220" class="diagram">
+            <!-- Triangle -->
+            <line x1="60" y1="160" x2="300" y2="160" stroke="#3af4c8" stroke-width="2.5"/>
+            <line x1="300" y1="160" x2="300" y2="70" stroke="#ff5e3a" stroke-width="2.5"/>
+            <line x1="60" y1="160" x2="300" y2="70" stroke="#e8f428" stroke-width="3"/>
+            <!-- Labels -->
+            <text x="175" y="180" fill="#3af4c8" font-size="13" text-anchor="middle" font-family="Space Mono">P (W)</text>
+            <text x="320" y="120" fill="#ff5e3a" font-size="13" font-family="Space Mono">Q (VAr)</text>
+            <text x="150" y="100" fill="#e8f428" font-size="14" text-anchor="middle" font-family="Space Mono" transform="rotate(-22,160,120)">S (VA)</text>
+            <!-- Angle phi -->
+            <path d="M 110,160 A 50,50 0 0,0 96,128" fill="none" stroke="#e8f428" stroke-width="1.5"/>
+            <text x="118" y="142" fill="#e8f428" font-size="11" font-family="Space Mono">φ</text>
+            <!-- Angle droit -->
+            <rect x="292" y="152" width="8" height="8" fill="none" stroke="#8888aa" stroke-width="1"/>
+            <!-- Formules -->
+            <text x="30" y="210" fill="#8888aa" font-size="10" font-family="Space Mono">cosφ = P/S &nbsp;|&nbsp; sinφ = Q/S &nbsp;|&nbsp; S² = P²+Q²</text>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 4.3 Puissance complexe -->
+      <div class="content-block" id="p-complexe">
+        <div class="section-tag">4.3 — Puissance complexe (p.45-51)</div>
+        <h2 class="block-title">Puissance complexe Ŝ</h2>
+        <div class="formula-box">
+          <span class="formula-label">Définitions équivalentes</span>
+          <div class="formula">
+            Ŝ = V·I* = P + jQ<br>
+            Ŝ = Z·|I|² = Z·I·I*<br>
+            Ŝ = |V|²/Z* = V²/Z*
+          </div>
+          <div class="formula-explain">
+            I* = conjugué de I. Le conjugué garantit que Re(Ŝ) = P > 0 pour un récepteur passif.<br>
+            |Ŝ| = S = √(P²+Q²) — le module donne la puissance apparente.<br>
+            <strong>Identification :</strong> P = Re(Ŝ) = Re(Z)·|I|² = R·I² &nbsp;|&nbsp; Q = Im(Ŝ) = Im(Z)·|I|² = X·I²
+          </div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Calcul complet — Exercice 1 (p.54)</span>
+          <p>V = 230 V, f = 50 Hz. Charge : R₁ = 20 Ω en parallèle avec R₂ = 10 Ω, L = 20 mH en série avec R₁.</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution détaillée</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>ω = 2π×50 = 314 rad/s &nbsp;|&nbsp; X<sub>L</sub> = 314×0,02 = 6,28 Ω</p>
+            <p>Z₁ (branche R₁+L) = 20 + j6,28 Ω &nbsp;|&nbsp; |Z₁| = √(400+39,4) = √439,4 ≈ 20,96 Ω</p>
+            <p>I₁ = 230/20,96 ≈ <strong>10,97 A</strong> &nbsp;|&nbsp; I₂ = 230/10 = <strong>23 A</strong></p>
+            <p>P₁ = R₁·I₁² = 20×10,97² ≈ 2408 W &nbsp;|&nbsp; Q₁ = X<sub>L</sub>·I₁² = 6,28×10,97² ≈ 756 VAr</p>
+            <p>P₂ = R₂·I₂² = 10×23² = 5290 W &nbsp;|&nbsp; Q₂ = 0</p>
+            <p>P<sub>tot</sub> = 2408+5290 = <strong>7698 W</strong> &nbsp;|&nbsp; Q<sub>tot</sub> = <strong>756 VAr</strong></p>
+            <p>S = √(7698²+756²) ≈ <strong>7735 VA</strong></p>
+            <p>I = S/V = 7735/230 ≈ <strong>33,6 A</strong> &nbsp;|&nbsp; cosφ = P/S = 7698/7735 ≈ <strong>0,995</strong></p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- 4.4 Boucherot -->
+      <div class="content-block" id="p-boucherot">
+        <div class="section-tag">4.4 — Théorème fondamental (p.52-53)</div>
+        <h2 class="block-title">Théorème de Boucherot</h2>
+        <div class="formula-box">
+          <span class="formula-label">Énoncé et corollaires</span>
+          <div class="formula">
+            P<sub>tot</sub> = ΣP<sub>i</sub> ✓ &nbsp;&nbsp; Q<sub>tot</sub> = ΣQ<sub>i</sub> ✓ &nbsp;&nbsp; Ŝ<sub>tot</sub> = ΣŜ<sub>i</sub> ✓<br>
+            <span style="color:var(--accent2)">S<sub>tot</sub> ≠ ΣS<sub>i</sub> ✗</span> &nbsp;&nbsp; S<sub>tot</sub> = √(P<sub>tot</sub>²+Q<sub>tot</sub>²)
+          </div>
+          <div class="formula-explain">
+            P et Q sont additives (scalaires réels). Ŝ est additive (complexe).<br>
+            Mais S<sub>tot</sub> (module de Ŝ<sub>tot</sub>) n'est PAS la somme des modules — à cause des déphasages différents !<br>
+            <strong>Méthode :</strong> 1) Calculer P<sub>i</sub> et Q<sub>i</sub> de chaque charge. 2) Sommer : P<sub>tot</sub>, Q<sub>tot</sub>. 3) S<sub>tot</sub> = √(P²+Q²). 4) cosφ<sub>tot</sub> = P<sub>tot</sub>/S<sub>tot</sub>.
+          </div>
+        </div>
+        <div class="tip"><div class="tip-icon">💡</div><div class="tip-text"><strong>Application directe :</strong> Un atelier avec plusieurs machines de facteurs de puissance différents. On calcule P et Q de chacune, on additionne, puis S<sub>tot</sub> = √(ΣP)²+(ΣQ)²). On ne fait JAMAIS S<sub>tot</sub> = ΣS<sub>i</sub>.</div></div>
+      </div>
+
+      <!-- 4.5 Compensation -->
+      <div class="content-block" id="p-compensation">
+        <div class="section-tag">4.5 — Améliorer cosφ</div>
+        <h2 class="block-title">Compensation de puissance réactive</h2>
+        <p class="block-text">Les charges inductives (moteurs, transformateurs) consomment de la puissance réactive Q > 0. Cela augmente S et le courant I, surchargeant inutilement les câbles et génératrices. On compense avec des condensateurs (Q &lt; 0).</p>
+        <div class="formula-box">
+          <span class="formula-label">Calcul du condensateur de compensation</span>
+          <div class="formula">
+            Q<sub>C</sub> = P·(tanφ − tanφ')<br>
+            C = Q<sub>C</sub>/(ωV²) &nbsp;(monophasé)<br>
+            C = Q<sub>C</sub>/(3ωV²) &nbsp;(triphasé étoile)
+          </div>
+          <div class="formula-explain">
+            φ = déphasage initial (cosφ donné) | φ' = déphasage cible (cosφ' voulu)<br>
+            Q<sub>C</sub> = puissance réactive capacitive à fournir (valeur positive = capacité à installer)<br>
+            Un condensateur produit Q &lt; 0 → il "consomme" du Q négatif = fournit du Q positif compensant le Q inductif.
+          </div>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Exemple numérique</span>
+          <p>P = 10 kW, cosφ = 0,7 (inductif) → cosφ' = 0,95. V = 230 V, f = 50 Hz.</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Calcul complet</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>φ = arccos(0,7) = 45,57° → tanφ = 1,020</p>
+            <p>φ' = arccos(0,95) = 18,19° → tanφ' = 0,329</p>
+            <p>Q<sub>C</sub> = 10000×(1,020−0,329) = <strong>6910 VAr</strong></p>
+            <p>C = 6910/(2π×50×230²) = 6910/16616 ≈ <strong>416 µF</strong></p>
+            <p>Vérif : après compensation, Q' = Q−Q<sub>C</sub> = 10200−6910 = 3290 VAr</p>
+            <p>S' = √(10000²+3290²) ≈ 10530 VA &nbsp;|&nbsp; cosφ' = 10000/10530 ≈ 0,950 ✓</p>
+            <p>Gain : courant avant = S/V = 14300/230 ≈ 62 A → après = 10530/230 ≈ 46 A (25% moins !)</p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- Calculatrice puissances -->
+      <div class="content-block" id="p-calc">
+        <div class="section-tag">🧮 Outil interactif</div>
+        <h2 class="block-title">Calculatrice — Puissances électriques</h2>
+        <div class="calc-box">
+          <div class="calc-title">⚡ Calculatrice <span>P, Q, S &amp; Compensation</span></div>
+          <div style="margin-bottom:1rem">
+            <label style="font-size:.8rem;color:var(--text2);font-family:'Space Mono',monospace;display:block;margin-bottom:.5rem">MODE DE CALCUL</label>
+            <select id="p-mode" onchange="calcPuissance()" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:.6rem .8rem;border-radius:6px;font-family:'Space Mono',monospace;font-size:.85rem;width:100%;outline:none">
+              <option value="pqs">P, Q → S, cosφ</option>
+              <option value="scosphi">S, cosφ → P, Q</option>
+              <option value="comp">Compensation de puissance réactive</option>
+            </select>
+          </div>
+          <div class="calc-grid">
+            <div class="calc-field"><label class="calc-label" id="p-l1">P (W)</label><input type="number" class="calc-input" id="p-in1" value="5000" oninput="calcPuissance()"></div>
+            <div class="calc-field"><label class="calc-label" id="p-l2">Q (VAr)</label><input type="number" class="calc-input" id="p-in2" value="3750" oninput="calcPuissance()"></div>
+            <div class="calc-field"><label class="calc-label" id="p-l3">V (V)</label><input type="number" class="calc-input" id="p-in3" value="230" oninput="calcPuissance()"></div>
+            <div class="calc-field"><label class="calc-label" id="p-l4">cosφ' cible</label><input type="number" class="calc-input" id="p-in4" value="0.95" step="0.01" oninput="calcPuissance()"></div>
+          </div>
+          <button class="calc-btn" onclick="calcPuissance()">Calculer →</button>
+          <div class="calc-result" id="p-result"></div>
+        </div>
+      </div>
+
+      <!-- Exercices -->
+      <div class="content-block" id="p-exercices">
+        <div class="section-tag">📐 Exercices résolus</div>
+        <h2 class="block-title">Exercices du cours</h2>
+        <div class="example-box" style="margin-bottom:1rem">
+          <span class="example-label">Exercice 1 — Charge monophasée (p.54)</span>
+          <p>V = 230 V, f = 50 Hz. R₁ = 20 Ω // L=20mH en série avec R₂ = 10 Ω en parallèle.</p>
+          <p><strong>Résultats :</strong> I₁ ≈ 10,97 A | I₂ = 23 A | I ≈ 33,6 A | P ≈ 7698 W | Q ≈ 756 VAr | S ≈ 7735 VA | cosφ ≈ 0,995</p>
+        </div>
+        <div class="example-box">
+          <span class="example-label">Exercice — Boucherot : atelier industriel</span>
+          <p>3 charges : M1 (P=5kW, cosφ=0,8 AR), M2 (P=8kW, cosφ=0,9 AR), Éclairage (P=2kW, cosφ=1)</p>
+          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Solution Boucherot</span><span class="expand-icon">+</span></div>
+          <div class="expand-content">
+            <p>M1 : tanφ=0,75 → Q₁=5000×0,75=3750 VAr</p>
+            <p>M2 : tanφ=0,484 → Q₂=8000×0,484=3873 VAr</p>
+            <p>Éclairage : Q₃=0</p>
+            <p>P<sub>tot</sub> = 5+8+2 = <strong>15 kW</strong></p>
+            <p>Q<sub>tot</sub> = 3750+3873+0 = <strong>7623 VAr</strong></p>
+            <p>S<sub>tot</sub> = √(15000²+7623²) = √(225×10⁶+58×10⁶) ≈ <strong>16830 VA = 16,83 kVA</strong></p>
+            <p>cosφ<sub>tot</sub> = 15000/16830 ≈ <strong>0,892</strong></p>
+          </div></div>
+        </div>
+      </div>
+
+      <!-- QCM -->
+      <div class="content-block" id="p-qcm">
+        <div class="section-tag">📋 QCM</div>
+        <h2 class="block-title">QCM — Puissances Électriques</h2>
+        <div id="qcm-puissances"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
