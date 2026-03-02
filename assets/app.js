@@ -1,9 +1,10 @@
+
 // ═══════════════════════════════
 // STATE
 // ═══════════════════════════════
 const state = {
   currentSection: 'home',
-  progress: {complexes:0, signaux:0, impedances:0, puissances:0, methodologie:0, 'triphasé':0, aop_bases:0, aop_lineaire:0, aop_oscillateurs:0},
+  progress: { generalites: 0, complexes: 0, signaux: 0, impedances: 0, puissances: 0, methodologie: 0, 'triphasé': 0, aop_bases: 0, aop_lineaire: 0, aop_oscillateurs: 0 },
   scores: {}
 };
 
@@ -20,44 +21,23 @@ function showHome() {
 function showSection(id) {
   hideAll();
   const el = document.getElementById(id);
-  if(el) {
+  if (el) {
     el.style.display = 'block';
     el.classList.add('active');
   }
   state.currentSection = id;
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
   updateProgress((id === 'modules-elec' || id === 'modules-aop') ? 10 : 20);
   if (id === 'progression') renderProgression();
 }
 
-async function loadLessonSection(id) {
-  const sectionId = 'lesson-' + id;
-  let el = document.getElementById(sectionId);
-  if (el) return el;
-
-  const mount = document.getElementById('lessons-mount') || document.body;
-  const res = await fetch(`sections/${sectionId}.html`);
-  if (!res.ok) throw new Error(`Impossible de charger ${sectionId}`);
-  const html = await res.text();
-
-  const wrapper = document.createElement('div');
-  wrapper.innerHTML = html.trim();
-  el = wrapper.firstElementChild;
-  mount.appendChild(el);
-
-  Object.keys(QCMs).forEach(mid => renderQCM(mid, QCMs[mid]));
-  attachComplexPlaneHandlers();
-  return el;
-}
-
-async function showLesson(id) {
+function showLesson(id) {
   hideAll();
-  const el = await loadLessonSection(id);
-  if (!el) return;
+  const el = document.getElementById('lesson-' + id);
   el.style.display = 'block';
   el.classList.add('active');
   state.currentSection = 'lesson-' + id;
-  window.scrollTo(0,0);
+  window.scrollTo(0, 0);
   updateProgress(40);
 }
 
@@ -70,7 +50,7 @@ function hideAll() {
 
 function scrollToId(id) {
   const el = document.getElementById(id);
-  if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // Progress bar
@@ -82,7 +62,7 @@ window.addEventListener('scroll', () => {
   const scrolled = window.scrollY;
   const total = document.documentElement.scrollHeight - window.innerHeight;
   if (total > 0) {
-    const pct = Math.max(10, (scrolled/total)*100);
+    const pct = Math.max(10, (scrolled / total) * 100);
     document.getElementById('progressBar').style.width = pct + '%';
   }
 });
@@ -102,10 +82,10 @@ function toggleExpand(header) {
 // FORM SWITCHER
 // ═══════════════════════════════
 function showForm(idx) {
-  [0,1,2].forEach(i => {
-    document.getElementById('form-'+i).style.display = i === idx ? 'block' : 'none';
+  [0, 1, 2].forEach(i => {
+    document.getElementById('form-' + i).style.display = i === idx ? 'block' : 'none';
   });
-  document.querySelectorAll('.step').forEach((s,i) => {
+  document.querySelectorAll('.step').forEach((s, i) => {
     s.classList.toggle('active', i === idx);
   });
 }
@@ -114,82 +94,75 @@ function showForm(idx) {
 // CANVAS PLAN COMPLEXE
 // ═══════════════════════════════
 function drawComplex() {
-  const reEl = document.getElementById('cRe');
-  const imEl = document.getElementById('cIm');
+  const a = parseFloat(document.getElementById('cRe').value) || 0;
+  const b = parseFloat(document.getElementById('cIm').value) || 0;
   const canvas = document.getElementById('complexCanvas');
-  const modEl = document.getElementById('cMod');
-  const argEl = document.getElementById('cArg');
-  const expEl = document.getElementById('cExp');
-  if (!reEl || !imEl || !canvas || !modEl || !argEl || !expEl) return;
-
-  const a = parseFloat(reEl.value) || 0;
-  const b = parseFloat(imEl.value) || 0;
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
-  const cx = W/2, cy = H/2;
-  const scale = Math.min(W,H) / (2 * Math.max(Math.abs(a), Math.abs(b), 3) * 1.4);
+  const cx = W / 2, cy = H / 2;
+  const scale = Math.min(W, H) / (2 * Math.max(Math.abs(a), Math.abs(b), 3) * 1.4);
 
-  ctx.clearRect(0,0,W,H);
+  ctx.clearRect(0, 0, W, H);
 
   // Background
   ctx.fillStyle = '#12121a';
-  ctx.fillRect(0,0,W,H);
+  ctx.fillRect(0, 0, W, H);
 
   // Grid
   ctx.strokeStyle = '#2a2a3a';
   ctx.lineWidth = 1;
-  for(let i=-10;i<=10;i++) {
-    ctx.beginPath(); ctx.moveTo(cx+i*scale*2,0); ctx.lineTo(cx+i*scale*2,H); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(0,cy+i*scale*2); ctx.lineTo(W,cy+i*scale*2); ctx.stroke();
+  for (let i = -10; i <= 10; i++) {
+    ctx.beginPath(); ctx.moveTo(cx + i * scale * 2, 0); ctx.lineTo(cx + i * scale * 2, H); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(0, cy + i * scale * 2); ctx.lineTo(W, cy + i * scale * 2); ctx.stroke();
   }
 
   // Axes
   ctx.strokeStyle = '#3a3a5a';
   ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(W,cy); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,H); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(W, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, H); ctx.stroke();
 
   // Labels axes
   ctx.fillStyle = '#8888aa';
   ctx.font = '12px Space Mono';
-  ctx.fillText('Re', W-25, cy-8);
-  ctx.fillText('Im', cx+8, 15);
-  ctx.fillText('0', cx+5, cy+15);
+  ctx.fillText('Re', W - 25, cy - 8);
+  ctx.fillText('Im', cx + 8, 15);
+  ctx.fillText('0', cx + 5, cy + 15);
 
   // Point Z
-  const px = cx + a*scale;
-  const py = cy - b*scale;
+  const px = cx + a * scale;
+  const py = cy - b * scale;
 
   // Dashed projections
   ctx.strokeStyle = '#2a2a3a';
   ctx.lineWidth = 1;
-  ctx.setLineDash([5,5]);
-  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(px,cy); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(px,py); ctx.lineTo(cx,py); ctx.stroke();
+  ctx.setLineDash([5, 5]);
+  ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, cy); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(cx, py); ctx.stroke();
   ctx.setLineDash([]);
 
   // Vector
   ctx.strokeStyle = '#e8f428';
   ctx.lineWidth = 2.5;
-  ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(px,py); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
 
   // Arrow head
-  const angle = Math.atan2(-(py-cy), px-cx);
+  const angle = Math.atan2(-(py - cy), px - cx);
   ctx.fillStyle = '#e8f428';
   ctx.beginPath();
-  ctx.moveTo(px,py);
-  ctx.lineTo(px-12*Math.cos(angle-0.4), py+12*Math.sin(angle-0.4));
-  ctx.lineTo(px-12*Math.cos(angle+0.4), py+12*Math.sin(angle+0.4));
+  ctx.moveTo(px, py);
+  ctx.lineTo(px - 12 * Math.cos(angle - 0.4), py + 12 * Math.sin(angle - 0.4));
+  ctx.lineTo(px - 12 * Math.cos(angle + 0.4), py + 12 * Math.sin(angle + 0.4));
   ctx.fill();
 
   // Point
   ctx.fillStyle = '#e8f428';
-  ctx.beginPath(); ctx.arc(px,py,5,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(px, py, 5, 0, Math.PI * 2); ctx.fill();
 
   // Angle arc
-  const mod = Math.sqrt(a*a+b*b);
-  if(mod > 0) {
-    const phi = Math.atan2(b,a);
+  const mod = Math.sqrt(a * a + b * b);
+  if (mod > 0) {
+    const phi = Math.atan2(b, a);
     ctx.strokeStyle = '#ff5e3a';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -197,43 +170,33 @@ function drawComplex() {
     ctx.stroke();
     ctx.fillStyle = '#ff5e3a';
     ctx.font = '13px Space Mono';
-    ctx.fillText('φ', cx+32, cy-5);
+    ctx.fillText('φ', cx + 32, cy - 5);
   }
 
   // Label Z
   ctx.fillStyle = '#e8f428';
   ctx.font = 'bold 14px Space Mono';
-  ctx.fillText(`Z(${a},${b>0?'+'+b:b}j)`, px+8, py-8);
+  ctx.fillText(`Z(${a},${b > 0 ? '+' + b : b}j)`, px + 8, py - 8);
 
   // Label a on x
   ctx.fillStyle = '#3af4c8';
   ctx.font = '11px Space Mono';
-  ctx.fillText('a='+a, px-15, cy+18);
+  ctx.fillText('a=' + a, px - 15, cy + 18);
   // Label b on y
   ctx.fillStyle = '#ff5e3a';
-  ctx.fillText('b='+b, cx+5, py+4);
+  ctx.fillText('b=' + b, cx + 5, py + 4);
 
   // Update info
-  const modZ = Math.sqrt(a*a+b*b);
-  const argDeg = Math.atan2(b,a) * 180 / Math.PI;
-  modEl.textContent = modZ.toFixed(3);
-  argEl.textContent = argDeg.toFixed(1) + '°';
-  expEl.textContent = modZ.toFixed(2) + '·e^(j' + argDeg.toFixed(0) + '°)';
+  const modZ = Math.sqrt(a * a + b * b);
+  const argDeg = Math.atan2(b, a) * 180 / Math.PI;
+  document.getElementById('cMod').textContent = modZ.toFixed(3);
+  document.getElementById('cArg').textContent = argDeg.toFixed(1) + '°';
+  document.getElementById('cExp').textContent = modZ.toFixed(2) + '·e^(j' + argDeg.toFixed(0) + '°)';
 }
 
-function attachComplexPlaneHandlers() {
-  const reInput = document.getElementById('cRe');
-  const imInput = document.getElementById('cIm');
-  if (!reInput || !imInput) return;
-  if (!reInput.dataset.bound) {
-    reInput.addEventListener('input', drawComplex);
-    reInput.dataset.bound = '1';
-  }
-  if (!imInput.dataset.bound) {
-    imInput.addEventListener('input', drawComplex);
-    imInput.dataset.bound = '1';
-  }
-}
+// Draw on input change
+document.getElementById('cRe').addEventListener('input', drawComplex);
+document.getElementById('cIm').addEventListener('input', drawComplex);
 
 // ═══════════════════════════════
 // CALCULATORS
@@ -241,86 +204,86 @@ function attachComplexPlaneHandlers() {
 function calcComplex() {
   const a = parseFloat(document.getElementById('calcA').value);
   const b = parseFloat(document.getElementById('calcB').value);
-  const mod = Math.sqrt(a*a+b*b);
-  const argRad = Math.atan2(b,a);
+  const mod = Math.sqrt(a * a + b * b);
+  const argRad = Math.atan2(b, a);
   const argDeg = argRad * 180 / Math.PI;
   document.getElementById('rMod').textContent = mod.toFixed(4);
   document.getElementById('rArg').textContent = argDeg.toFixed(2) + '°';
   document.getElementById('rArgR').textContent = argRad.toFixed(4) + ' rad';
-  document.getElementById('rConj').textContent = a + (b>=0 ? ' − j' + Math.abs(b) : ' + j' + Math.abs(b));
+  document.getElementById('rConj').textContent = a + (b >= 0 ? ' − j' + Math.abs(b) : ' + j' + Math.abs(b));
   document.getElementById('rExp').textContent = mod.toFixed(3) + ' · e^(j' + argDeg.toFixed(1) + '°)';
   document.getElementById('calcResult').classList.add('show');
 }
 
 function calcProd() {
-  const a1=parseFloat(document.getElementById('z1a').value), b1=parseFloat(document.getElementById('z1b').value);
-  const a2=parseFloat(document.getElementById('z2a').value), b2=parseFloat(document.getElementById('z2b').value);
-  const ra = a1*a2 - b1*b2, rb = a1*b2 + b1*a2;
-  const mod = Math.sqrt(ra*ra+rb*rb);
-  const arg = Math.atan2(rb,ra)*180/Math.PI;
-  document.getElementById('rProd').textContent = ra.toFixed(3) + (rb>=0?' + j':' − j') + Math.abs(rb).toFixed(3);
+  const a1 = parseFloat(document.getElementById('z1a').value), b1 = parseFloat(document.getElementById('z1b').value);
+  const a2 = parseFloat(document.getElementById('z2a').value), b2 = parseFloat(document.getElementById('z2b').value);
+  const ra = a1 * a2 - b1 * b2, rb = a1 * b2 + b1 * a2;
+  const mod = Math.sqrt(ra * ra + rb * rb);
+  const arg = Math.atan2(rb, ra) * 180 / Math.PI;
+  document.getElementById('rProd').textContent = ra.toFixed(3) + (rb >= 0 ? ' + j' : ' − j') + Math.abs(rb).toFixed(3);
   document.getElementById('rProdMod').textContent = mod.toFixed(4);
   document.getElementById('rProdArg').textContent = arg.toFixed(2) + '°';
   document.getElementById('prodResult').classList.add('show');
 }
 
 function calcDiv() {
-  const a1=parseFloat(document.getElementById('z1a').value), b1=parseFloat(document.getElementById('z1b').value);
-  const a2=parseFloat(document.getElementById('z2a').value), b2=parseFloat(document.getElementById('z2b').value);
-  const denom = a2*a2 + b2*b2;
-  if(denom===0){alert('Z₂ ne peut pas être nul !');return;}
-  const ra = (a1*a2 + b1*b2)/denom, rb = (b1*a2 - a1*b2)/denom;
-  const mod = Math.sqrt(ra*ra+rb*rb);
-  const arg = Math.atan2(rb,ra)*180/Math.PI;
-  document.getElementById('rProd').textContent = ra.toFixed(3) + (rb>=0?' + j':' − j') + Math.abs(rb).toFixed(3);
+  const a1 = parseFloat(document.getElementById('z1a').value), b1 = parseFloat(document.getElementById('z1b').value);
+  const a2 = parseFloat(document.getElementById('z2a').value), b2 = parseFloat(document.getElementById('z2b').value);
+  const denom = a2 * a2 + b2 * b2;
+  if (denom === 0) { alert('Z₂ ne peut pas être nul !'); return; }
+  const ra = (a1 * a2 + b1 * b2) / denom, rb = (b1 * a2 - a1 * b2) / denom;
+  const mod = Math.sqrt(ra * ra + rb * rb);
+  const arg = Math.atan2(rb, ra) * 180 / Math.PI;
+  document.getElementById('rProd').textContent = ra.toFixed(3) + (rb >= 0 ? ' + j' : ' − j') + Math.abs(rb).toFixed(3);
   document.getElementById('rProdMod').textContent = mod.toFixed(4);
   document.getElementById('rProdArg').textContent = arg.toFixed(2) + '°';
   document.getElementById('prodResult').classList.add('show');
 }
 
 function calcSignal() {
-  const smax=parseFloat(document.getElementById('sMax').value);
-  const freq=parseFloat(document.getElementById('sFreq').value);
-  const seff = smax/Math.sqrt(2);
-  const T = 1/freq;
-  const omega = 2*Math.PI*freq;
+  const smax = parseFloat(document.getElementById('sMax').value);
+  const freq = parseFloat(document.getElementById('sFreq').value);
+  const seff = smax / Math.sqrt(2);
+  const T = 1 / freq;
+  const omega = 2 * Math.PI * freq;
   document.getElementById('sEff').textContent = seff.toFixed(2) + ' V (ou A)';
-  document.getElementById('sPeriod').textContent = (T*1000).toFixed(2) + ' ms';
+  document.getElementById('sPeriod').textContent = (T * 1000).toFixed(2) + ' ms';
   document.getElementById('sOmega').textContent = omega.toFixed(2) + ' rad/s';
   document.getElementById('sExpr').textContent = smax.toFixed(1) + '·sin(' + omega.toFixed(0) + 't)';
   document.getElementById('signalResult').classList.add('show');
 }
 
 function calcImpedance() {
-  const R=parseFloat(document.getElementById('iR').value);
-  const L=parseFloat(document.getElementById('iL').value)*1e-3;
-  const C=parseFloat(document.getElementById('iC').value)*1e-6;
-  const f=parseFloat(document.getElementById('iF').value);
-  const omega=2*Math.PI*f;
-  const XL=L*omega, XC=1/(C*omega), X=XL-XC;
-  const modZ=Math.sqrt(R*R+X*X);
-  const phi=Math.atan2(X,R)*180/Math.PI;
+  const R = parseFloat(document.getElementById('iR').value);
+  const L = parseFloat(document.getElementById('iL').value) * 1e-3;
+  const C = parseFloat(document.getElementById('iC').value) * 1e-6;
+  const f = parseFloat(document.getElementById('iF').value);
+  const omega = 2 * Math.PI * f;
+  const XL = L * omega, XC = 1 / (C * omega), X = XL - XC;
+  const modZ = Math.sqrt(R * R + X * X);
+  const phi = Math.atan2(X, R) * 180 / Math.PI;
   document.getElementById('iXL').textContent = XL.toFixed(3) + ' Ω';
   document.getElementById('iXC').textContent = XC.toFixed(3) + ' Ω';
   document.getElementById('iX').textContent = X.toFixed(3) + ' Ω';
-  document.getElementById('iZ').textContent = R.toFixed(2) + (X>=0?' + j':' − j') + Math.abs(X).toFixed(2) + ' Ω';
+  document.getElementById('iZ').textContent = R.toFixed(2) + (X >= 0 ? ' + j' : ' − j') + Math.abs(X).toFixed(2) + ' Ω';
   document.getElementById('iMod').textContent = modZ.toFixed(3) + ' Ω';
   document.getElementById('iPhi').textContent = phi.toFixed(2) + '°';
-  document.getElementById('iChar').textContent = X>0 ? '⚡ Inductif (Q>0)' : X<0 ? '⚡ Capacitif (Q<0)' : '⚡ Résistif pur';
+  document.getElementById('iChar').textContent = X > 0 ? '⚡ Inductif (Q>0)' : X < 0 ? '⚡ Capacitif (Q<0)' : '⚡ Résistif pur';
   document.getElementById('impedanceResult').classList.add('show');
 }
 
 function calcPower() {
-  const V=parseFloat(document.getElementById('pV').value);
-  const I=parseFloat(document.getElementById('pI').value);
-  const phi=parseFloat(document.getElementById('pPhi').value)*Math.PI/180;
-  const P=V*I*Math.cos(phi), Q=V*I*Math.sin(phi), S=V*I;
-  const cosP=Math.cos(phi);
+  const V = parseFloat(document.getElementById('pV').value);
+  const I = parseFloat(document.getElementById('pI').value);
+  const phi = parseFloat(document.getElementById('pPhi').value) * Math.PI / 180;
+  const P = V * I * Math.cos(phi), Q = V * I * Math.sin(phi), S = V * I;
+  const cosP = Math.cos(phi);
   document.getElementById('pP').textContent = P.toFixed(1) + ' W';
   document.getElementById('pQ').textContent = Q.toFixed(1) + ' VAr';
   document.getElementById('pS').textContent = S.toFixed(1) + ' VA';
   document.getElementById('pCos').textContent = cosP.toFixed(4);
-  document.getElementById('pVerif').textContent = '√('+ P.toFixed(0)+'²+'+Q.toFixed(0)+'²) = ' + Math.sqrt(P*P+Q*Q).toFixed(1) + ' ≈ ' + S.toFixed(1) + ' ✓';
+  document.getElementById('pVerif').textContent = '√(' + P.toFixed(0) + '²+' + Q.toFixed(0) + '²) = ' + Math.sqrt(P * P + Q * Q).toFixed(1) + ' ≈ ' + S.toFixed(1) + ' ✓';
   document.getElementById('powerResult').classList.add('show');
 }
 
@@ -843,20 +806,20 @@ const QCMs = {
 // ═══════════════════════════════
 function calcSignal() {
   const Seff = parseFloat(document.getElementById('s-eff').value) || 0;
-  const f    = parseFloat(document.getElementById('s-freq').value) || 50;
-  const phi  = parseFloat(document.getElementById('s-phi').value) || 0;
+  const f = parseFloat(document.getElementById('s-freq').value) || 50;
+  const phi = parseFloat(document.getElementById('s-phi').value) || 0;
   const result = document.getElementById('s-result');
 
-  const Smax  = Seff * Math.sqrt(2);
-  const T     = 1 / f;
+  const Smax = Seff * Math.sqrt(2);
+  const T = 1 / f;
   const omega = 2 * Math.PI * f;
   const phiRad = phi * Math.PI / 180;
 
   result.innerHTML = `
     <div class="result-line"><span class="result-key">Valeur crête S_max</span><span class="result-val">${Smax.toFixed(3)} V (ou A)</span></div>
     <div class="result-line"><span class="result-key">Pulsation ω</span><span class="result-val">${omega.toFixed(2)} rad/s</span></div>
-    <div class="result-line"><span class="result-key">Période T</span><span class="result-val">${(T*1000).toFixed(3)} ms</span></div>
-    <div class="result-line"><span class="result-key">Expression temporelle</span><span class="result-val">s(t) = ${Smax.toFixed(2)}·sin(${omega.toFixed(0)}t ${phi>=0?'+':''}${phi}°)</span></div>
+    <div class="result-line"><span class="result-key">Période T</span><span class="result-val">${(T * 1000).toFixed(3)} ms</span></div>
+    <div class="result-line"><span class="result-key">Expression temporelle</span><span class="result-val">s(t) = ${Smax.toFixed(2)}·sin(${omega.toFixed(0)}t ${phi >= 0 ? '+' : ''}${phi}°)</span></div>
     <div class="result-line"><span class="result-key">Phaseur complexe</span><span class="result-val">${Seff.toFixed(2)}∠${phi}° (module = valeur eff.)</span></div>
   `;
   result.className = 'calc-result show';
@@ -876,20 +839,20 @@ function calcImpedance() {
   const omega = 2 * Math.PI * f;
   const XL = omega * L / 1000;        // L en mH
   const XC = C > 0 ? 1 / (omega * C / 1e6) : 0;  // C en µF
-  const X  = XL - XC;
-  const Ztot = Math.sqrt(R*R + X*X);
-  const phi  = Math.atan2(X, R) * 180 / Math.PI;
-  const I    = Ztot > 0 ? V / Ztot : 0;
-  const P    = R * I * I;
-  const Q    = X * I * I;
-  const S    = V * I;
+  const X = XL - XC;
+  const Ztot = Math.sqrt(R * R + X * X);
+  const phi = Math.atan2(X, R) * 180 / Math.PI;
+  const I = Ztot > 0 ? V / Ztot : 0;
+  const P = R * I * I;
+  const Q = X * I * I;
+  const S = V * I;
   const cosP = S > 0 ? P / S : 0;
 
   const nature = X > 0.01 ? 'Inductif' : X < -0.01 ? 'Capacitif' : 'Résistif pur';
 
   result.innerHTML = `
     <div class="result-line"><span class="result-key">X_L = ωL</span><span class="result-val">${XL.toFixed(2)} Ω</span></div>
-    ${C>0 ? '<div class="result-line"><span class="result-key">X_C = 1/(ωC)</span><span class="result-val">'+XC.toFixed(2)+' Ω</span></div>' : ''}
+    ${C > 0 ? '<div class="result-line"><span class="result-key">X_C = 1/(ωC)</span><span class="result-val">' + XC.toFixed(2) + ' Ω</span></div>' : ''}
     <div class="result-line"><span class="result-key">X = X_L − X_C</span><span class="result-val">${X.toFixed(2)} Ω</span></div>
     <div class="result-line"><span class="result-key">|Z| = √(R²+X²)</span><span class="result-val">${Ztot.toFixed(3)} Ω</span></div>
     <div class="result-line"><span class="result-key">φ = arctan(X/R)</span><span class="result-val">${phi.toFixed(1)}° (${nature})</span></div>
@@ -898,7 +861,7 @@ function calcImpedance() {
     <div class="result-line"><span class="result-key">Q = X·I²</span><span class="result-val">${Q.toFixed(1)} VAr</span></div>
     <div class="result-line"><span class="result-key">S = V·I</span><span class="result-val">${S.toFixed(1)} VA</span></div>
     <div class="result-line"><span class="result-key">cosφ = P/S</span><span class="result-val">${cosP.toFixed(3)}</span></div>
-    ${C>0&&L>0 ? '<div class="result-line"><span class="result-key">f₀ résonance</span><span class="result-val">'+(1/(2*Math.PI*Math.sqrt(L/1000*C/1e6))).toFixed(1)+' Hz</span></div>' : ''}
+    ${C > 0 && L > 0 ? '<div class="result-line"><span class="result-key">f₀ résonance</span><span class="result-val">' + (1 / (2 * Math.PI * Math.sqrt(L / 1000 * C / 1e6))).toFixed(1) + ' Hz</span></div>' : ''}
   `;
   result.className = 'calc-result show';
 }
@@ -908,44 +871,44 @@ function calcImpedance() {
 // ═══════════════════════════════
 function calcPuissance() {
   const mode = document.getElementById('p-mode').value;
-  const in1  = parseFloat(document.getElementById('p-in1').value) || 0;
-  const in2  = parseFloat(document.getElementById('p-in2').value) || 0;
-  const in3  = parseFloat(document.getElementById('p-in3').value) || 230;
-  const in4  = parseFloat(document.getElementById('p-in4').value) || 0.95;
+  const in1 = parseFloat(document.getElementById('p-in1').value) || 0;
+  const in2 = parseFloat(document.getElementById('p-in2').value) || 0;
+  const in3 = parseFloat(document.getElementById('p-in3').value) || 230;
+  const in4 = parseFloat(document.getElementById('p-in4').value) || 0.95;
   const result = document.getElementById('p-result');
 
   // Update labels
   const labels = {
-    'pqs':  ['P (W)', 'Q (VAr)', 'V (V)', 'cosφ\' cible'],
+    'pqs': ['P (W)', 'Q (VAr)', 'V (V)', 'cosφ\' cible'],
     'scosphi': ['S (VA)', 'cosφ', 'V (V)', 'f (Hz)'],
     'comp': ['P (W)', 'cosφ actuel', 'V (V)', 'cosφ\' cible']
   };
-  ['p-l1','p-l2','p-l3','p-l4'].forEach((id,i) => {
+  ['p-l1', 'p-l2', 'p-l3', 'p-l4'].forEach((id, i) => {
     const el = document.getElementById(id);
-    if(el) el.textContent = labels[mode][i];
+    if (el) el.textContent = labels[mode][i];
   });
 
   let html = '';
   if (mode === 'pqs') {
-    const P=in1, Q=in2, V=in3;
-    const S = Math.sqrt(P*P+Q*Q);
-    const cosP = S>0 ? P/S : 0;
-    const phi  = Math.atan2(Q,P)*180/Math.PI;
-    const I    = V>0 ? S/V : 0;
+    const P = in1, Q = in2, V = in3;
+    const S = Math.sqrt(P * P + Q * Q);
+    const cosP = S > 0 ? P / S : 0;
+    const phi = Math.atan2(Q, P) * 180 / Math.PI;
+    const I = V > 0 ? S / V : 0;
     html = `
       <div class="result-line"><span class="result-key">S = √(P²+Q²)</span><span class="result-val">${S.toFixed(1)} VA</span></div>
       <div class="result-line"><span class="result-key">cosφ = P/S</span><span class="result-val">${cosP.toFixed(4)}</span></div>
       <div class="result-line"><span class="result-key">φ</span><span class="result-val">${phi.toFixed(1)}°</span></div>
       <div class="result-line"><span class="result-key">I = S/V</span><span class="result-val">${I.toFixed(2)} A</span></div>
-      <div class="result-line"><span class="result-key">Nature</span><span class="result-val">${Q>0?'Inductif (Q>0)':Q<0?'Capacitif (Q<0)':'Résistif pur'}</span></div>
+      <div class="result-line"><span class="result-key">Nature</span><span class="result-val">${Q > 0 ? 'Inductif (Q>0)' : Q < 0 ? 'Capacitif (Q<0)' : 'Résistif pur'}</span></div>
     `;
   } else if (mode === 'scosphi') {
-    const S=in1, cosP=in2, V=in3;
+    const S = in1, cosP = in2, V = in3;
     const P = S * cosP;
-    const sinP = Math.sqrt(1-cosP*cosP);
+    const sinP = Math.sqrt(1 - cosP * cosP);
     const Q = S * sinP;
-    const phi = Math.acos(cosP)*180/Math.PI;
-    const I = V>0 ? S/V : 0;
+    const phi = Math.acos(cosP) * 180 / Math.PI;
+    const I = V > 0 ? S / V : 0;
     html = `
       <div class="result-line"><span class="result-key">P = S·cosφ</span><span class="result-val">${P.toFixed(1)} W</span></div>
       <div class="result-line"><span class="result-key">Q = S·sinφ</span><span class="result-val">${Q.toFixed(1)} VAr</span></div>
@@ -953,23 +916,23 @@ function calcPuissance() {
       <div class="result-line"><span class="result-key">I = S/V</span><span class="result-val">${I.toFixed(2)} A</span></div>
     `;
   } else { // comp
-    const P=in1, cosPhi=in2, V=in3, cosPhiTarget=in4;
-    const phi  = Math.acos(cosPhi);
+    const P = in1, cosPhi = in2, V = in3, cosPhiTarget = in4;
+    const phi = Math.acos(cosPhi);
     const phiT = Math.acos(cosPhiTarget);
-    const Qc   = P*(Math.tan(phi)-Math.tan(phiT));
-    const C    = Qc/(2*Math.PI*50*V*V);
-    const C_tri= Qc/(3*2*Math.PI*50*V*V);
-    const Sbefore = P/cosPhi;
-    const Safter  = Math.sqrt(P*P + (P*Math.tan(phi)-Qc)**2);
-    const Ibefore = Sbefore/V;
-    const Iafter  = Safter/V;
+    const Qc = P * (Math.tan(phi) - Math.tan(phiT));
+    const C = Qc / (2 * Math.PI * 50 * V * V);
+    const C_tri = Qc / (3 * 2 * Math.PI * 50 * V * V);
+    const Sbefore = P / cosPhi;
+    const Safter = Math.sqrt(P * P + (P * Math.tan(phi) - Qc) ** 2);
+    const Ibefore = Sbefore / V;
+    const Iafter = Safter / V;
     html = `
       <div class="result-line"><span class="result-key">Q_C à compenser</span><span class="result-val">${Qc.toFixed(0)} VAr</span></div>
-      <div class="result-line"><span class="result-key">C (monophasé)</span><span class="result-val">${(C*1e6).toFixed(1)} µF</span></div>
-      <div class="result-line"><span class="result-key">C (triphasé étoile)</span><span class="result-val">${(C_tri*1e6*3).toFixed(1)} µF / phase</span></div>
-      <div class="result-line"><span class="result-key">C (triphasé triangle)</span><span class="result-val">${(C_tri*1e6).toFixed(1)} µF / phase</span></div>
+      <div class="result-line"><span class="result-key">C (monophasé)</span><span class="result-val">${(C * 1e6).toFixed(1)} µF</span></div>
+      <div class="result-line"><span class="result-key">C (triphasé étoile)</span><span class="result-val">${(C_tri * 1e6 * 3).toFixed(1)} µF / phase</span></div>
+      <div class="result-line"><span class="result-key">C (triphasé triangle)</span><span class="result-val">${(C_tri * 1e6).toFixed(1)} µF / phase</span></div>
       <div class="result-line"><span class="result-key">Courant avant</span><span class="result-val">${Ibefore.toFixed(2)} A</span></div>
-      <div class="result-line"><span class="result-key">Courant après</span><span class="result-val">${Iafter.toFixed(2)} A (−${(100*(Ibefore-Iafter)/Ibefore).toFixed(0)}%)</span></div>
+      <div class="result-line"><span class="result-key">Courant après</span><span class="result-val">${Iafter.toFixed(2)} A (−${(100 * (Ibefore - Iafter) / Ibefore).toFixed(0)}%)</span></div>
     `;
   }
   result.innerHTML = html;
@@ -983,14 +946,14 @@ function calcAOP2() {
   const R1 = parseFloat(document.getElementById('aop2-r1').value) || 0;
   const R2 = parseFloat(document.getElementById('aop2-r2').value) || 0;
   const Ve = parseFloat(document.getElementById('aop2-ve').value) || 0;
-  const C  = parseFloat(document.getElementById('aop2-c').value) || 0;
+  const C = parseFloat(document.getElementById('aop2-c').value) || 0;
   const result = document.getElementById('aop2-result');
   let html = '';
 
   if (type === 'inv') {
-    if (R1 === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">R₁ ne peut pas être 0</span></div>'; result.className='calc-result show'; return; }
+    if (R1 === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">R₁ ne peut pas être 0</span></div>'; result.className = 'calc-result show'; return; }
     const Av = -(R2 / R1);
-    const S  = Av * Ve;
+    const S = Av * Ve;
     const dB = 20 * Math.log10(Math.abs(Av));
     html = `
       <div class="result-line"><span class="result-key">Gain Av</span><span class="result-val">${Av.toFixed(3)}</span></div>
@@ -999,9 +962,9 @@ function calcAOP2() {
       <div class="result-line"><span class="result-key">Phase</span><span class="result-val">180° (inversé)</span></div>
     `;
   } else if (type === 'noninv') {
-    if (R1 === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">R₁ ne peut pas être 0</span></div>'; result.className='calc-result show'; return; }
+    if (R1 === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">R₁ ne peut pas être 0</span></div>'; result.className = 'calc-result show'; return; }
     const Av = 1 + R2 / R1;
-    const S  = Av * Ve;
+    const S = Av * Ve;
     const dB = 20 * Math.log10(Math.abs(Av));
     html = `
       <div class="result-line"><span class="result-key">Gain Av</span><span class="result-val">+${Av.toFixed(3)}</span></div>
@@ -1017,25 +980,25 @@ function calcAOP2() {
       <div class="result-line"><span class="result-key">Impédance sortie</span><span class="result-val">≈ 0 Ω (idéal)</span></div>
     `;
   } else if (type === 'integ') {
-    if (R1 === 0 || C === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">R₁ et C doivent être non nuls</span></div>'; result.className='calc-result show'; return; }
+    if (R1 === 0 || C === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">R₁ et C doivent être non nuls</span></div>'; result.className = 'calc-result show'; return; }
     const tau = R1 * 1e3 * C * 1e-9;
-    const fc  = 1 / (2 * Math.PI * tau);
+    const fc = 1 / (2 * Math.PI * tau);
     html = `
-      <div class="result-line"><span class="result-key">Constante τ = R₁C</span><span class="result-val">${(tau*1e6).toFixed(2)} µs</span></div>
-      <div class="result-line"><span class="result-key">Fréquence de coupure fc</span><span class="result-val">${fc >= 1000 ? (fc/1000).toFixed(2)+' kHz' : fc.toFixed(1)+' Hz'}</span></div>
+      <div class="result-line"><span class="result-key">Constante τ = R₁C</span><span class="result-val">${(tau * 1e6).toFixed(2)} µs</span></div>
+      <div class="result-line"><span class="result-key">Fréquence de coupure fc</span><span class="result-val">${fc >= 1000 ? (fc / 1000).toFixed(2) + ' kHz' : fc.toFixed(1) + ' Hz'}</span></div>
       <div class="result-line"><span class="result-key">Pente atténuation</span><span class="result-val">−20 dB/décade</span></div>
       <div class="result-line"><span class="result-key">Gain à fc</span><span class="result-val">−3 dB (= G₀/√2)</span></div>
     `;
   } else if (type === 'filtre') {
-    if (R1 === 0 || R2 === 0 || C === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">Tous les paramètres requis</span></div>'; result.className='calc-result show'; return; }
-    const G0  = R2 / R1;
+    if (R1 === 0 || R2 === 0 || C === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">Tous les paramètres requis</span></div>'; result.className = 'calc-result show'; return; }
+    const G0 = R2 / R1;
     const tau = R2 * 1e3 * C * 1e-9;
-    const fc  = 1 / (2 * Math.PI * tau);
-    const dB  = 20 * Math.log10(G0);
+    const fc = 1 / (2 * Math.PI * tau);
+    const dB = 20 * Math.log10(G0);
     html = `
       <div class="result-line"><span class="result-key">Gain DC G₀ = Rf/R₁</span><span class="result-val">${G0.toFixed(2)} (${dB.toFixed(1)} dB)</span></div>
-      <div class="result-line"><span class="result-key">Fréquence de coupure fc</span><span class="result-val">${fc >= 1000 ? (fc/1000).toFixed(2)+' kHz' : fc.toFixed(1)+' Hz'}</span></div>
-      <div class="result-line"><span class="result-key">Gain à fc</span><span class="result-val">${(G0/Math.sqrt(2)).toFixed(2)} (−3 dB)</span></div>
+      <div class="result-line"><span class="result-key">Fréquence de coupure fc</span><span class="result-val">${fc >= 1000 ? (fc / 1000).toFixed(2) + ' kHz' : fc.toFixed(1) + ' Hz'}</span></div>
+      <div class="result-line"><span class="result-key">Gain à fc</span><span class="result-val">${(G0 / Math.sqrt(2)).toFixed(2)} (−3 dB)</span></div>
       <div class="result-line"><span class="result-key">Pente pour f &gt; fc</span><span class="result-val">−20 dB/décade</span></div>
     `;
   }
@@ -1048,16 +1011,16 @@ function calcAOP2() {
 // ═══════════════════════════════
 function calcAOP3() {
   const type = document.getElementById('aop3-type').value;
-  const R1   = parseFloat(document.getElementById('aop3-r1').value) || 0;
-  const R2   = parseFloat(document.getElementById('aop3-r2').value) || 0;
-  const R    = parseFloat(document.getElementById('aop3-r').value) || 0;
-  const C    = parseFloat(document.getElementById('aop3-c').value) || 0;
+  const R1 = parseFloat(document.getElementById('aop3-r1').value) || 0;
+  const R2 = parseFloat(document.getElementById('aop3-r2').value) || 0;
+  const R = parseFloat(document.getElementById('aop3-r').value) || 0;
+  const C = parseFloat(document.getElementById('aop3-c').value) || 0;
   const Vsat = parseFloat(document.getElementById('aop3-vsat').value) || 12;
   const result = document.getElementById('aop3-result');
   let html = '';
 
   if (type === 'schmitt') {
-    if (R1 + R2 === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">R₁ et R₂ requis</span></div>'; result.className='calc-result show'; return; }
+    if (R1 + R2 === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">R₁ et R₂ requis</span></div>'; result.className = 'calc-result show'; return; }
     const Vp = Vsat * R1 / (R1 + R2);
     const Vm = -Vp;
     const dV = 2 * Vp;
@@ -1065,29 +1028,29 @@ function calcAOP3() {
       <div class="result-line"><span class="result-key">Seuil haut V⁺</span><span class="result-val">+${Vp.toFixed(3)} V</span></div>
       <div class="result-line"><span class="result-key">Seuil bas V⁻</span><span class="result-val">${Vm.toFixed(3)} V</span></div>
       <div class="result-line"><span class="result-key">Largeur hystérésis ΔVH</span><span class="result-val">${dV.toFixed(3)} V</span></div>
-      <div class="result-line"><span class="result-key">β = R₁/(R₁+R₂)</span><span class="result-val">${(R1/(R1+R2)).toFixed(4)}</span></div>
+      <div class="result-line"><span class="result-key">β = R₁/(R₁+R₂)</span><span class="result-val">${(R1 / (R1 + R2)).toFixed(4)}</span></div>
     `;
   } else if (type === 'astable') {
-    if (R === 0 || C === 0 || R1 + R2 === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-key" style="color:var(--accent2)">Tous paramètres requis</span></div>'; result.className='calc-result show'; return; }
+    if (R === 0 || C === 0 || R1 + R2 === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-key" style="color:var(--accent2)">Tous paramètres requis</span></div>'; result.className = 'calc-result show'; return; }
     const beta = R2 / (R1 + R2);
-    const tau  = R * 1e3 * C * 1e-9;
-    const T    = 2 * tau * Math.log((1 + beta) / (1 - beta));
-    const f    = 1 / T;
+    const tau = R * 1e3 * C * 1e-9;
+    const T = 2 * tau * Math.log((1 + beta) / (1 - beta));
+    const f = 1 / T;
     html = `
       <div class="result-line"><span class="result-key">β = R₂/(R₁+R₂)</span><span class="result-val">${beta.toFixed(4)}</span></div>
-      <div class="result-line"><span class="result-key">Constante τ = RC</span><span class="result-val">${(tau*1e6).toFixed(2)} µs</span></div>
-      <div class="result-line"><span class="result-key">Période T</span><span class="result-val">${T >= 1e-3 ? (T*1e3).toFixed(3)+' ms' : (T*1e6).toFixed(1)+' µs'}</span></div>
-      <div class="result-line"><span class="result-key">Fréquence f</span><span class="result-val">${f >= 1000 ? (f/1000).toFixed(2)+' kHz' : f.toFixed(1)+' Hz'}</span></div>
+      <div class="result-line"><span class="result-key">Constante τ = RC</span><span class="result-val">${(tau * 1e6).toFixed(2)} µs</span></div>
+      <div class="result-line"><span class="result-key">Période T</span><span class="result-val">${T >= 1e-3 ? (T * 1e3).toFixed(3) + ' ms' : (T * 1e6).toFixed(1) + ' µs'}</span></div>
+      <div class="result-line"><span class="result-key">Fréquence f</span><span class="result-val">${f >= 1000 ? (f / 1000).toFixed(2) + ' kHz' : f.toFixed(1) + ' Hz'}</span></div>
       <div class="result-line"><span class="result-key">Rapport cyclique</span><span class="result-val">50% (symétrique)</span></div>
     `;
   } else if (type === 'wien') {
-    if (R === 0 || C === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">R et C requis</span></div>'; result.className='calc-result show'; return; }
+    if (R === 0 || C === 0) { result.innerHTML = '<div class="result-line"><span class="result-key">Erreur</span><span class="result-val" style="color:var(--accent2)">R et C requis</span></div>'; result.className = 'calc-result show'; return; }
     const tau = R * 1e3 * C * 1e-9;
-    const f0  = 1 / (2 * Math.PI * tau);
+    const f0 = 1 / (2 * Math.PI * tau);
     html = `
-      <div class="result-line"><span class="result-key">Fréquence f₀</span><span class="result-val">${f0 >= 1000 ? (f0/1000).toFixed(3)+' kHz' : f0.toFixed(1)+' Hz'}</span></div>
+      <div class="result-line"><span class="result-key">Fréquence f₀</span><span class="result-val">${f0 >= 1000 ? (f0 / 1000).toFixed(3) + ' kHz' : f0.toFixed(1) + ' Hz'}</span></div>
       <div class="result-line"><span class="result-key">Gain requis Av</span><span class="result-val">3 (exactement)</span></div>
-      <div class="result-line"><span class="result-key">Rf = 2R₁ (ex: R₁)</span><span class="result-val">${R1.toFixed(1)} kΩ → Rf = ${(2*R1).toFixed(1)} kΩ</span></div>
+      <div class="result-line"><span class="result-key">Rf = 2R₁ (ex: R₁)</span><span class="result-val">${R1.toFixed(1)} kΩ → Rf = ${(2 * R1).toFixed(1)} kΩ</span></div>
       <div class="result-line"><span class="result-key">Atténuation réseau Wien à f₀</span><span class="result-val">1/3 ∠0°</span></div>
     `;
   }
@@ -1108,14 +1071,14 @@ function renderQCM(moduleId, questions) {
     card.className = 'qcm-card';
     card.id = 'qcard-' + moduleId + '-' + qi;
 
-    const letters = ['A','B','C','D'];
-    const optsHTML = q.opts.map((o,oi) => `
+    const letters = ['A', 'B', 'C', 'D'];
+    const optsHTML = q.opts.map((o, oi) => `
       <div class="qcm-opt" id="opt-${moduleId}-${qi}-${oi}" onclick="selectOpt('${moduleId}',${qi},${oi},${q.correct})">
         <div class="opt-letter">${letters[oi]}</div>${o}
       </div>`).join('');
 
     card.innerHTML = `
-      <div class="qcm-q"><strong>Q${qi+1}.</strong> ${q.q}</div>
+      <div class="qcm-q"><strong>Q${qi + 1}.</strong> ${q.q}</div>
       <div class="qcm-options">${optsHTML}</div>
       <div class="qcm-explanation" id="expl-${moduleId}-${qi}">💡 ${q.expl}</div>`;
     container.appendChild(card);
@@ -1137,7 +1100,7 @@ const qcmState = {};
 function selectOpt(mid, qi, oi, correct) {
   const key = mid + '-' + qi;
   if (qcmState[key]) return; // already answered
-  qcmState[key] = {chosen: oi, correct: correct, isCorrect: oi === correct};
+  qcmState[key] = { chosen: oi, correct: correct, isCorrect: oi === correct };
 
   // Visual feedback
   const opts = document.querySelectorAll(`[id^="opt-${mid}-${qi}-"]`);
@@ -1164,28 +1127,28 @@ function selectOpt(mid, qi, oi, correct) {
 function checkAllAnswered(mid) {
   const qs = QCMs[mid];
   let total = qs.length, answered = 0, correct = 0;
-  qs.forEach((q,i) => {
+  qs.forEach((q, i) => {
     const k = mid + '-' + i;
-    if (qcmState[k]) { answered++; if(qcmState[k].isCorrect) correct++; }
+    if (qcmState[k]) { answered++; if (qcmState[k].isCorrect) correct++; }
   });
   if (answered === total) {
     const scoreDiv = document.getElementById('score-' + mid);
     scoreDiv.classList.add('show');
     document.getElementById('score-num-' + mid).textContent = correct + '/' + total;
-    const pct = Math.round(correct/total*100);
+    const pct = Math.round(correct / total * 100);
     let msg = pct >= 80 ? '🎉 Excellent ! Vous maîtrisez ce module.' :
-              pct >= 60 ? '👍 Bien ! Revoyez les points incorrects.' :
-              '📚 Continuez à réviser — relisez les explications.';
+      pct >= 60 ? '👍 Bien ! Revoyez les points incorrects.' :
+        '📚 Continuez à réviser — relisez les explications.';
     document.getElementById('score-msg-' + mid).textContent = msg;
     state.progress[mid] = pct;
-    state.scores[mid] = {correct, total};
+    state.scores[mid] = { correct, total };
   }
 }
 
 function retryQCM(mid) {
   // Reset state
   const qs = QCMs[mid];
-  qs.forEach((q,i) => { delete qcmState[mid+'-'+i]; });
+  qs.forEach((q, i) => { delete qcmState[mid + '-' + i]; });
   document.getElementById('score-' + mid).classList.remove('show');
   renderQCM(mid, qs);
 }
@@ -1193,12 +1156,12 @@ function retryQCM(mid) {
 // ═══════════════════════════════
 // PROGRESSION
 // ═══════════════════════════════
-const modules = ['complexes','signaux','impedances','puissances','methodologie','triphasé','aop_bases','aop_lineaire','aop_oscillateurs'];
-const moduleNames = ['Nombres Complexes','Signaux Sinusoïdaux','Lois & Impédances','Puissances','Méthodologie','Systèmes Triphasés','AOP — Bases','AOP — Montages Linéaires','AOP — Oscillateurs'];
+const modules = ['generalites', 'complexes', 'signaux', 'impedances', 'puissances', 'methodologie', 'triphasé', 'aop_bases', 'aop_lineaire', 'aop_oscillateurs'];
+const moduleNames = ['Généralités', 'Nombres Complexes', 'Signaux Sinusoïdaux', 'Lois & Impédances', 'Puissances', 'Méthodologie', 'Systèmes Triphasés', 'AOP — Bases', 'AOP — Montages Linéaires', 'AOP — Oscillateurs'];
 
 function renderProgression() {
   const container = document.getElementById('progressItems');
-  container.innerHTML = modules.map((m,i) => {
+  container.innerHTML = modules.map((m, i) => {
     const pct = state.progress[m] || 0;
     const score = state.scores[m] ? `${state.scores[m].correct}/${state.scores[m].total}` : '—';
     return `
@@ -1216,8 +1179,7 @@ function renderProgression() {
 window.addEventListener('DOMContentLoaded', () => {
   // Render all QCMs
   Object.keys(QCMs).forEach(mid => renderQCM(mid, QCMs[mid]));
-  // Draw initial complex plane if loaded
-  attachComplexPlaneHandlers();
+  // Draw initial complex plane
   setTimeout(drawComplex, 100);
   // Show home
   showHome();
