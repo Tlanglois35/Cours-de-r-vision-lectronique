@@ -406,56 +406,6 @@
         </div>
       </div>
 
-      <!-- 3.8bis Barkhausen (extrait cours AOP) -->
-      <div class="content-block" id="aop3-barkhausen-pdf">
-        <div class="section-tag" style="color:var(--accent3)">3.8bis — Barkhausen (version cours)</div>
-        <h2 class="block-title">Condition d’oscillation harmonique — lecture corrigée</h2>
-        <div class="formula-box">
-          <span class="formula-label">Condition d’oscillation</span>
-          <div class="formula">T(jω₀)=A(jω₀)·F(jω₀)=1 &nbsp;→&nbsp; |A·F|=1 et arg(A·F)=0 [2π]</div>
-          <div class="formula-explain">
-            Valable pour une pulsation unique ω₀. En pratique on amorce souvent avec <strong>|A·F| = 1 + δ</strong> (δ &gt; 0 petit),
-            puis la non-linéarité ramène le gain de boucle vers <strong>|A·F| = 1</strong> pour stabiliser l’amplitude.
-          </div>
-        </div>
-        <div class="tip"><div class="tip-icon">🧠</div><div class="tip-text"><strong>Interprétation physique :</strong> si |A·F|&lt;1 l’oscillation meurt, si |A·F|&gt;1 elle croit jusqu’à saturation, et l’état stationnaire réel est proche de |A·F|=1.</div></div>
-      </div>
-
-      <!-- 3.8ter Exercice issu du support -->
-      <div class="content-block" id="aop3-barkhausen-exo">
-        <div class="section-tag" style="color:var(--accent3)">3.8ter — Exercice</div>
-        <h2 class="block-title">Démarrage et stabilisation d’un oscillateur</h2>
-        <div class="example-box">
-          <span class="example-label">Énoncé</span>
-          <p>À la fréquence ω₀ d’un oscillateur, on mesure initialement |A·F|=1,08 puis après 50 ms |A·F|=1,00. Expliquer qualitativement l’évolution de l’amplitude et l’état final.</p>
-          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Correction guidée</span><span class="expand-icon">+</span></div>
-            <div class="expand-content">
-              <p>Au démarrage, |A·F|=1,08 &gt; 1 : l’oscillation est <strong>amorcée</strong> et l’amplitude augmente.</p>
-              <p>Quand l’amplitude augmente, l’étage actif quitte l’idéal (compression de gain / non-linéarités), ce qui réduit le gain de boucle effectif.</p>
-              <p>L’équilibre est atteint lorsque |A·F| revient à 1,00 : amplitude <strong>stable</strong>, fréquence fixée par le réseau sélectif.</p>
-              <p><strong>Conclusion :</strong> démarrage avec gain légèrement supérieur à 1, puis maintien autour de 1 (principe rappelé dans le support).</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3.8 Approfondissement -->
-      <div class="content-block" id="aop3-approfondissement">
-        <div class="section-tag" style="color:var(--accent3)">3.8 — Approfondissement</div>
-        <h2 class="block-title">Exercice approfondi — Trigger de Schmitt et marges de bruit</h2>
-        <div class="example-box">
-          <span class="example-label">Données</span>
-          <p>Comparateur à hystérésis non-inverseur, Vsat=±10 V, R1=8,2 kΩ, R2=33 kΩ. Calculer V<sub>TH+</sub>, V<sub>TH−</sub> et la marge anti-bruit.</p>
-          <div class="expand-card"><div class="expand-header" onclick="toggleExpand(this)"><span class="expand-header-text">Correction</span><span class="expand-icon">+</span></div>
-          <div class="expand-content">
-            <p>β = R1/(R1+R2) = 8,2/(8,2+33) ≈ 0,199</p>
-            <p>Seuils : V<sub>TH+</sub>=+βVsat≈<strong>+1,99 V</strong>, V<sub>TH−</sub>=−1,99 V</p>
-            <p>Largeur d'hystérésis : ΔV = V<sub>TH+</sub>−V<sub>TH−</sub> = <strong>3,98 V</strong></p>
-            <p>La marge de bruit admissible autour du zéro est ±1,99 V avant basculement intempestif.</p>
-          </div></div>
-        </div>
-      </div>
-
       <!-- ── QCM AOP-03 ── -->
       <div class="content-block" id="aop3-qcm">
         <div class="section-tag" style="color:var(--accent3)">📋 Test de connaissance</div>
